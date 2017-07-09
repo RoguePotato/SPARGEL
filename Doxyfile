@@ -1,0 +1,17 @@
+PROJECT_NAME = 'SPARGEL'
+
+PROJECT_BRIEF = "Smoothed Particle Generator and Loader"
+
+DOT_PATH = "@DOXYGEN_DOT_PATH@"
+
+EXTRACT_ALL = YES
+
+INPUT = src include
+
+RECURSIVE = YES
+
+GENERATE_LATEX = YES
+
+LATEX_OUTPUT = latex/
+
+GENERATE_HTML = NO
