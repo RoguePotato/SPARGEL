@@ -9,7 +9,9 @@
 //===----------------------------------------------------------------------===//
 ///
 /// \file
-/// This file contains the declaration to the main entry point of the program.
+/// Main.cpp contains the declaration to the main entry point of the program,
+/// creating a parameter context and starting the analyser with the given
+/// parameters.
 ///
 //===----------------------------------------------------------------------===//
 
