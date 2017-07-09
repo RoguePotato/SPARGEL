@@ -1,15 +1,23 @@
-/// @file Main.cpp
-/// @brief this header file will contain all required
-/// definitions and basic utilities functions.
+//===-- Main.cpp ----------------------------------------------------------===//
 //
-/// @author Anthony Mercer
+//                                  SPARGEL
+//                   Smoothed Particle Generator and Loader
 //
-/// @date 07/07/2017
+// This file is distributed under the GNU General Public License. See LICENSE
+// for details.
+//
+//===----------------------------------------------------------------------===//
+///
+/// \file
+/// This file contains the declaration to the main entry point of the program.
+///
+//===----------------------------------------------------------------------===//
 
 #include <stdio>
 
-/// Main function does this that and the other
-int main() {
-    printf("Hello world\n");
-    return 0;
+int main(int argc, char *argv[]) {
+
+  printf("Hello world\n");
+
+  return 0;
 }
