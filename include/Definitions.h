@@ -9,11 +9,22 @@
 //===----------------------------------------------------------------------===//
 ///
 /// \file
-/// Definitions.h lists all type definitions for use within SPARGEL.
+/// Definitions.h lists all includes and type definitions for use within
+/// SPARGEL.
 ///
 //===----------------------------------------------------------------------===//
 
 #pragma once
+
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <stdint.h>
+#include <stdio.h>
+#include <time.h>
+#include <vector>
 
 #define global static;
 #define local static;
