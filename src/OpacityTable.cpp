@@ -42,6 +42,8 @@ bool OpacityTable::Read(std::string fileName, bool formatted) {
 
   if (!mInStream.good()) return false;
 
+  std::cout << "Reading opacity table: " << fileName << "\n";
+
   std::string line;
   uint32 i, j, l;
   real64 dens, temp, energy, mu, kappa, kappar, kappap, gamma;

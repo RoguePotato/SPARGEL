@@ -10,24 +10,25 @@
 ///
 /// \file
 /// Main.cpp contains the declaration to the main entry point of the program,
-/// creating a parameter context and starting the analyser with the given
+/// creating a parameter context and starting the application with the given
 /// parameters.
 ///
 //===----------------------------------------------------------------------===//
 
+#include "Application.h"
 #include "Arguments.h"
 #include "Definitions.h"
 
 int main(int argc, char *argv[]) {
-  Arguments *_Args = new Arguments(argc, argv);
-  // Analyser *_Analyser = new Analyser(_Args);
-  //
-  // if (_Analyser->Initialise()) {
-  //   _Analyser->Run();
-  // }
-  //
-  // delete _Analyser;
-  delete _Args;
+  Arguments *args = new Arguments(argc, argv);
+  Application *app = new Application(args);
+
+  if (app->Initialise()) {
+    app->Run();
+  }
+
+  delete app;
+  delete args;
 
   return 0;
 }

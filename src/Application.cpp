@@ -15,18 +15,23 @@
 
 #include "Application.h"
 
-Analyser::Analyser(Arguments *args) : mArgs(args) {}
+Application::Application(Arguments *args) : mArgs(args) {}
 
-Analyser::~Analyser() {
+Application::~Application() {
   // Only delete if they exist
-  if (mArgs) delete mArgs;
-  if (mParams) delete mParams;
-  if (mOpacity) delete mOpacity;
+  // if (mArgs) delete mArgs;
+  // if (mParams) delete mParams;
+  // if (mOpacity) delete mOpacity;
   // delete mRA;
   // delete mFNE;
 }
 
-bool Analyser::Initialise() {
+bool Application::Initialise() {
+  if (mArgs->GetNumArgs() < 2) {
+    std::cout << "A parameter file must be specified, exiting...\n";
+    return false;
+  }
+  
   mParams = new Parameters();
   mParams->Read(mArgs->GetArgument(0));
 
@@ -41,14 +46,14 @@ bool Analyser::Initialise() {
   mOpacity->Read(mEosFilePath);
 }
 
-void Analyser::Run() {
+void Application::Run() {
 
 }
 
-void Analyser::ConvertFile(File *file, NameData nameData) {
+void Application::ConvertFile(File *file, NameData nameData) {
 
 }
 
-void Analyser::CenterDisc(File *file, uint32 sinkID) {
+void Application::CenterDisc(File *file, uint32 sinkID) {
 
 }

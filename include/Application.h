@@ -22,10 +22,10 @@
 #include "OpacityTable.h"
 #include "Parameters.h"
 
-class Analyser {
+class Application {
 public:
-  Analyser(Arguments *args);
-  ~Analyser();
+  Application(Arguments *args);
+  ~Application();
 
   bool Initialise();
   void Run();
