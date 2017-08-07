@@ -19,6 +19,7 @@
 #include "Arguments.h"
 #include "Definitions.h"
 #include "File.h"
+#include "OpacityTable.h"
 #include "Parameters.h"
 
 class Analyser {
@@ -32,9 +33,9 @@ public:
 private:
   Arguments *mArgs;
   Parameters *mParams;
+  OpacityTable *mOpacity;
   // RadialAnalyser *mRA;
   // FileNameExtractor *mFNE;
-  // EosTable *mEOS;
   //
   // std::vector<std::string> mFileNames;
   // std::vector<File *> mFiles;

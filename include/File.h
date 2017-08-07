@@ -32,7 +32,7 @@ public:
   File() {};
   ~File() {};
 
-  virtual bool Read() = 0;
+  virtual bool Read(std::string fileName, bool formatted = true) = 0;
   virtual bool Write(std::string fileName, bool formatted) = 0;
 
 protected:

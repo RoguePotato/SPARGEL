@@ -19,11 +19,11 @@ Analyser::Analyser(Arguments *args) : mArgs(args) {}
 
 Analyser::~Analyser() {
   // Only delete if they exist
-  // delete mArgs;
-  // delete mParams;
+  if (mArgs) delete mArgs;
+  if (mParams) delete mParams;
+  if (mOpacity) delete mOpacity;
   // delete mRA;
   // delete mFNE;
-  // delete mEOS;
 }
 
 bool Analyser::Initialise() {
@@ -36,6 +36,9 @@ bool Analyser::Initialise() {
   mEosFilePath = mParams->GetString("EOS_TABLE");
   mCenter = mParams->GetInt("CENTER_DISC");
   mRadial = mParams->GetInt("RADIAL_AVG");
+
+  mOpacity = new OpacityTable();
+  mOpacity->Read(mEosFilePath);
 }
 
 void Analyser::Run() {
