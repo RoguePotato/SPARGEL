@@ -19,6 +19,7 @@
 #include "Arguments.h"
 #include "Definitions.h"
 #include "File.h"
+#include "Generator.h"
 #include "OpacityTable.h"
 #include "Parameters.h"
 
@@ -33,6 +34,7 @@ public:
 private:
   Arguments *mArgs;
   Parameters *mParams;
+  Generator *mGenerator;
   OpacityTable *mOpacity;
   // RadialAnalyser *mRA;
   // FileNameExtractor *mFNE;

@@ -119,4 +119,23 @@ void Parameters::SetDefaultParameters() {
   mIntParams["RADIUS_IN"] = 1;
   mIntParams["RADIUS_OUT"] = 100;
   mIntParams["RADIAL_BINS"] = 100;
+
+  mIntParams["GENERATE"] = 0;
+  mStringParams["IC_TYPE"] = "disc";
+  mIntParams["SEED"] = 0;
+  mIntParams["N_HYDRO"] = 4096 * 8;
+  mIntParams["DIMENSIONS"] = 3;
+
+  // Protostellar disc parameters
+  mFloatParams["M_STAR"] = 0.5;
+  mFloatParams["M_DISC"] = 0.01;
+
+  mFloatParams["R_IN"] = 5.0;
+  mFloatParams["R_OUT"] = 100.0;
+  mFloatParams["R_0"] = 0.01;
+  mFloatParams["T_0"] = 250;
+  mFloatParams["T_INF"] = 10;
+  mIntParams["N_NEIGH"] = 50;
+  mFloatParams["P"] = 1.0;
+  mFloatParams["Q"] = 0.75;
 }

@@ -87,9 +87,9 @@ struct Vec3 {
     return *this;
   }
 
-  real64 Norm() const { return sqrtf(x * x + y * y + z * z); }
+  real64 Norm() const { return sqrt(x * x + y * y + z * z); }
 
-  real64 Norm2() const { return sqrtf(x * x + y * y); }
+  real64 Norm2() const { return sqrt(x * x + y * y); }
 
   real64 NormSquared() const { return x * x + y * y + z * z; }
 
