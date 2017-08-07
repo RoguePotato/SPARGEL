@@ -20,15 +20,11 @@
 #include <cmath>
 #include <iostream>
 #include <fstream>
+#include <map>
 #include <sstream>
 #include <stdint.h>
-#include <stdio.h>
 #include <time.h>
 #include <vector>
-
-#define global static;
-#define local static;
-#define internal static;
 
 typedef int8_t int8;
 typedef uint8_t uint8;

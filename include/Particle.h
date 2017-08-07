@@ -16,6 +16,7 @@
 #pragma once
 
 #include "Definitions.h"
+#include "Vec.h"
 
 class Particle {
 public:
@@ -23,7 +24,20 @@ public:
   ~Particle();
 
 private:
-
+  uint32 mID = 0;
+  Vec3 mX = Vec3(0.0, 0.0, 0.0);
+  Vec3 mV = Vec3(0.0, 0.0, 0.0);
+  real64 mR = 0.0;
+  real64 mS = 0.0;
+  real64 mT = 0.0;
+  real64 mH = 0.0;
+  real64 mD = 0.0;
+  real64 mM = 0.0;
+  real64 mU = 0.0;
+  real64 mQ = 0.0;
+  real64 mGamma = 0.0;
+  real64 mMu = 0.0;
+  int8 mType = 1;
 };
 
 class Gas : public Particle {
