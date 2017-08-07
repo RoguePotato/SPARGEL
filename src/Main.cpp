@@ -15,11 +15,19 @@
 ///
 //===----------------------------------------------------------------------===//
 
+#include "Arguments.h"
 #include "Definitions.h"
 
 int main(int argc, char *argv[]) {
-
-  
+  Arguments *_Args = new Arguments(argc, argv);
+  // Analyser *_Analyser = new Analyser(_Args);
+  //
+  // if (_Analyser->Initialise()) {
+  //   _Analyser->Run();
+  // }
+  //
+  // delete _Analyser;
+  delete _Args;
 
   return 0;
 }
