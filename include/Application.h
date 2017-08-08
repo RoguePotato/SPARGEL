@@ -18,6 +18,7 @@
 
 #include "Arguments.h"
 #include "Definitions.h"
+#include "DragonFile.h"
 #include "File.h"
 #include "Generator.h"
 #include "OpacityTable.h"
@@ -36,6 +37,7 @@ private:
   Parameters *mParams;
   Generator *mGenerator;
   OpacityTable *mOpacity;
+  DragonFile *mDragonFile;
   // RadialAnalyser *mRA;
   // FileNameExtractor *mFNE;
   //

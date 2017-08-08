@@ -29,6 +29,7 @@ static real64 THETA = 0.57735026919;
 
 static real64 MSUN_TO_KG = 1.9891E30;
 static real64 PC_TO_M = 3.08567758E16;
+static real64 PC_TO_AU = 206265.0;
 static real64 AU_TO_M = 1.495978707E11;
 static real64 AU_TO_KM = 1.495978707E8;
 static real64 MSOLAU_TO_KGM = 8.88803576E7;

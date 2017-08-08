@@ -123,12 +123,12 @@ void Parameters::SetDefaultParameters() {
   mIntParams["GENERATE"] = 0;
   mStringParams["IC_TYPE"] = "disc";
   mIntParams["SEED"] = 0;
-  mIntParams["N_HYDRO"] = 4096 * 8;
+  mIntParams["N_HYDRO"] = 4096 * 16;
   mIntParams["DIMENSIONS"] = 3;
 
   // Protostellar disc parameters
-  mFloatParams["M_STAR"] = 0.5;
-  mFloatParams["M_DISC"] = 0.01;
+  mFloatParams["M_STAR"] = 0.7;
+  mFloatParams["M_DISC"] = 0.3;
 
   mFloatParams["R_IN"] = 5.0;
   mFloatParams["R_OUT"] = 100.0;

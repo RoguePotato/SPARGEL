@@ -107,7 +107,7 @@ void Generator::CreateDisc(void) {
 
 		real64 z_0 = -((PI * sigma * R * R * R) / (2 * mMStar)) +
                  pow(pow((PI * sigma * R * R * R) / (2 * mMStar), 2.0f) +
-                 ((cS2 * R * R * R) / (G * mMStar)), 0.5f);
+                 ((cS2 * R * R * R) / (G_AU * mMStar)), 0.5f);
 
 		real64 z = (2 / PI) * z_0 * asin(2 * mRands[2] - 1);
 

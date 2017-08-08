@@ -48,19 +48,18 @@ bool Application::Initialise() {
   mOpacity = new OpacityTable();
   mOpacity->Read(mEosFilePath);
 
+  NameData nameData;
+  nameData.name = ("/home/anthony/Documents/roguepotato/SPARGEL/disc.dat");
+  mDragonFile = new DragonFile(nameData, true);
+
   return true;
 }
 
 void Application::Run() {
   mGenerator->Create();
 
-  std::ofstream out;
-  out.open("test.dat");
-  std::vector<Particle *> p = mGenerator->GetParticles();
-  for (int i = 0; i < p.size(); ++i) {
-    out << p.at(i)->GetR() << "\t" << p.at(i)->GetS() << "\n";
-  }
-  out.close();
+  mDragonFile->SetParticles(mGenerator->GetParticles());
+  mDragonFile->Write("/home/anthony/Documents/roguepotato/SPARGEL/disc.dat", true);
 }
 
 void Application::ConvertFile(File *file, NameData nameData) {

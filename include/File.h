@@ -47,17 +47,19 @@ protected:
 class SnapshotFile : public File {
 public:
   // virtual void CalculateTemperatures(EosTable *eos) {};
+  SnapshotFile() {};
+  ~SnapshotFile() {};
 
   virtual NameData GetNameData() { return mNameData; }
   virtual std::string GetFileName() { return mFileName; }
-  virtual std::vector<Particle> GetParticles() { return mParticles; }
+  virtual std::vector<Particle *> GetParticles() { return mParticles; }
   virtual real64 GetTime() { return mTime; }
   virtual uint32 GetNumGas() { return mNumGas; }
   virtual uint32 GetNumSinks() { return mNumSink; }
   virtual uint32 GetNumPart() { return mNumTot; }
   virtual bool GetFormatted() { return mFormatted; }
 
-  virtual void SetParticles(std::vector<Particle> particles) {
+  virtual void SetParticles(std::vector<Particle *> particles) {
     mParticles = particles;
   }
 
@@ -66,11 +68,15 @@ public:
   virtual void SetNumPart(uint32 i) { mNumTot = i; }
   virtual void SetTime (real64 t) { mTime = t; }
 
-private:
+protected:
   NameData mNameData = {};
   bool mFormatted = true;
 
-  std::vector<Particle> mParticles;
+  virtual bool Read(std::string fileName, bool formatted = true) {};
+  virtual bool Write(std::string fileName, bool formatted) {};
+
+  std::vector<Particle *> mParticles;
+  std::vector<Sink *> mSinks;
 
   uint32 mNumGas = 0;
   uint32 mNumSink = 0;
