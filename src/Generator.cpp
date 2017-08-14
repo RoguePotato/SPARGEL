@@ -100,10 +100,9 @@ void Generator::CreateDisc(void) {
 		real64 sigma = mSigma0 *
                    pow((mR0 * mR0) / (mR0 * mR0 + R * R), mP / 2);
 
-		real64 T = pow((mT0 * mT0) *
-               pow(R * R + mR0 * mR0, -mQ) + (mTinf * mTinf), 0.5);
-		real64 cS2 = (K * T) / (MU * M_P);
-		cS2 /= (AU_TO_M * AU_TO_M);
+    real64 T = pow(pow(mTinf, 4.0) + pow(mT0, 4.0) *
+               pow(pow(R, 2.0) + pow(mR0, 2.0), -2.0 * mQ), 0.25);
+		real64 cS2 = ((K * T) / (MU * M_P)) / (AU_TO_M * AU_TO_M);
 
 		real64 z_0 = -((PI * sigma * R * R * R) / (2 * mMStar)) +
                  pow(pow((PI * sigma * R * R * R) / (2 * mMStar), 2.0f) +

@@ -32,7 +32,7 @@ public:
   real64 GetH() { return mH; }
   real64 GetD() { return mD; }
   real64 GetM() { return mM; }
-  int8 GetType() { return mType; }
+  int32 GetType() { return mType; }
 
   void SetID(uint32 id) { mID = id; }
   void SetX(Vec3 x) { mX = x; }
@@ -42,7 +42,7 @@ public:
   void SetD(real64 D) { mD = D; }
   void SetM(real64 M) { mM = M; }
   void SetU(real64 U) { mU = U; }
-  void SetType(int8 type) { mType = type; }
+  void SetType(int32 type) { mType = type; }
 
 private:
   uint32 mID = 0;
@@ -58,7 +58,7 @@ private:
   real64 mQ = 0.0;
   real64 mGamma = 0.0;
   real64 mMu = 0.0;
-  int8 mType = 1;
+  int32 mType = 1;
 };
 
 class Gas : public Particle {
