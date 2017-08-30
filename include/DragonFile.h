@@ -16,6 +16,7 @@
 
 #pragma once
 
+#include "BinaryIO.h"
 #include "Constants.h"
 #include "File.h"
 #include "Particle.h"
@@ -30,8 +31,8 @@ public:
   bool Write(std::string fileName, bool formatted);
 
 private:
-  // BinaryReader *BR;
-  // BinaryWriter *BW;
+  BinaryReader *BR;
+  BinaryWriter *BW;
 
   int32 mIntData[20] = {0};
   real64 mFloatData[50] = {0};
