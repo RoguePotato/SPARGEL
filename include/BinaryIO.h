@@ -16,8 +16,7 @@
 
 #pragma once
 
-#include <fstream>
-#include <string>
+#include "Definitions.h"
 
 class BinaryWriter {
 public:

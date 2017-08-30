@@ -15,7 +15,7 @@
 
 #pragma once
 
-// #include "EosTable.h"
+#include "BinaryIO.h"
 #include "Definitions.h"
 #include "Particle.h"
 
@@ -41,12 +41,18 @@ protected:
   std::ifstream mInStream;
   std::ofstream mOutStream;
 
-  std::string TrimWhiteSpace(std::string str);
+  inline std::string TrimWhiteSpace(std::string str) {
+    std::string result;
+    for (uint32 i = 0; i < str.length(); ++i) {
+      if (str[i] != ' ' && str[i] != '\t')
+        result += str[i];
+    }
+    return result;
+  }
 };
 
 class SnapshotFile : public File {
 public:
-  // virtual void CalculateTemperatures(EosTable *eos) {};
   SnapshotFile() {};
   ~SnapshotFile() {};
 
@@ -69,6 +75,9 @@ public:
   virtual void SetTime (real64 t) { mTime = t; }
 
 protected:
+  BinaryReader *mBR;
+  BinaryWriter *mBW;
+
   NameData mNameData = {};
   bool mFormatted = true;
 

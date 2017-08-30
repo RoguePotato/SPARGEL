@@ -149,7 +149,7 @@ bool DragonFile::Write(std::string fileName, bool formatted) {
     return false;
   }
 
-  for (int i = 0; i < mParticles.size(); ++i) {
+  for (uint32 i = 0; i < mParticles.size(); ++i) {
     int32 type = mParticles.at(i)->GetType();
     if (type == 1) ++mNumGas;
     if (type == -1) ++mNumSink;
@@ -162,43 +162,43 @@ bool DragonFile::Write(std::string fileName, bool formatted) {
 
   mFloatData[0] = mTime / 1E6;
 
-  for (int i = 0; i < 20; ++i) mOutStream << mIntData[i] << "\n";
-  for (int i = 0; i < 50; ++i) mOutStream << mFloatData[i] << "\n";
+  for (uint32 i = 0; i < 20; ++i) mOutStream << mIntData[i] << "\n";
+  for (uint32 i = 0; i < 50; ++i) mOutStream << mFloatData[i] << "\n";
 
-  for (int i = 0; i < mParticles.size(); ++i) {
+  for (uint32 i = 0; i < mParticles.size(); ++i) {
     mOutStream << mParticles.at(i)->GetX().x / PC_TO_AU << "\t"
               << mParticles.at(i)->GetX().y / PC_TO_AU << "\t"
               << mParticles.at(i)->GetX().z / PC_TO_AU << "\n";
   }
-  // for (int i = 0; i < mNumSink; ++i) {
+  // for (uint32 i = 0; i < mNumSink; ++i) {
   //   mOutStream << mSinks.at(i).SerenData[1] / PC_TO_AU << "\t"
   //             << mSinks.at(i).SerenData[2] / PC_TO_AU << "\t"
   //             << mSinks.at(i).SerenData[3] / PC_TO_AU << "\n";
   // }
 
-  for (int i = 0; i < mParticles.size(); ++i) {
+  for (uint32 i = 0; i < mParticles.size(); ++i) {
     mOutStream << mParticles.at(i)->GetV().x << "\t"
               << mParticles.at(i)->GetV().y << "\t"
               << mParticles.at(i)->GetV().z << "\n";
   }
-  // for (int i = 0; i < mNumSink; ++i) {
+  // for (uint32 i = 0; i < mNumSink; ++i) {
   //   mOutStream << mSinks.at(i).SerenData[4] << "\t"
   //             << mSinks.at(i).SerenData[5] << "\t"
   //             << mSinks.at(i).SerenData[6] << "\n";
   // }
 
-  for (int i = 0; i < mParticles.size(); ++i) mOutStream << mParticles.at(i)->GetT() << "\n";
-  // for (int i = 0; i < mNumSink; ++i) mOutStream << mSinks.at(i)->GetT() << "\n";
-  for (int i = 0; i < mParticles.size(); ++i) mOutStream << mParticles.at(i)->GetH() / PC_TO_AU << "\n";
-  // for (int i = 0; i < mNumSink; ++i) mOutStream << mSinks.at(i)->GetH() / PC_TO_AU << "\n";
-  for (int i = 0; i < mParticles.size(); ++i) mOutStream << mParticles.at(i)->GetD() << "\n";
-  // for (int i = 0; i < mNumSink; ++i) mOutStream << mSinks.at(i)->GetD() << "\n";
-  for (int i = 0; i < mParticles.size(); ++i) mOutStream << mParticles.at(i)->GetM() << "\n";
-  // for (int i = 0; i < mNumSink; ++i) mOutStream << mSinks.at(i)->GetSerenData[8] << "\n";
-  for (int i = 0; i < mParticles.size(); ++i) mOutStream << mParticles.at(i)->GetType() << "\n";
-  // for (int i = 0; i < mNumSink; ++i) mOutStream << -1 << "\n";
-  for (int i = 0; i < mParticles.size(); ++i) mOutStream << mParticles.at(i)->GetID() << "\n";
-  // for (int i = 0; i < mNumSink; ++i) mOutStream << mSinks.at(i)->GetID() << "\n";
+  for (uint32 i = 0; i < mParticles.size(); ++i) mOutStream << mParticles.at(i)->GetT() << "\n";
+  // for (uint32 i = 0; i < mNumSink; ++i) mOutStream << mSinks.at(i)->GetT() << "\n";
+  for (uint32 i = 0; i < mParticles.size(); ++i) mOutStream << mParticles.at(i)->GetH() / PC_TO_AU << "\n";
+  // for (uint32 i = 0; i < mNumSink; ++i) mOutStream << mSinks.at(i)->GetH() / PC_TO_AU << "\n";
+  for (uint32 i = 0; i < mParticles.size(); ++i) mOutStream << mParticles.at(i)->GetD() << "\n";
+  // for (uint32 i = 0; i < mNumSink; ++i) mOutStream << mSinks.at(i)->GetD() << "\n";
+  for (uint32 i = 0; i < mParticles.size(); ++i) mOutStream << mParticles.at(i)->GetM() << "\n";
+  // for (uint32 i = 0; i < mNumSink; ++i) mOutStream << mSinks.at(i)->GetSerenData[8] << "\n";
+  for (uint32 i = 0; i < mParticles.size(); ++i) mOutStream << mParticles.at(i)->GetType() << "\n";
+  // for (uint32 i = 0; i < mNumSink; ++i) mOutStream << -1 << "\n";
+  for (uint32 i = 0; i < mParticles.size(); ++i) mOutStream << mParticles.at(i)->GetID() << "\n";
+  // for (uint32 i = 0; i < mNumSink; ++i) mOutStream << mSinks.at(i)->GetID() << "\n";
 
   mOutStream.close();
   return true;

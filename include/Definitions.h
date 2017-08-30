@@ -18,6 +18,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <iomanip>
+#include <ios>
 #include <iostream>
 #include <fstream>
 #include <map>

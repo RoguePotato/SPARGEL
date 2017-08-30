@@ -32,6 +32,7 @@ public:
   real64 GetH() { return mH; }
   real64 GetD() { return mD; }
   real64 GetM() { return mM; }
+  real64 GetU() { return mU; }
   int32 GetType() { return mType; }
 
   void SetID(uint32 id) { mID = id; }
@@ -75,6 +76,8 @@ public:
   Sink();
   ~Sink();
 
+  real64 GetData(uint32 index) { return mSerenData[index]; }
+  void SetData(uint32 index, real64 data) { mSerenData[index] = data; }
 private:
-
+  real64 mSerenData[255] = {0.0};
 };
