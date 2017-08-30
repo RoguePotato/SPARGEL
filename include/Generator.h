@@ -18,12 +18,13 @@
 
 #include "Definitions.h"
 #include "Octree.h"
+#include "OpacityTable.h"
 #include "Parameters.h"
 #include "Particle.h"
 
 class Generator {
 public:
-  Generator(Parameters *params);
+  Generator(Parameters *params, OpacityTable *opacity);
   ~Generator();
 
   void Create(void);
@@ -40,6 +41,7 @@ private:
   void CalculateVelocity(void);
 
   Parameters *mParams = NULL;
+  OpacityTable *mOpacity = NULL;
   std::vector<Particle *> mParticles;
   Octree *mOctree = NULL;
   OctreePoint *mOctreePoints = NULL;

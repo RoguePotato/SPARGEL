@@ -15,7 +15,9 @@
 
 #include "Generator.h"
 
-Generator::Generator(Parameters *params) : mParams(params) {
+Generator::Generator
+(Parameters *params,
+ OpacityTable *opacity) : mParams(params), mOpacity(opacity) {
 
 }
 
@@ -118,8 +120,7 @@ void Generator::CreateDisc(void) {
 
     real64 h = pow((3 * mNumNeigh * m) / (32 * PI * rho), (1.0f / 3.0f));
 
-    // Set U later from OpacityTable
-    real64 U = (K * T) / (MU * M_P * (GAMMA - 1.0f));
+    real64 U = mOpacity->GetEnergy(rho, T);
 
     mParticles.at(i)->SetID(i);
     mParticles.at(i)->SetX(Vec3(x, y, z));
@@ -127,6 +128,7 @@ void Generator::CreateDisc(void) {
     mParticles.at(i)->SetH(h);
     mParticles.at(i)->SetD(rho);
     mParticles.at(i)->SetM(m);
+    mParticles.at(i)->SetU(U);
     mParticles.at(i)->SetType(1);
   }
 }

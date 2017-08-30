@@ -43,10 +43,11 @@ bool Application::Initialise() {
   mCenter = mParams->GetInt("CENTER_DISC");
   mRadial = mParams->GetInt("RADIAL_AVG");
 
-  mGenerator = new Generator(mParams);
-
   mOpacity = new OpacityTable();
   mOpacity->Read(mEosFilePath);
+
+  mGenerator = new Generator(mParams, mOpacity);
+
 
   NameData nameData;
   nameData.name = ("/home/anthony/Documents/roguepotato/SPARGEL/disc.dat");

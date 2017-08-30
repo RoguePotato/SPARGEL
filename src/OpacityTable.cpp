@@ -115,6 +115,10 @@ real64 OpacityTable::GetGamma(real64 density, real64 temperature) {
   return mGamma[GetIDens(density)][GetITemp(temperature)];
 }
 
+real64 OpacityTable::GetEnergy(real64 density, real64 temperature) {
+  return mEnergy[GetIDens(density)][GetITemp(temperature)];
+}
+
 real64 OpacityTable::GetTemp(real64 density, real64 energy) {
   real64 result = 0.0;
   energy *= 1E4; // cgs conversion

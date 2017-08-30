@@ -28,6 +28,7 @@ public:
 
   uint32 GetNDens() { return mNumDens; }
 
+  real64 GetEnergy(real64 density, real64 temperature);
   real64 GetMuBar(real64 density, real64 temperature);
   real64 GetGamma(real64 density, real64 temperature);
   real64 GetTemp(real64 density, real64 energy);
