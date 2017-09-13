@@ -58,16 +58,21 @@ private:
   int mTypeData[8][5] = {};
   int mUnknownValues[50] = {};
 
-  void AllocateMemory();
+  void AllocateMemory(void);
 
-  void ReadHeaderForm();
-  void ReadParticleDataForm();
-  void ReadSinkDataForm();
+  void ReadHeaderForm(void);
+  void ReadParticleForm(void);
+  void ReadSinkForm(void);
 
-  void ReadHeaderUnform();
-  void ReadParticleDataUnform();
-  void ReadSinkDataUnform();
+  void ReadHeaderUnform(void);
+  void ReadParticleUnform(void);
+  void ReadSinkUnform(void);
 
-  bool WriteForm(void);
-  bool WriteUnform(void);
+  void WriteHeaderForm(Formatter formatStream);
+  void WriteParticleForm(Formatter formatStream);
+  void WriteSinkForm(Formatter formatStream);
+
+  void WriteHeaderUnform(void);
+  void WriteParticleUnform(void);
+  void WriteSinkUnform(void);
 };

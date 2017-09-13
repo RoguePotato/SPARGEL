@@ -25,7 +25,7 @@ SerenFile::~SerenFile() {
 
 }
 
-bool SerenFile::Read() {
+bool SerenFile::Read(void) {
   mInStream.open(mFileName, (mFormatted) ? std::ios::in : std::ios::binary);
   if (!mInStream.is_open()) {
     std::cout << "Could not open: " << mFileName << " for reading!\n";
@@ -36,13 +36,14 @@ bool SerenFile::Read() {
   if (mFormatted) {
     ReadHeaderForm();
     AllocateMemory();
-    ReadParticleDataForm();
-    ReadSinkDataForm();
-  } else {
+    ReadParticleForm();
+    ReadSinkForm();
+  }
+  else {
     ReadHeaderUnform();
     AllocateMemory();
-    ReadParticleDataUnform();
-    ReadSinkDataUnform();
+    ReadParticleUnform();
+    ReadSinkUnform();
   }
 
   mInStream.close();
@@ -51,17 +52,24 @@ bool SerenFile::Read() {
 }
 
 bool SerenFile::Write(std::string fileName, bool formatted) {
-  mOutStream.open(mFileName, (mFormatted) ? std::ios::out : std::ios::binary);
+  mOutStream.open(fileName, (formatted) ? std::ios::out : std::ios::binary);
   if (!mOutStream.is_open()) {
-    std::cout << "Could not open: " << mFileName << " for writing!\n";
+    std::cout << "Could not open: " << fileName << " for writing!\n";
     return false;
   }
-  std::cout << "Writing file: " << mFileName << "\n";
+  std::cout << "Writing file: " << fileName << "\n";
 
-  if (mFormatted) {
-    // WriteForm();
+  if (formatted) {
+    Formatter formatStream(mOutStream, 18, 2, 10);
+    WriteHeaderForm(formatStream);
+    WriteParticleForm(formatStream);
+    WriteSinkForm(formatStream);
   } else {
-    // WriteUnform();
+    mBW = new BinaryWriter(mOutStream);
+    WriteHeaderUnform();
+    WriteParticleUnform();
+    WriteSinkUnform();
+    delete mBW;
   }
 
   mOutStream.close();
@@ -69,7 +77,7 @@ bool SerenFile::Write(std::string fileName, bool formatted) {
   return true;
 }
 
-void SerenFile::AllocateMemory() {
+void SerenFile::AllocateMemory(void) {
   mPrecision = mHeader[0];
   mPosDim = mHeader[1];
   mVelDim = mHeader[2];
@@ -94,7 +102,7 @@ void SerenFile::AllocateMemory() {
   }
 }
 
-void SerenFile::ReadHeaderForm() {
+void SerenFile::ReadHeaderForm(void) {
   std::string temp = "";
 
   mInStream >> mFormatID;
@@ -129,7 +137,7 @@ void SerenFile::ReadHeaderForm() {
   }
 }
 
-void SerenFile::ReadParticleDataForm() {
+void SerenFile::ReadParticleForm(void) {
   double temp[3] = {0.0};
 
   for (int i = 0; i < mNumGas; ++i) {
@@ -180,7 +188,7 @@ void SerenFile::ReadParticleDataForm() {
   }
 }
 
-void SerenFile::ReadSinkDataForm() {
+void SerenFile::ReadSinkForm(void) {
   double temp[3] = {0.0};
   std::string dummyStr = "";
 
@@ -199,7 +207,7 @@ void SerenFile::ReadSinkDataForm() {
   }
 }
 
-void SerenFile::ReadHeaderUnform() {
+void SerenFile::ReadHeaderUnform(void) {
   mBR = new BinaryReader(mInStream);
 
   std::vector<char> fileTag(STRING_LENGTH);
@@ -240,7 +248,7 @@ void SerenFile::ReadHeaderUnform() {
   }
 }
 
-void SerenFile::ReadParticleDataUnform() {
+void SerenFile::ReadParticleUnform(void) {
   int intTemp = 0;
   double temp[3] = {0.0, 0.0, 0.0};
 
@@ -282,7 +290,7 @@ void SerenFile::ReadParticleDataUnform() {
   }
 }
 
-void SerenFile::ReadSinkDataUnform() {
+void SerenFile::ReadSinkUnform(void) {
   double temp[3] = {0.0};
   int tempInt = 0;
   int dummyBool = 0;
@@ -303,9 +311,7 @@ void SerenFile::ReadSinkDataUnform() {
   }
 }
 
-bool SerenFile::WriteForm() {
-  Formatter formatStream(mOutStream, 18, 2, 10);
-
+void SerenFile::WriteHeaderForm(Formatter formatStream) {
   mOutStream << ASCII_FORMAT << "\n";
   for (int i = 0; i < 4; ++i)
     formatStream << mHeader[i] << "\n";
@@ -339,53 +345,132 @@ bool SerenFile::WriteForm() {
     }
     formatStream << "\n";
   }
+}
 
-  for (int i = 0; i < mParticles.size(); ++i)
-    formatStream << mParticles.at(i)->GetID() << "\n";
+void SerenFile::WriteParticleForm(Formatter formatStream) {
+  for (int i = 0; i < mNumGas; ++i)
+    formatStream << mParticles[i]->GetID() << "\n";
 
-  for (int i = 0; i < mParticles.size(); ++i) {
+  for (int i = 0; i < mNumGas; ++i) {
     for (int j = 0; j < mPosDim; ++j)
-      formatStream << mParticles.at(i)->GetX()[j] << "\t";
+      formatStream << mParticles[i]->GetX()[j] << "\t";
     formatStream << "\n";
   }
 
-  for (int i = 0; i < mParticles.size(); ++i)
-    formatStream << mParticles.at(i)->GetM() << "\n";
+  for (int i = 0; i < mNumGas; ++i)
+    formatStream << mParticles[i]->GetM() << "\n";
 
-  for (int i = 0; i < mParticles.size(); ++i)
-    formatStream << mParticles.at(i)->GetH() << "\n";
+  for (int i = 0; i < mNumGas; ++i)
+    formatStream << mParticles[i]->GetH() << "\n";
 
-  for (int i = 0; i < mParticles.size(); ++i) {
+  for (int i = 0; i < mNumGas; ++i) {
     for (int j = 0; j < mVelDim; ++j)
-      formatStream << mParticles.at(i)->GetV()[j] << "\t";
+      formatStream << mParticles[i]->GetV()[j] << "\t";
     formatStream << "\n";
   }
 
-  for (int i = 0; i < mParticles.size(); ++i)
-    formatStream << mParticles.at(i)->GetD() << "\n";
+  for (int i = 0; i < mNumGas; ++i)
+    formatStream << mParticles[i]->GetD() << "\n";
 
-  for (int i = 0; i < mParticles.size(); ++i)
-    formatStream << mParticles.at(i)->GetU() << "\n";
+  for (int i = 0; i < mNumGas; ++i)
+    formatStream << mParticles[i]->GetU() << "\n";
+}
 
+void SerenFile::WriteSinkForm(Formatter formatStream) {
   int sinkValues[6] = {2, 2, 0, mSinkDataLength, 0, 0};
   for (int i = 0; i < 6; ++i)
     formatStream << sinkValues[i];
   formatStream << "\n";
   formatStream.SetWidthInteger(8);
-  for (int i = 0; i < mSinks.size(); ++i) {
+  for (int i = 0; i < mNumSink; ++i) {
     formatStream << "TT"
                  << "\n";
-    formatStream << mSinks.at(i)->GetID() << 0 << "\n";
+    formatStream << mSinks[i]->GetID() << 0 << "\n";
 
     for (int j = 0; j < 8; ++j)
-      formatStream << mSinks.at(i)->GetData(j);
+      formatStream << mSinks[i]->GetData(j);
 
     formatStream << "\n";
   }
-
-  return true;
 }
 
-bool SerenFile::WriteUnform(void) {
-  mBW->WriteValue(ASCII_FORMAT);
+void SerenFile::WriteHeaderUnform(void) {
+  std::ostringstream stream;
+  stream << std::left << std::setw(STRING_LENGTH)
+         << std::setfill(' ') << BINARY_FORMAT;
+  mOutStream << stream.str();
+
+  for (int i = 0; i < 4; ++i)
+    mBW->WriteValue(mHeader[i]);
+  for (int i = 0; i < 50; ++i)
+    mBW->WriteValue(mIntData[i]);
+  for (int i = 0; i < 50; ++i)
+    mBW->WriteValue(mLongData[i]);
+  for (int i = 0; i < 50; ++i)
+    mBW->WriteValue(mFloatData[i]);
+  for (int i = 0; i < 50; ++i)
+    mBW->WriteValue(mDoubleData[i]);
+
+  for (int i = 0; i < mNumUnit; ++i) {
+    std::ostringstream stream;
+    stream << std::left << std::setw(STRING_LENGTH)
+           << std::setfill(' ') << mUnitData[i];
+    mOutStream << stream.str();
+  }
+  for (int i = 0; i < mNumData; ++i) {
+    std::ostringstream stream;
+    stream << std::left << std::setw(STRING_LENGTH)
+           << std::setfill(' ') << mDataID[i];
+    mOutStream << stream.str();
+  }
+
+  for (int i = 0; i < mNumData; ++i) {
+    for (int j = 0; j < 5; ++j)
+      mBW->WriteValue(mTypeData[i][j]);
+  }
+}
+
+void SerenFile::WriteParticleUnform(void) {
+  for (int i = 0; i < mNumGas; ++i)
+    mBW->WriteValue(mParticles[i]->GetID());
+
+  for (int i = 0; i < mNumGas; ++i) {
+    for (int j = 0; j < mPosDim; ++j) {
+      mBW->WriteValue(mParticles[i]->GetX()[j]);
+    }
+  }
+
+  for (int i = 0; i < mNumGas; ++i)
+    mBW->WriteValue(mParticles[i]->GetM());
+
+  for (int i = 0; i < mNumGas; ++i)
+    mBW->WriteValue(mParticles[i]->GetH());
+
+  for (int i = 0; i < mNumGas; ++i) {
+    for (int j = 0; j < mVelDim; ++j) {
+      mBW->WriteValue(mParticles[i]->GetV()[j]);
+    }
+  }
+
+  for (int i = 0; i < mNumGas; ++i)
+    mBW->WriteValue(mParticles[i]->GetD());
+
+  for (int i = 0; i < mNumGas; ++i)
+    mBW->WriteValue(mParticles[i]->GetU());
+}
+
+void SerenFile::WriteSinkUnform(void) {
+  int sinkValues[6] = {2, 2, 0, mSinkDataLength, 0, 0};
+  for (int i = 0; i < 6; ++i)
+    mBW->WriteValue(sinkValues[i]);
+
+  for (int i = 0; i < mNumSink; ++i) {
+    mBW->WriteValue(true);
+    mBW->WriteValue(true);
+    mBW->WriteValue(i + 1);
+    mBW->WriteValue(0);
+
+    for (int j = 0; j < mSinkDataLength; ++j)
+      mBW->WriteValue(mSinks[i]->GetData(j));
+  }
 }

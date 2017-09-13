@@ -54,7 +54,7 @@ bool Application::Initialise() {
   mDragonFile = new DragonFile(dragName, true);
 
   NameData nameData;
-  nameData.name = ("/home/anthony/Documents/disc_tests/32k/RAD.su.00001");
+  nameData.name = ("/home/anthony/Documents/disc_tests/32k/RAD.su.00002");
   mSerenFile = new SerenFile(nameData, false);
   mSerenFile->Read();
 
@@ -65,7 +65,7 @@ void Application::Run() {
   // mGenerator->Create();
 
   mDragonFile->SetParticles(mSerenFile->GetParticles());
-  mDragonFile->Write("/home/anthony/Documents/roguepotato/SPARGEL/disc.dat", true);
+  mSerenFile->Write("/home/anthony/Documents/roguepotato/SPARGEL/TEST.su.00001", false);
 
 
 }
