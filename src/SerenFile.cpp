@@ -40,10 +40,12 @@ bool SerenFile::Read(void) {
     ReadSinkForm();
   }
   else {
+    mBR = new BinaryReader(mInStream);
     ReadHeaderUnform();
     AllocateMemory();
     ReadParticleUnform();
     ReadSinkUnform();
+    delete mBR;
   }
 
   mInStream.close();
@@ -208,8 +210,6 @@ void SerenFile::ReadSinkForm(void) {
 }
 
 void SerenFile::ReadHeaderUnform(void) {
-  mBR = new BinaryReader(mInStream);
-
   std::vector<char> fileTag(STRING_LENGTH);
   mInStream.read(&fileTag[0], STRING_LENGTH);
   std::string concatString(fileTag.begin(), fileTag.end());
