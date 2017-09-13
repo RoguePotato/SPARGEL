@@ -32,31 +32,31 @@ public:
   bool Write(std::string fileName, bool formatted);
 
 private:
-  const uint32 STRING_LENGTH = 20;
+  const int STRING_LENGTH = 20;
   const std::string ASCII_FORMAT = "SERENASCIIDUMPV2";
   const std::string BINARY_FORMAT = "SERENBINARYDUMPV3";
 
   std::string mFormatID = "";
-  uint32 mHeader[4] = {0}; // precision (4 or 8), ndim, vdim, bdim
-  int32 mIntData[50] = {0};
-  int64 mLongData[50] = {0};
-  real32 mFloatData[50] = {0};
-  real64 mDoubleData[50] = {0};
+  int mHeader[4] = {0}; // precision (4 or 8), ndim, vdim, bdim
+  int mIntData[50] = {0};
+  long mLongData[50] = {0};
+  FLOAT mFloatData[50] = {0};
+  DOUBLE mDoubleData[50] = {0};
 
-  uint32 mPrecision = 8;
-  uint32 mPosDim = 1;
-  uint32 mVelDim = 1;
-  uint32 mMagDim = 1;
+  int mPrecision = 8;
+  int mPosDim = 1;
+  int mVelDim = 1;
+  int mMagDim = 1;
 
-  uint32 mSinkDataLength = 0;
+  int mSinkDataLength = 0;
 
   std::vector<std::string> mUnitData;
   std::vector<std::string> mDataID;
-  uint32 mNumUnit = 0;
-  uint32 mNumData = 0;
+  int mNumUnit = 0;
+  int mNumData = 0;
 
-  int32 mTypeData[8][5] = {};
-  int32 mUnknownValues[50] = {};
+  int mTypeData[8][5] = {};
+  int mUnknownValues[50] = {};
 
   void AllocateMemory();
 

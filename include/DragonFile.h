@@ -31,10 +31,10 @@ public:
   bool Write(std::string fileName, bool formatted);
 
 private:
-  int32 mIntData[20] = {0};
-  real64 mFloatData[50] = {0};
+  int mIntData[20] = {0};
+  FLOAT mFloatData[50] = {0};
 
-  int32 mTypeData[8][5] = {};
+  int mTypeData[8][5] = {};
 
   void AllocateMemory();
 

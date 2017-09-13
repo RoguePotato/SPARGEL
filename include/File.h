@@ -43,7 +43,7 @@ protected:
 
   inline std::string TrimWhiteSpace(std::string str) {
     std::string result;
-    for (uint32 i = 0; i < str.length(); ++i) {
+    for (int i = 0; i < str.length(); ++i) {
       if (str[i] != ' ' && str[i] != '\t')
         result += str[i];
     }
@@ -59,20 +59,20 @@ public:
   virtual NameData GetNameData() { return mNameData; }
   virtual std::string GetFileName() { return mFileName; }
   virtual std::vector<Particle *> GetParticles() { return mParticles; }
-  virtual real64 GetTime() { return mTime; }
-  virtual uint32 GetNumGas() { return mNumGas; }
-  virtual uint32 GetNumSinks() { return mNumSink; }
-  virtual uint32 GetNumPart() { return mNumTot; }
+  virtual double GetTime() { return mTime; }
+  virtual int GetNumGas() { return mNumGas; }
+  virtual int GetNumSinks() { return mNumSink; }
+  virtual int GetNumPart() { return mNumTot; }
   virtual bool GetFormatted() { return mFormatted; }
 
   virtual void SetParticles(std::vector<Particle *> particles) {
     mParticles = particles;
   }
 
-  virtual void SetNumGas(uint32 i) { mNumGas = i; }
-  virtual void SetNumSinks(uint32 i) { mNumSink = i; }
-  virtual void SetNumPart(uint32 i) { mNumTot = i; }
-  virtual void SetTime (real64 t) { mTime = t; }
+  virtual void SetNumGas(int i) { mNumGas = i; }
+  virtual void SetNumSinks(int i) { mNumSink = i; }
+  virtual void SetNumPart(int i) { mNumTot = i; }
+  virtual void SetTime (double t) { mTime = t; }
 
 protected:
   BinaryReader *mBR;
@@ -87,9 +87,9 @@ protected:
   std::vector<Particle *> mParticles;
   std::vector<Sink *> mSinks;
 
-  uint32 mNumGas = 0;
-  uint32 mNumSink = 0;
-  uint32 mNumTot = 0;
+  int mNumGas = 0;
+  int mNumSink = 0;
+  int mNumTot = 0;
 
-  real64 mTime = 0.0;
+  double mTime = 0.0;
 };

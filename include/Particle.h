@@ -23,43 +23,43 @@ public:
   Particle();
   ~Particle();
 
-  uint32 GetID() { return mID; }
+  int GetID() { return mID; }
   Vec3 GetX() { return mX; }
   Vec3 GetV() { return mV; }
-  real64 GetR() { return mX.Norm(); }
-  real64 GetS() { return mV.Norm(); }
-  real64 GetT() { return mT; }
-  real64 GetH() { return mH; }
-  real64 GetD() { return mD; }
-  real64 GetM() { return mM; }
-  real64 GetU() { return mU; }
-  int32 GetType() { return mType; }
+  double GetR() { return mX.Norm(); }
+  double GetS() { return mV.Norm(); }
+  double GetT() { return mT; }
+  double GetH() { return mH; }
+  double GetD() { return mD; }
+  double GetM() { return mM; }
+  double GetU() { return mU; }
+  int GetType() { return mType; }
 
-  void SetID(uint32 id) { mID = id; }
+  void SetID(int id) { mID = id; }
   void SetX(Vec3 x) { mX = x; }
   void SetV(Vec3 v) { mV = v; }
-  void SetT(real64 T) { mT = T; }
-  void SetH(real64 H) { mH = H; }
-  void SetD(real64 D) { mD = D; }
-  void SetM(real64 M) { mM = M; }
-  void SetU(real64 U) { mU = U; }
-  void SetType(int32 type) { mType = type; }
+  void SetT(double T) { mT = T; }
+  void SetH(double H) { mH = H; }
+  void SetD(double D) { mD = D; }
+  void SetM(double M) { mM = M; }
+  void SetU(double U) { mU = U; }
+  void SetType(int type) { mType = type; }
 
 private:
-  uint32 mID = 0;
+  int mID = 0;
   Vec3 mX = Vec3(0.0, 0.0, 0.0);
   Vec3 mV = Vec3(0.0, 0.0, 0.0);
-  real64 mR = 0.0;
-  real64 mS = 0.0;
-  real64 mT = 0.0;
-  real64 mH = 0.0;
-  real64 mD = 0.0;
-  real64 mM = 0.0;
-  real64 mU = 0.0;
-  real64 mQ = 0.0;
-  real64 mGamma = 0.0;
-  real64 mMu = 0.0;
-  int32 mType = 1;
+  double mR = 0.0;
+  double mS = 0.0;
+  double mT = 0.0;
+  double mH = 0.0;
+  double mD = 0.0;
+  double mM = 0.0;
+  double mU = 0.0;
+  double mQ = 0.0;
+  double mGamma = 0.0;
+  double mMu = 0.0;
+  int mType = 1;
 };
 
 class Gas : public Particle {
@@ -76,8 +76,8 @@ public:
   Sink();
   ~Sink();
 
-  real64 GetData(uint32 index) { return mSerenData[index]; }
-  void SetData(uint32 index, real64 data) { mSerenData[index] = data; }
+  double GetData(int index) { return mSerenData[index]; }
+  void SetData(int index, double data) { mSerenData[index] = data; }
 private:
-  real64 mSerenData[255] = {0.0};
+  double mSerenData[255] = {0.0};
 };

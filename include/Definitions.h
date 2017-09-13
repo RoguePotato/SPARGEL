@@ -28,13 +28,15 @@
 #include <time.h>
 #include <vector>
 
-typedef int8_t int8;
-typedef uint8_t uint8;
-typedef int16_t int16;
-typedef uint16_t uint16;
-typedef int32_t int32;
-typedef uint32_t uint32;
-typedef int64_t int64;
-typedef uint64_t uint64;
-typedef float real32;
-typedef double real64;
+#define PRECISION DOUBLE_PRECISION
+
+#define SINGLE_PRECISION 4
+#define DOUBLE_PRECISION 8
+
+#if PRECISION == SINGLE_PRECISION
+  typedef float FLOAT;
+  typedef double DOUBLE;
+#elif PRECISION == DOUBLE_PRECISION
+  typedef double FLOAT;
+  typedef double DOUBLE;
+#endif

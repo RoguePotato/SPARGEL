@@ -23,6 +23,7 @@
 #include "Generator.h"
 #include "OpacityTable.h"
 #include "Parameters.h"
+#include "SerenFile.h"
 
 class Application {
 public:
@@ -38,6 +39,7 @@ private:
   Generator *mGenerator;
   OpacityTable *mOpacity;
   DragonFile *mDragonFile;
+  SerenFile *mSerenFile;
   // RadialAnalyser *mRA;
   // FileNameExtractor *mFNE;
   //
@@ -51,11 +53,11 @@ private:
   std::string mInFormat = "";
   std::string mOutFormat = "";
   std::string mEosFilePath = "";
-  int8 mConvert = 0;
-  int8 mCenter = 0;
-  int8 mRadial = 0;
+  int mConvert = 0;
+  int mCenter = 0;
+  int mRadial = 0;
   //
-  void CenterDisc(File *file, uint32 sinkID = 1);
+  void CenterDisc(File *file, int sinkID = 1);
   void ConvertFile(File *file, NameData nameData);
 	// void WriteConvertedFiles(void);
 };

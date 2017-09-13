@@ -45,29 +45,29 @@ bool OpacityTable::Read(std::string fileName, bool formatted) {
   std::cout << "Reading opacity table: " << fileName << "\n";
 
   std::string line;
-  uint32 i, j, l;
-  real64 dens, temp, energy, mu, kappa, kappar, kappap, gamma;
+  int i, j, l;
+  double dens, temp, energy, mu, kappa, kappar, kappap, gamma;
 
   getline(mInStream, line);
   std::istringstream istr(line);
   istr >> mNumDens >> mNumTemp >> mFcol;
 
-  mDens   = new real64[mNumDens];
-  mTemp   = new real64[mNumTemp];
-  mEnergy = new real64*[mNumDens];
-  mMu     = new real64*[mNumDens];
-  mGamma  = new real64*[mNumDens];
-  mKappa  = new real64*[mNumDens];
-  mKappar = new real64*[mNumDens];
-  mKappap = new real64*[mNumDens];
+  mDens   = new double[mNumDens];
+  mTemp   = new double[mNumTemp];
+  mEnergy = new double*[mNumDens];
+  mMu     = new double*[mNumDens];
+  mGamma  = new double*[mNumDens];
+  mKappa  = new double*[mNumDens];
+  mKappar = new double*[mNumDens];
+  mKappap = new double*[mNumDens];
 
   for (i = 0; i < mNumDens; ++i) {
-    mEnergy[i] = new real64[mNumTemp];
-    mMu[i]     = new real64[mNumTemp];
-    mGamma[i]  = new real64[mNumTemp];
-    mKappa[i]  = new real64[mNumTemp];
-    mKappar[i] = new real64[mNumTemp];
-    mKappap[i] = new real64[mNumTemp];
+    mEnergy[i] = new double[mNumTemp];
+    mMu[i]     = new double[mNumTemp];
+    mGamma[i]  = new double[mNumTemp];
+    mKappa[i]  = new double[mNumTemp];
+    mKappar[i] = new double[mNumTemp];
+    mKappap[i] = new double[mNumTemp];
   }
 
   // read table
@@ -107,23 +107,23 @@ bool OpacityTable::Read(std::string fileName, bool formatted) {
   return true;
 }
 
-real64 OpacityTable::GetMuBar(real64 density, real64 temperature) {
+double OpacityTable::GetMuBar(double density, double temperature) {
   return mMu[GetIDens(density)][GetITemp(temperature)];
 }
 
-real64 OpacityTable::GetGamma(real64 density, real64 temperature) {
+double OpacityTable::GetGamma(double density, double temperature) {
   return mGamma[GetIDens(density)][GetITemp(temperature)];
 }
 
-real64 OpacityTable::GetEnergy(real64 density, real64 temperature) {
+double OpacityTable::GetEnergy(double density, double temperature) {
   return mEnergy[GetIDens(density)][GetITemp(temperature)];
 }
 
-real64 OpacityTable::GetTemp(real64 density, real64 energy) {
-  real64 result = 0.0;
+double OpacityTable::GetTemp(double density, double energy) {
+  double result = 0.0;
   energy *= 1E4; // cgs conversion
 
-  real64 logdens = log10(density);
+  double logdens = log10(density);
   int idens = GetIDens(logdens);
 
   if (energy == 0.0) return result;
@@ -131,7 +131,7 @@ real64 OpacityTable::GetTemp(real64 density, real64 energy) {
   // gets nearest temperature in table from density and specific
   // internal energy
   int tempIndex = -1;
-  real64 diff = 1e20;
+  double diff = 1e20;
   for (int i = 0; i < mNumTemp; ++i) {
     if (fabs(energy - mEnergy[idens][i]) < diff) {
       diff = fabs(energy - mEnergy[idens][i]);
@@ -171,8 +171,8 @@ std::size_t GetClosestIndex(BidirectionalIterator first,
   return std::distance(first, GetClosest(first, last, value));
 }
 
-uint32 OpacityTable::GetIDens(const real64 density) {
-  uint32 idens = GetClosestIndex(mDens, mDens + mNumDens, density);
+int OpacityTable::GetIDens(const double density) {
+  int idens = GetClosestIndex(mDens, mDens + mNumDens, density);
 
   if (density < mDens[idens]) {
     idens = std::max((int) idens - 1, 0);
@@ -180,8 +180,8 @@ uint32 OpacityTable::GetIDens(const real64 density) {
   return idens;
 }
 
-uint32 OpacityTable::GetITemp(const real64 temperature) {
-  uint32 itemp = GetClosestIndex(mTemp, mTemp + mNumTemp , temperature);
+int OpacityTable::GetITemp(const double temperature) {
+  int itemp = GetClosestIndex(mTemp, mTemp + mNumTemp , temperature);
 
   if (temperature <= mTemp[itemp]) {
     itemp = std::max((int) itemp - 1, 0);

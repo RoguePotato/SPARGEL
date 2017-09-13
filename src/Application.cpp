@@ -49,24 +49,31 @@ bool Application::Initialise() {
   mGenerator = new Generator(mParams, mOpacity);
 
 
+  NameData dragName;
+  dragName.name = ("/home/anthony/Documents/roguepotato/SPARGEL/disc.dat");
+  mDragonFile = new DragonFile(dragName, true);
+
   NameData nameData;
-  nameData.name = ("/home/anthony/Documents/roguepotato/SPARGEL/disc.dat");
-  mDragonFile = new DragonFile(nameData, true);
+  nameData.name = ("/home/anthony/Documents/disc_tests/32k/RAD.su.00001");
+  mSerenFile = new SerenFile(nameData, false);
+  mSerenFile->Read();
 
   return true;
 }
 
 void Application::Run() {
-  mGenerator->Create();
+  // mGenerator->Create();
 
-  mDragonFile->SetParticles(mGenerator->GetParticles());
+  mDragonFile->SetParticles(mSerenFile->GetParticles());
   mDragonFile->Write("/home/anthony/Documents/roguepotato/SPARGEL/disc.dat", true);
+
+
 }
 
 void Application::ConvertFile(File *file, NameData nameData) {
 
 }
 
-void Application::CenterDisc(File *file, uint32 sinkID) {
+void Application::CenterDisc(File *file, int sinkID) {
 
 }

@@ -46,24 +46,24 @@ private:
   Octree *mOctree = NULL;
   OctreePoint *mOctreePoints = NULL;
 
-  uint32 mSeed = 0;
-  uint32 mNumHydro = 0;
-  uint32 mDim = 0;
+  int mSeed = 0;
+  int mNumHydro = 0;
+  int mDim = 0;
 
-  real64 mMStar = 0.0;
-  real64 mMDisc = 0.0;
-  real64 mRin = 0.0;
-  real64 mRout = 0.0;
-  real64 mR0 = 0.0;
-  real64 mT0 = 0.0;
-  real64 mTinf = 0.0;
-  uint32 mNumNeigh = 0;
+  double mMStar = 0.0;
+  double mMDisc = 0.0;
+  double mRin = 0.0;
+  double mRout = 0.0;
+  double mR0 = 0.0;
+  double mT0 = 0.0;
+  double mTinf = 0.0;
+  int mNumNeigh = 0;
 
-  real64 mP = 0.0;
-  real64 mQ = 0.0;
+  double mP = 0.0;
+  double mQ = 0.0;
 
-  real64 mRands[3];
-  real64 mOmegaIn = 0.0;
-  real64 mOmegaOut = 0.0;
-  real64 mSigma0 = 0.0;
+  double mRands[3];
+  double mOmegaIn = 0.0;
+  double mOmegaOut = 0.0;
+  double mSigma0 = 0.0;
 };

@@ -26,26 +26,26 @@ public:
   bool Read(std::string fileName, bool formatted = true);
   bool Write(std::string fileName, bool formatted) { return true; }
 
-  uint32 GetNDens() { return mNumDens; }
+  int GetNDens() { return mNumDens; }
 
-  real64 GetEnergy(real64 density, real64 temperature);
-  real64 GetMuBar(real64 density, real64 temperature);
-  real64 GetGamma(real64 density, real64 temperature);
-  real64 GetTemp(real64 density, real64 energy);
+  double GetEnergy(double density, double temperature);
+  double GetMuBar(double density, double temperature);
+  double GetGamma(double density, double temperature);
+  double GetTemp(double density, double energy);
 
 private:
-  uint32 mNumDens = 0;
-  uint32 mNumTemp = 0;
-  real64 mFcol = 0.0;
-  real64 *mDens;
-  real64 *mTemp;
-  real64 **mEnergy;
-  real64 **mMu;
-  real64 **mKappa;
-  real64 **mKappar;
-  real64 **mKappap;
-  real64 **mGamma;
+  int mNumDens = 0;
+  int mNumTemp = 0;
+  double mFcol = 0.0;
+  double *mDens;
+  double *mTemp;
+  double **mEnergy;
+  double **mMu;
+  double **mKappa;
+  double **mKappar;
+  double **mKappap;
+  double **mGamma;
 
-  uint32 GetIDens(const real64 density);
-  uint32 GetITemp(const real64 temperature);
+  int GetIDens(const double density);
+  int GetITemp(const double temperature);
 };
