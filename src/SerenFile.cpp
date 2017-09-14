@@ -15,17 +15,19 @@
 
 #include "SerenFile.h"
 
-SerenFile::SerenFile(NameData nameData, bool formatted) {
-  mNameData = nameData;
-  mFileName = mNameData.name;
-  mFormatted = formatted;
+SerenFile::SerenFile() {
+
 }
 
 SerenFile::~SerenFile() {
 
 }
 
-bool SerenFile::Read(void) {
+bool SerenFile::Read(NameData nameData, bool formatted) {
+  mNameData = nameData;
+  mFileName = mNameData.name;
+  mFormatted = formatted;
+
   mInStream.open(mFileName, (mFormatted) ? std::ios::in : std::ios::binary);
   if (!mInStream.is_open()) {
     std::cout << "Could not open: " << mFileName << " for reading!\n";
@@ -102,6 +104,100 @@ void SerenFile::AllocateMemory(void) {
     Sink *s = new Sink();
     mSinks.push_back(s);
   }
+}
+
+void SerenFile::CreateHeader(void) {
+  mNumGas = mParticles.size();
+  mNumSink = mSinks.size();
+
+  // TODO: Replace string vectors
+  // with array size 50
+  for (int i = 0; i < 50; ++i) {
+    mUnitData.push_back("");
+    mDataID.push_back("");
+  }
+
+  mUnitData[0] = "au";
+  mUnitData[1] = "m_sun";
+  mUnitData[2] = "yr";
+  mUnitData[3] = "km_s";
+  mUnitData[4] = "km_s2";
+  mUnitData[5] = "g_cm3";
+  mUnitData[6] = "g_cm2";
+  mUnitData[7] = "Pa";
+  mUnitData[8] = "N";
+  mUnitData[9] = "J";
+  mUnitData[10] = "m_sunkm_s";
+  mUnitData[11] = "m_sunkm2_s";
+  mUnitData[12] = "rad_s";
+  mUnitData[13] = "m_sun_yr";
+  mUnitData[14] = "L_sun";
+  mUnitData[15] = "cm2_g";
+  mUnitData[16] = "cm2_g";
+  mUnitData[17] = "cm2_g";
+  mUnitData[18] = "cm2_g";
+  mUnitData[19] = "J_kg";
+  mUnitData[20] = "K";
+  mNumUnit = 21;
+
+  mNumData = 0;
+  mDataID[mNumData] = "porig";
+  mTypeData[mNumData][0] = 1;           mTypeData[mNumData][1] = 1;
+  mTypeData[mNumData][2] = mNumGas;     mTypeData[mNumData][3] = 2;
+  mTypeData[mNumData][4] = 0;           mNumData++;
+
+  mDataID[mNumData] = "r";
+  mTypeData[mNumData][0] = mPosDim;     mTypeData[mNumData][1] = 1;
+  mTypeData[mNumData][2] = mNumGas;     mTypeData[mNumData][3] = 4;
+  mTypeData[mNumData][4] = 1;           mNumData++;
+
+  mDataID[mNumData] = "m";
+  mTypeData[mNumData][0] = 1;           mTypeData[mNumData][1] = 1;
+  mTypeData[mNumData][2] = mNumGas;     mTypeData[mNumData][3] = 4;
+  mTypeData[mNumData][4] = 2;           mNumData++;
+
+  mDataID[mNumData] = "h";
+  mTypeData[mNumData][0] = 1;           mTypeData[mNumData][1] = 1;
+  mTypeData[mNumData][2] = mNumGas;     mTypeData[mNumData][3] = 4;
+  mTypeData[mNumData][4] = 1;           mNumData++;
+
+  mDataID[mNumData] = "v";
+  mTypeData[mNumData][0] = mVelDim;     mTypeData[mNumData][1] = 1;
+  mTypeData[mNumData][2] = mNumGas;     mTypeData[mNumData][3] = 4;
+  mTypeData[mNumData][4] = 4;           mNumData++;
+
+  mDataID[mNumData] = "rho";
+  mTypeData[mNumData][0] = 1;           mTypeData[mNumData][1] = 1;
+  mTypeData[mNumData][2] = mNumGas;     mTypeData[mNumData][3] = 4;
+  mTypeData[mNumData][4] = 6;           mNumData++;
+
+  mDataID[mNumData] = "u";
+  mTypeData[mNumData][0] = 1;           mTypeData[mNumData][1] = 1;
+  mTypeData[mNumData][2] = mNumGas;     mTypeData[mNumData][3] = 4;
+  mTypeData[mNumData][4] = 20;          mNumData++;
+
+  mDataID[mNumData] = "sink_v1";
+  mTypeData[mNumData][0] = 1;           mTypeData[mNumData][1] = 1;
+  mTypeData[mNumData][2] = mNumSink;    mTypeData[mNumData][3] = 7;
+  mTypeData[mNumData][4] = 0;           mNumData++;
+
+  mIntData[0] = mNumGas;
+  mIntData[1] = mNumSink;
+  mIntData[3] = 0; // icm_type
+  mIntData[4] = mNumGas; // gas_type
+  mIntData[5] = 0; // cdm_type (cold dark matter?)
+  mIntData[6] = 0; // dust_type
+  mIntData[19] = mNumUnit;
+  mIntData[20] = mNumData;
+  mLongData[0] = 0; // Noutsnap
+  mLongData[1] = 0; // Nsteps
+  mLongData[10] = 0; // Noutlitesnap
+  mFloatData[0] = 1.2; // h_fac
+  mFloatData[1] = 0.0;
+  mDoubleData[0] = 0.0; // time
+  mDoubleData[1] = 0.0; // time lastsnap
+  mDoubleData[2] = mParticles[0]->GetM(); // avg. hydro mass
+  mDoubleData[10] = 0.0; // tlite lastsnap
 }
 
 void SerenFile::ReadHeaderForm(void) {
@@ -410,6 +506,8 @@ void SerenFile::WriteHeaderUnform(void) {
     mBW->WriteValue(mFloatData[i]);
   for (int i = 0; i < 50; ++i)
     mBW->WriteValue(mDoubleData[i]);
+
+  std::cout << "Particles: " << mIntData[0] << "\n";
 
   for (int i = 0; i < mNumUnit; ++i) {
     std::ostringstream stream;

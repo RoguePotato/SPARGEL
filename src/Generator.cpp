@@ -138,12 +138,12 @@ void Generator::CreateCloud(void) {
 }
 
 void Generator::CreateStars(void) {
-  Particle* p = new Particle();
-  p->SetID(mNumHydro + 1);
-  p->SetH(1.0);
-  p->SetM(mMStar);
-  p->SetType(-1);
-  mParticles.push_back(p);
+  Sink* s = new Sink();
+  s->SetID(mNumHydro + 1);
+  s->SetH(1.0);
+  s->SetM(mMStar);
+  s->SetType(-1);
+  mSinks.push_back(s);
 }
 
 void Generator::CalculateVelocity(void) {

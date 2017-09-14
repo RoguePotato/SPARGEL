@@ -48,26 +48,25 @@ bool Application::Initialise() {
 
   mGenerator = new Generator(mParams, mOpacity);
 
-
-  NameData dragName;
-  dragName.name = ("/home/anthony/Documents/roguepotato/SPARGEL/disc.dat");
-  mDragonFile = new DragonFile(dragName, true);
-
-  NameData nameData;
-  nameData.name = ("/home/anthony/Documents/disc_tests/32k/RAD.su.00002");
-  mSerenFile = new SerenFile(nameData, false);
-  mSerenFile->Read();
-
   return true;
 }
 
 void Application::Run() {
-  // mGenerator->Create();
+  mGenerator->Create();
 
-  mDragonFile->SetParticles(mSerenFile->GetParticles());
+  // SEREN file create from generator
+  mSerenFile = new SerenFile();
+  mSerenFile->SetParticles(mGenerator->GetParticles());
+  mSerenFile->SetSinks(mGenerator->GetSinks());
+  mSerenFile->CreateHeader();
   mSerenFile->Write("/home/anthony/Documents/roguepotato/SPARGEL/TEST.su.00001", false);
 
-
+  // DRAGON file create from SEREN file
+  mDragonFile = new DragonFile();
+  mDragonFile->SetParticles(mSerenFile->GetParticles());
+  mDragonFile->SetSinks(mSerenFile->GetSinks());
+  mDragonFile->CreateHeader();
+  mDragonFile->Write("/home/anthony/Documents/roguepotato/SPARGEL/TEST.df.00001", true);
 }
 
 void Application::ConvertFile(File *file, NameData nameData) {

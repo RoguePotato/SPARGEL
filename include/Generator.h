@@ -30,6 +30,7 @@ public:
   void Create(void);
 
   std::vector<Particle *> GetParticles() { return mParticles; }
+  std::vector<Sink *> GetSinks() { return mSinks; }
 
 private:
   void SetupParams(void);
@@ -43,6 +44,7 @@ private:
   Parameters *mParams = NULL;
   OpacityTable *mOpacity = NULL;
   std::vector<Particle *> mParticles;
+  std::vector<Sink *> mSinks;
   Octree *mOctree = NULL;
   OctreePoint *mOctreePoints = NULL;
 

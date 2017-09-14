@@ -25,11 +25,13 @@
 
 class SerenFile : public SnapshotFile {
 public:
-  SerenFile(NameData nameData, bool formatted);
+  SerenFile();
   ~SerenFile();
 
-  bool Read();
+  bool Read(NameData nameData, bool formatted);
   bool Write(std::string fileName, bool formatted);
+
+  void CreateHeader(void);
 
 private:
   const int STRING_LENGTH = 20;

@@ -17,6 +17,7 @@
 
 #include "BinaryIO.h"
 #include "Definitions.h"
+#include "Formatter.h"
 #include "Particle.h"
 
 struct NameData {
@@ -59,6 +60,7 @@ public:
   virtual NameData GetNameData() { return mNameData; }
   virtual std::string GetFileName() { return mFileName; }
   virtual std::vector<Particle *> GetParticles() { return mParticles; }
+  virtual std::vector<Sink *> GetSinks() { return mSinks; }
   virtual double GetTime() { return mTime; }
   virtual int GetNumGas() { return mNumGas; }
   virtual int GetNumSinks() { return mNumSink; }
@@ -68,6 +70,11 @@ public:
   virtual void SetParticles(std::vector<Particle *> particles) {
     mParticles = particles;
   }
+  virtual void SetSinks(std::vector<Sink *> sinks) {
+    mSinks = sinks;
+  }
+
+  virtual void CreateHeader(void) {};
 
   virtual void SetNumGas(int i) { mNumGas = i; }
   virtual void SetNumSinks(int i) { mNumSink = i; }
@@ -75,14 +82,32 @@ public:
   virtual void SetTime (double t) { mTime = t; }
 
 protected:
+  virtual bool Read(std::string fileName, bool formatted = true) {};
+  virtual bool Write(std::string fileName, bool formatted) {};
+
+  virtual void AllocateMemory(void) {};
+
+  virtual void ReadHeaderForm(void) {};
+  virtual void ReadParticleForm(void) {};
+  virtual void ReadSinkForm(void) {};
+
+  virtual void ReadHeaderUnform(void) {};
+  virtual void ReadParticleUnform(void) {};
+  virtual void ReadSinkUnform(void) {};
+
+  virtual void WriteHeaderForm(Formatter formatStream) {};
+  virtual void WriteParticleForm(Formatter formatStream) {};
+  virtual void WriteSinkForm(Formatter formatStream) {};
+
+  virtual void WriteHeaderUnform(void) {};
+  virtual void WriteParticleUnform(void) {};
+  virtual void WriteSinkUnform(void) {};
+
   BinaryReader *mBR;
   BinaryWriter *mBW;
 
   NameData mNameData = {};
   bool mFormatted = true;
-
-  virtual bool Read(std::string fileName, bool formatted = true) {};
-  virtual bool Write(std::string fileName, bool formatted) {};
 
   std::vector<Particle *> mParticles;
   std::vector<Sink *> mSinks;

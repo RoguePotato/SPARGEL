@@ -24,11 +24,13 @@
 
 class DragonFile : public SnapshotFile {
 public:
-  DragonFile(NameData nameData, bool formatted);
+  DragonFile();
   ~DragonFile();
 
-  bool Read();
+  bool Read(NameData nameData, bool formatted);
   bool Write(std::string fileName, bool formatted);
+
+  void CreateHeader(void);
 
 private:
   int mIntData[20] = {0};
@@ -36,13 +38,21 @@ private:
 
   int mTypeData[8][5] = {};
 
-  void AllocateMemory();
+  void AllocateMemory(void);
 
-  void ReadHeaderForm();
-  void ReadParticleDataForm();
-  void ReadSinkDataForm();
+  void ReadHeaderForm(void);
+  void ReadParticleForm(void);
+  void ReadSinkForm(void);
 
-  void ReadHeaderUnform();
-  void ReadParticleDataUnform();
-  void ReadSinkDataUnform();
+  void ReadHeaderUnform(void);
+  void ReadParticleUnform(void);
+  void ReadSinkUnform(void);
+
+  void WriteHeaderForm(Formatter formatStream);
+  void WriteParticleForm(Formatter formatStream);
+  void WriteSinkForm(Formatter formatStream);
+
+  void WriteHeaderUnform(void);
+  void WriteParticleUnform(void);
+  void WriteSinkUnform(void);
 };

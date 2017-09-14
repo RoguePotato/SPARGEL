@@ -15,15 +15,17 @@
 
 #include "DragonFile.h"
 
-DragonFile::DragonFile(NameData nameData, bool formatted) {
-  mNameData = nameData;
-  mFileName = mNameData.name;
-  mFormatted = formatted;
+DragonFile::DragonFile() {
+
 }
 
 DragonFile::~DragonFile() {}
 
-bool DragonFile::Read() {
+bool DragonFile::Read(NameData nameData, bool formatted) {
+  mNameData = nameData;
+  mFileName = mNameData.name;
+  mFormatted = formatted;
+
   mInStream.open(mFileName);
   if (!mInStream.is_open()) {
     return false;
@@ -32,8 +34,8 @@ bool DragonFile::Read() {
     std::cout << "Reading formatted DRAGON file: " << mFileName << "\n";
     ReadHeaderForm();
     AllocateMemory();
-    ReadParticleDataForm();
-    ReadSinkDataForm();
+    ReadParticleForm();
+    ReadSinkForm();
   } else {
     std::cout << "Reading unformatted DRAGON file: " << mFileName << "\n";
     std::cout << " NOT IMPLEMENTED YET "
@@ -49,14 +51,14 @@ bool DragonFile::Read() {
   return true;
 }
 
-void DragonFile::ReadHeaderForm() {
+void DragonFile::ReadHeaderForm(void) {
   for (int i = 0; i < 20; ++i)
     mInStream >> mIntData[i];
   for (int i = 0; i < 50; ++i)
     mInStream >> mFloatData[i];
 }
 
-void DragonFile::ReadHeaderUnform() {
+void DragonFile::ReadHeaderUnform(void) {
   // BR = new BinaryReader(mInStream);
   //
   // for (int i = 0; i < 20; ++i)
@@ -65,7 +67,7 @@ void DragonFile::ReadHeaderUnform() {
   //   BR->ReadValue(mFloatData[i]);
 }
 
-void DragonFile::AllocateMemory() {
+void DragonFile::AllocateMemory(void) {
   mNumTot = mIntData[0];
   mNumGas = mIntData[2];
   mNumSink = mNumTot - mNumGas;
@@ -83,7 +85,11 @@ void DragonFile::AllocateMemory() {
   }
 }
 
-void DragonFile::ReadParticleDataForm() {
+void DragonFile::CreateHeader(void) {
+
+}
+
+void DragonFile::ReadParticleForm(void) {
   float Temp[3] = {0.0f};
 
   // Positions
@@ -137,7 +143,7 @@ void DragonFile::ReadParticleDataForm() {
   }
 }
 
-void DragonFile::ReadSinkDataForm() {
+void DragonFile::ReadSinkForm(void) {
   // Requires implementation. Have Hydro particle which Sink and Particle
   // inherit from. Polymorph the sink particles into sinks.
 }
@@ -204,6 +210,18 @@ bool DragonFile::Write(std::string fileName, bool formatted) {
   return true;
 }
 
-void DragonFile::ReadParticleDataUnform() {}
+void DragonFile::ReadParticleUnform() {}
 
-void DragonFile::ReadSinkDataUnform() {}
+void DragonFile::ReadSinkUnform() {}
+
+void DragonFile::WriteHeaderForm(Formatter formatStream) {}
+
+void DragonFile::WriteParticleForm(Formatter formatStream) {}
+
+void DragonFile::WriteSinkForm(Formatter formatStream) {}
+
+void DragonFile::WriteHeaderUnform(void) {}
+
+void DragonFile::WriteParticleUnform(void) {}
+
+void DragonFile::WriteSinkUnform(void) {}
