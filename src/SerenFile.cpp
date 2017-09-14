@@ -52,6 +52,15 @@ bool SerenFile::Read(NameData nameData, bool formatted) {
 
   mInStream.close();
 
+  // Set sink data
+  for (int i = 0; i < mSinks.size(); ++i) {
+    Sink *s = mSinks.at(i);
+    mSinks.at(i)->SetX(Vec3(s->GetData(1), s->GetData(2), s->GetData(3)));
+    mSinks.at(i)->SetV(Vec3(s->GetData(4), s->GetData(5), s->GetData(6)));
+    mSinks.at(i)->SetM(s->GetData(7));
+    mSinks.at(i)->SetH(s->GetData(8));
+  }
+
   return true;
 }
 
@@ -61,14 +70,15 @@ bool SerenFile::Write(std::string fileName, bool formatted) {
     std::cout << "Could not open: " << fileName << " for writing!\n";
     return false;
   }
-  std::cout << "Writing file: " << fileName << "\n";
 
   if (formatted) {
+    std::cout << "Writing formatted SEREN file: " << fileName << "\n";
     Formatter formatStream(mOutStream, 18, 2, 10);
     WriteHeaderForm(formatStream);
     WriteParticleForm(formatStream);
     WriteSinkForm(formatStream);
   } else {
+    std::cout << "Writing unformatted SEREN file: " << fileName << "\n";
     mBW = new BinaryWriter(mOutStream);
     WriteHeaderUnform();
     WriteParticleUnform();

@@ -78,7 +78,7 @@ public:
 
   virtual void SetNumGas(int i) { mNumGas = i; }
   virtual void SetNumSinks(int i) { mNumSink = i; }
-  virtual void SetNumPart(int i) { mNumTot = i; }
+  virtual void SetNumTot(int i) { mNumTot = i; }
   virtual void SetTime (double t) { mTime = t; }
 
 protected:

@@ -76,6 +76,7 @@ public:
   Sink();
   ~Sink();
 
+  double *GetAllData() { return mSerenData; }
   double GetData(int index) { return mSerenData[index]; }
   void SetData(int index, double data) { mSerenData[index] = data; }
 private:

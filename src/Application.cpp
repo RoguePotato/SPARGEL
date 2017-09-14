@@ -65,6 +65,11 @@ void Application::Run() {
   mDragonFile = new DragonFile();
   mDragonFile->SetParticles(mSerenFile->GetParticles());
   mDragonFile->SetSinks(mSerenFile->GetSinks());
+  mDragonFile->SetNumGas(mSerenFile->GetParticles().size());
+  mDragonFile->SetNumSinks(mSerenFile->GetSinks().size());
+  mDragonFile->SetNumTot(mSerenFile->GetParticles().size() +
+                         mSerenFile->GetSinks().size());
+  mDragonFile->SetTime(mSerenFile->GetTime());
   mDragonFile->CreateHeader();
   mDragonFile->Write("/home/anthony/Documents/roguepotato/SPARGEL/TEST.df.00001", true);
 }
