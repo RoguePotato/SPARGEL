@@ -31,7 +31,7 @@ public:
   ~Application();
 
   bool Initialise();
-  void Run(int task, int start, int end);
+  void Run();
 
 private:
   int mNumThreads = 0;
@@ -61,7 +61,8 @@ private:
   int mConvert = 0;
   int mCenter = 0;
   int mRadial = 0;
-  //
+
+  void Analyse(int task, int start, int end);
   void CenterDisc(File *file, int sinkID = 1);
   void ConvertFile(File *file, NameData nameData);
 	// void WriteConvertedFiles(void);

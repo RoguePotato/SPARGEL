@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
   Application *app = new Application(args);
 
   if (app->Initialise()) {
-    // app->Run();
+    app->Run();
   }
 
   delete app;

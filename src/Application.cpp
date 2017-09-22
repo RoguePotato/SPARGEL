@@ -86,6 +86,10 @@ bool Application::Initialise() {
     return false;
   }
 
+  return true;
+}
+
+void Application::Run() {
   // Set up file batches
   if (mFiles.size() < mNumThreads) mNumThreads = mFiles.size();
   mFilesPerThread = mFiles.size() / (mNumThreads - 1);
@@ -93,9 +97,9 @@ bool Application::Initialise() {
   std::thread threads[mNumThreads];
 
   // Run threaded analysis, remainder on thread 0
-  threads[0] = std::thread(&Application::Run, this, 0, 0, mRemainder);
+  threads[0] = std::thread(&Application::Analyse, this, 0, 0, mRemainder);
   for (int i = 1; i < mNumThreads; ++i) {
-    threads[i] = std::thread(&Application::Run,
+    threads[i] = std::thread(&Application::Analyse,
                              this,
                              i,
                              mRemainder + (i - 1) * mFilesPerThread,
@@ -106,14 +110,11 @@ bool Application::Initialise() {
   for (int i = 0; i < mNumThreads; ++i) {
     threads[i].join();
   }
-
-  return true;
 }
 
-void Application::Run(int task, int start, int end) {
+void Application::Analyse(int task, int start, int end) {
   for (int i = start; i < end; ++i) {
     mFiles.at(i)->Read();
-
   }
 }
 
