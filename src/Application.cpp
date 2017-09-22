@@ -36,6 +36,16 @@ bool Application::Initialise() {
   mParams = new Parameters();
   mParams->Read(mArgs->GetArgument(0));
 
+  mThreads = mParams->GetInt("THREADS");
+  mMaxThreads = std::thread::hardware_concurrency();
+  if (mMaxThreads <= 0) {
+    std::cout << "Number of threads not detected, exiting...\n";
+    return false;
+  }
+  if (mThreads < 0 || mThreads > mMaxThreads) mThreads = mMaxThreads;
+
+  std::cout << mThreads << '\n';
+
   mConvert = mParams->GetInt("CONVERT");
   mInFormat = mParams->GetString("IN_FORMAT");
   mOutFormat = mParams->GetString("OUT_FORMAT");
@@ -43,35 +53,36 @@ bool Application::Initialise() {
   mCenter = mParams->GetInt("CENTER_DISC");
   mRadial = mParams->GetInt("RADIAL_AVG");
 
-  mOpacity = new OpacityTable();
-  mOpacity->Read(mEosFilePath);
+  mOpacity = new OpacityTable(mEosFilePath, true);
+  mOpacity->Read();
 
-  mGenerator = new Generator(mParams, mOpacity);
+  // mGenerator = new Generator(mParams, mOpacity);
+
+  // Create files
+  for (int i = 1; i < mArgs->GetNumArgs() - 1; ++i) {
+    std::string curArg = mArgs->GetArgument(i);
+    if (mInFormat == "su") {
+      mFiles.push_back(new SerenFile(curArg, false));
+    }
+    else if (mInFormat == "df"){
+
+    }
+  }
+  for (int i = 0; i < mFiles.size(); ++i) {
+    std::cout << mFiles.at(i)->GetFileName() << "\n";
+  }
+
+  std::thread threads[mThreads];
+  for (int i = 0; i < mThreads; ++i) {
+    std::thread t1(&Application::Run, this, i);
+    t1.join();
+  }
 
   return true;
 }
 
-void Application::Run() {
-  mGenerator->Create();
-
-  // SEREN file create from generator
-  mSerenFile = new SerenFile();
-  mSerenFile->SetParticles(mGenerator->GetParticles());
-  mSerenFile->SetSinks(mGenerator->GetSinks());
-  mSerenFile->CreateHeader();
-  mSerenFile->Write("/home/anthony/Documents/roguepotato/SPARGEL/TEST.su.00001", false);
-
-  // DRAGON file create from SEREN file
-  mDragonFile = new DragonFile();
-  mDragonFile->SetParticles(mSerenFile->GetParticles());
-  mDragonFile->SetSinks(mSerenFile->GetSinks());
-  mDragonFile->SetNumGas(mSerenFile->GetParticles().size());
-  mDragonFile->SetNumSinks(mSerenFile->GetSinks().size());
-  mDragonFile->SetNumTot(mSerenFile->GetParticles().size() +
-                         mSerenFile->GetSinks().size());
-  mDragonFile->SetTime(mSerenFile->GetTime());
-  mDragonFile->CreateHeader();
-  mDragonFile->Write("/home/anthony/Documents/roguepotato/SPARGEL/TEST.df.00001", true);
+void Application::Run(int task) {
+  std::cout << "Running task " << task << '\n';
 }
 
 void Application::ConvertFile(File *file, NameData nameData) {

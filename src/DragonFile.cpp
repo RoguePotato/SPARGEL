@@ -15,17 +15,14 @@
 
 #include "DragonFile.h"
 
-DragonFile::DragonFile() {
-
+DragonFile::DragonFile(std::string fileName, bool formatted) {
+  mFileName = fileName;
+  mFormatted = formatted;
 }
 
 DragonFile::~DragonFile() {}
 
-bool DragonFile::Read(NameData nameData, bool formatted) {
-  mNameData = nameData;
-  mFileName = mNameData.name;
-  mFormatted = formatted;
-
+bool DragonFile::Read() {
   mInStream.open(mFileName);
   if (!mInStream.is_open()) {
     return false;

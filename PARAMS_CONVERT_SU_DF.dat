@@ -1,11 +1,12 @@
-#---------------------------------------------------------------------------------------------------#
-# SParGeL: Smoothed Particle General-Purpose Loader                                                 #
-#---------------------------------------------------------------------------------------------------#
-#                                                                                                   #
-# This file is a complete list of parameters used within the PDA program. Descriptions and valid    #
-# values are documented.                                                                            #
-#                                                                                                   #
-#---------------------------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+# SParGeL: Smoothed Particle General-Purpose Loader                            #
+#------------------------------------------------------------------------------#
+#                                                                              #
+# This file is a complete list of parameters used within the PDA program.      #
+# Descriptions and valid values are documented.                                #
+#------------------------------------------------------------------------------#
+
+ Number of threads       : THREADS = -1
 
 #---------------------------------------------------------------------------------------------------#
 # FILE IO                                                                                           #

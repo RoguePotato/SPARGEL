@@ -31,10 +31,13 @@ struct NameData {
 class File {
 public:
   File() {};
+  File(std::string fileName, bool formatted) {};
   ~File() {};
 
-  virtual bool Read(std::string fileName, bool formatted = true) = 0;
+  virtual bool Read() = 0;
   virtual bool Write(std::string fileName, bool formatted) = 0;
+
+  std::string GetFileName() { return mFileName; }
 
 protected:
   std::string mFileName = "";
@@ -55,6 +58,7 @@ protected:
 class SnapshotFile : public File {
 public:
   SnapshotFile() {};
+  SnapshotFile(std::string fileName, bool formatted) {};
   ~SnapshotFile() {};
 
   virtual NameData GetNameData() { return mNameData; }
@@ -82,7 +86,7 @@ public:
   virtual void SetTime (double t) { mTime = t; }
 
 protected:
-  virtual bool Read(std::string fileName, bool formatted = true) {};
+  virtual bool Read() {};
   virtual bool Write(std::string fileName, bool formatted) {};
 
   virtual void AllocateMemory(void) {};

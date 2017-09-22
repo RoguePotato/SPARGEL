@@ -25,10 +25,10 @@
 
 class SerenFile : public SnapshotFile {
 public:
-  SerenFile();
+  SerenFile(std::string fileName, bool formatted);
   ~SerenFile();
 
-  bool Read(NameData nameData, bool formatted);
+  bool Read();
   bool Write(std::string fileName, bool formatted);
 
   void CreateHeader(void);

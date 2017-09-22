@@ -24,10 +24,10 @@
 
 class DragonFile : public SnapshotFile {
 public:
-  DragonFile();
+  DragonFile(std::string fileName, bool formatted);
   ~DragonFile();
 
-  bool Read(NameData nameData, bool formatted);
+  bool Read();
   bool Write(std::string fileName, bool formatted);
 
   void CreateHeader(void);

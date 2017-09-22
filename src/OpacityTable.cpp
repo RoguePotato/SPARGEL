@@ -15,8 +15,8 @@
 
 #include "OpacityTable.h"
 
-OpacityTable::OpacityTable() {
-
+OpacityTable::OpacityTable(std::string fileName, bool formatted) {
+  mFileName = fileName;
 }
 
 OpacityTable::~OpacityTable() {
@@ -37,12 +37,12 @@ OpacityTable::~OpacityTable() {
   delete[] mGamma;
 }
 
-bool OpacityTable::Read(std::string fileName, bool formatted) {
-  mInStream.open(fileName.c_str(), std::ios::in);
+bool OpacityTable::Read() {
+  mInStream.open(mFileName.c_str(), std::ios::in);
 
   if (!mInStream.good()) return false;
 
-  std::cout << "Reading opacity table: " << fileName << "\n";
+  std::cout << "Reading opacity table: " << mFileName << "\n";
 
   std::string line;
   int i, j, l;

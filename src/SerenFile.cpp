@@ -15,19 +15,16 @@
 
 #include "SerenFile.h"
 
-SerenFile::SerenFile() {
-
+SerenFile::SerenFile(std::string fileName, bool formatted) {
+  mFileName = fileName;
+  mFormatted = formatted;
 }
 
 SerenFile::~SerenFile() {
 
 }
 
-bool SerenFile::Read(NameData nameData, bool formatted) {
-  mNameData = nameData;
-  mFileName = mNameData.name;
-  mFormatted = formatted;
-
+bool SerenFile::Read() {
   mInStream.open(mFileName, (mFormatted) ? std::ios::in : std::ios::binary);
   if (!mInStream.is_open()) {
     std::cout << "Could not open: " << mFileName << " for reading!\n";

@@ -31,9 +31,12 @@ public:
   ~Application();
 
   bool Initialise();
-  void Run();
+  void Run(int task);
 
 private:
+  int mThreads = 0;
+  unsigned int mMaxThreads = 0;
+
   Arguments *mArgs;
   Parameters *mParams;
   Generator *mGenerator;
@@ -43,8 +46,8 @@ private:
   // RadialAnalyser *mRA;
   // FileNameExtractor *mFNE;
   //
-  // std::vector<std::string> mFileNames;
-  // std::vector<File *> mFiles;
+  std::vector<File *> mFiles;
+  std::vector<std::string> mFileNames;
 	// std::vector<File *> mConvertedFiles;
   // std::vector<RadialAnalyser *> mRadialAnalysers;
   //

@@ -20,10 +20,10 @@
 
 class OpacityTable : public File {
 public:
-  OpacityTable();
+  OpacityTable(std::string fileName, bool formatted);
   ~OpacityTable();
 
-  bool Read(std::string fileName, bool formatted = true);
+  bool Read();
   bool Write(std::string fileName, bool formatted) { return true; }
 
   int GetNDens() { return mNumDens; }
