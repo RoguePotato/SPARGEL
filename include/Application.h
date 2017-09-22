@@ -31,11 +31,13 @@ public:
   ~Application();
 
   bool Initialise();
-  void Run(int task);
+  void Run(int task, int start, int end);
 
 private:
-  int mThreads = 0;
+  int mNumThreads = 0;
   unsigned int mMaxThreads = 0;
+  int mFilesPerThread = 0;
+  int mRemainder = 0;
 
   Arguments *mArgs;
   Parameters *mParams;

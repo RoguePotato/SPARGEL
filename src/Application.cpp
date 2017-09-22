@@ -36,15 +36,13 @@ bool Application::Initialise() {
   mParams = new Parameters();
   mParams->Read(mArgs->GetArgument(0));
 
-  mThreads = mParams->GetInt("THREADS");
+  mNumThreads = mParams->GetInt("THREADS");
   mMaxThreads = std::thread::hardware_concurrency();
   if (mMaxThreads <= 0) {
     std::cout << "Number of threads not detected, exiting...\n";
     return false;
   }
-  if (mThreads < 0 || mThreads > mMaxThreads) mThreads = mMaxThreads;
-
-  std::cout << mThreads << '\n';
+  if (mNumThreads < 0 || mNumThreads > mMaxThreads) mNumThreads = mMaxThreads;
 
   mConvert = mParams->GetInt("CONVERT");
   mInFormat = mParams->GetString("IN_FORMAT");
@@ -61,28 +59,62 @@ bool Application::Initialise() {
   // Create files
   for (int i = 1; i < mArgs->GetNumArgs() - 1; ++i) {
     std::string curArg = mArgs->GetArgument(i);
+
     if (mInFormat == "su") {
       mFiles.push_back(new SerenFile(curArg, false));
     }
+    else if (mInFormat == "sf"){
+      mFiles.push_back(new SerenFile(curArg, true));
+    }
+    else if (mInFormat == "du"){
+      mFiles.push_back(new DragonFile(curArg, false));
+    }
     else if (mInFormat == "df"){
-
+      mFiles.push_back(new DragonFile(curArg, true));
+    }
+    else {
+      std::cout << "Unrecognised input file format, exiting...\n";
+      return false;
     }
   }
-  for (int i = 0; i < mFiles.size(); ++i) {
-    std::cout << mFiles.at(i)->GetFileName() << "\n";
+
+  // TODO: Handle case where user does not want to read files just generate
+  // one. Possible run generator above here, and create the file, then
+  // perform analysis. If no analysis is selected, it will just write.
+  if (mFiles.size() < 1) {
+    std::cout << "No files selected, exiting...\n";
+    return false;
   }
 
-  std::thread threads[mThreads];
-  for (int i = 0; i < mThreads; ++i) {
-    std::thread t1(&Application::Run, this, i);
-    t1.join();
+  // Set up file batches
+  if (mFiles.size() < mNumThreads) mNumThreads = mFiles.size();
+  mFilesPerThread = mFiles.size() / (mNumThreads - 1);
+  mRemainder = mFiles.size() % (mNumThreads - 1);
+  std::thread threads[mNumThreads];
+
+  // Run threaded analysis, remainder on thread 0
+  threads[0] = std::thread(&Application::Run, this, 0, 0, mRemainder);
+  for (int i = 1; i < mNumThreads; ++i) {
+    threads[i] = std::thread(&Application::Run,
+                             this,
+                             i,
+                             mRemainder + (i - 1) * mFilesPerThread,
+                             mRemainder + (i + 0) * mFilesPerThread);
+  }
+
+  // Join the threads
+  for (int i = 0; i < mNumThreads; ++i) {
+    threads[i].join();
   }
 
   return true;
 }
 
-void Application::Run(int task) {
-  std::cout << "Running task " << task << '\n';
+void Application::Run(int task, int start, int end) {
+  for (int i = start; i < end; ++i) {
+    mFiles.at(i)->Read();
+
+  }
 }
 
 void Application::ConvertFile(File *file, NameData nameData) {
