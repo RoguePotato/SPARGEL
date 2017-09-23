@@ -25,6 +25,11 @@
 #include "Parameters.h"
 #include "SerenFile.h"
 
+struct Maxima {
+  FLOAT density;
+  FLOAT temperature;
+};
+
 class Application {
 public:
   Application(Arguments *args);
@@ -50,6 +55,7 @@ private:
   //
   std::vector<File *> mFiles;
   std::vector<std::string> mFileNames;
+  std::vector<Maxima> mMaxima;
 	// std::vector<File *> mConvertedFiles;
   // std::vector<RadialAnalyser *> mRadialAnalysers;
   //
@@ -65,5 +71,7 @@ private:
   void Analyse(int task, int start, int end);
   void CenterDisc(File *file, int sinkID = 1);
   void ConvertFile(File *file, NameData nameData);
+  void FindTemperatures(SnapshotFile *file);
+  void CloudCollapse(SnapshotFile *file);
 	// void WriteConvertedFiles(void);
 };

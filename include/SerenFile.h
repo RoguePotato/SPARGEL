@@ -20,6 +20,7 @@
 #include "Constants.h"
 #include "File.h"
 #include "Formatter.h"
+#include "OpacityTable.h"
 #include "Particle.h"
 #include "Vec.h"
 
@@ -30,6 +31,7 @@ public:
 
   bool Read();
   bool Write(std::string fileName, bool formatted);
+  void FindTemperatures(OpacityTable *op);
 
   void CreateHeader(void);
 

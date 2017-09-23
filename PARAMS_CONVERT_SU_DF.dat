@@ -32,6 +32,8 @@
  Output in new format    : CONVERT = 1
  Output file format      : OUT_FORMAT = df
 
+ Opacity table path      : EOS_TABLE = /home/anthony/Documents/disc_tests/eos.bell.cc.dat
+
 #---------------------------------------------------------------------------------------------------#
 # ANALYSIS                                                                                          #
 #---------------------------------------------------------------------------------------------------#

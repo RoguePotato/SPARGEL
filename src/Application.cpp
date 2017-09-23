@@ -110,11 +110,24 @@ void Application::Run() {
   for (int i = 0; i < mNumThreads; ++i) {
     threads[i].join();
   }
+
+  // CloudCollapse
+  std::sort(mMaxima.begin(), mMaxima.end(),
+            [](Maxima a, Maxima b) { return b.density > a.density; });
+
+  std::ofstream outStream;
+  outStream.open("MaxDensity.dat");
+  for (int i = 0; i < mMaxima.size(); ++i) {
+    outStream << mMaxima.at(i).density << "\t" << mMaxima.at(i).temperature << "\n";
+  }
+  outStream.close();
 }
 
 void Application::Analyse(int task, int start, int end) {
   for (int i = start; i < end; ++i) {
     mFiles.at(i)->Read();
+    if (mInFormat == "su") FindTemperatures((SnapshotFile *) mFiles.at(i));
+    CloudCollapse((SnapshotFile *) mFiles.at(i));
   }
 }
 
@@ -124,4 +137,35 @@ void Application::ConvertFile(File *file, NameData nameData) {
 
 void Application::CenterDisc(File *file, int sinkID) {
 
+}
+
+void Application::FindTemperatures(SnapshotFile *file) {
+  std::vector<Particle *> part = file->GetParticles();
+  for (int i = 0; i < part.size(); ++i) {
+    Particle *p = part.at(i);
+    FLOAT density = p->GetD();
+    FLOAT energy = p->GetU();
+    FLOAT temp = mOpacity->GetTemp(density, energy);
+    part.at(i)->SetT(temp);
+  }
+  file->SetParticles(part);
+}
+
+void Application::CloudCollapse(SnapshotFile *file) {
+  std::vector<Particle *> part = file->GetParticles();
+
+  std::sort(part.begin(), part.end(),
+            [](Particle *a, Particle *b) { return b->GetD() < a->GetD(); });
+
+  Maxima max;
+  max.density = 0.0;
+  max.temperature = 0.0;
+  for (int i = 0; i < 400; ++i) {
+    max.density += part.at(i)->GetD();
+    max.temperature += part.at(i)->GetT();
+  }
+  max.density /= 400.0;
+  max.temperature /= 400.0;
+
+  mMaxima.push_back(max);
 }
