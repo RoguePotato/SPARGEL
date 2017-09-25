@@ -20,6 +20,7 @@
 #include "Definitions.h"
 #include "DragonFile.h"
 #include "File.h"
+#include "FileNameExtractor.h"
 #include "Generator.h"
 #include "OpacityTable.h"
 #include "Parameters.h"
@@ -35,6 +36,8 @@ public:
   Application(Arguments *args);
   ~Application();
 
+  void StartSplash();
+  void EndSplash();
   bool Initialise();
   void Run();
 
@@ -46,14 +49,13 @@ private:
 
   Arguments *mArgs;
   Parameters *mParams;
-  Generator *mGenerator;
+  FileNameExtractor *mFNE;
   OpacityTable *mOpacity;
-  DragonFile *mDragonFile;
-  SerenFile *mSerenFile;
+  // Generator *mGenerator;
   // RadialAnalyser *mRA;
-  // FileNameExtractor *mFNE;
-  //
+
   std::vector<File *> mFiles;
+  int mFilesAnalysed = 0;
   std::vector<std::string> mFileNames;
   std::vector<Maxima> mMaxima;
 	// std::vector<File *> mConvertedFiles;
@@ -70,7 +72,7 @@ private:
 
   void Analyse(int task, int start, int end);
   void CenterDisc(File *file, int sinkID = 1);
-  void ConvertFile(File *file, NameData nameData);
+  void ConvertFile(SnapshotFile *file);
   void FindTemperatures(SnapshotFile *file);
   void CloudCollapse(SnapshotFile *file);
 	// void WriteConvertedFiles(void);

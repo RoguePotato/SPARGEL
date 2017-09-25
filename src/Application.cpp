@@ -19,12 +19,26 @@ Application::Application(Arguments *args) : mArgs(args) {}
 
 Application::~Application() {
   // Only delete if they exist
-  // if (mArgs) delete mArgs;
-  // if (mParams) delete mParams;
-  // if (mGenerator) delete mGenerator;
-  // if (mOpacity) delete mOpacity;
+  // if (mArgs != NULL) delete mArgs;
+  // if (mParams != NULL) delete mParams;
+  // if (mOpacity != NULL) delete mOpacity;
+  // if (mFNE != NULL) delete mFNE;
   // delete mRA;
-  // delete mFNE;
+}
+
+void Application::StartSplash(void) {
+  std::cout << "\n";
+  for (int i = 0; i < 16; ++i) std::cout << "=====";
+  std::cout << "\n\n";
+  std::cout << "   SParGeL\n\n";
+  std::cout << "   Smoothed Particle Generator and Loader\n\n";
+  for (int i = 0; i < 16; ++i) std::cout << "=====";
+  std::cout << "\n\n";
+}
+
+void Application::EndSplash(void) {
+  for (int i = 0; i < 16; ++i) std::cout << "=====";
+  std::cout << "\n";
 }
 
 bool Application::Initialise() {
@@ -52,25 +66,27 @@ bool Application::Initialise() {
   mRadial = mParams->GetInt("RADIAL_AVG");
 
   mOpacity = new OpacityTable(mEosFilePath, true);
-  mOpacity->Read();
+   if (!mOpacity->Read()) return false;
 
   // mGenerator = new Generator(mParams, mOpacity);
 
   // Create files
   for (int i = 1; i < mArgs->GetNumArgs() - 1; ++i) {
     std::string curArg = mArgs->GetArgument(i);
+    mFNE = new FileNameExtractor(curArg);
+    NameData nd = mFNE->GetNameData();
 
     if (mInFormat == "su") {
-      mFiles.push_back(new SerenFile(curArg, false));
+      mFiles.push_back(new SerenFile(nd, false));
     }
     else if (mInFormat == "sf"){
-      mFiles.push_back(new SerenFile(curArg, true));
+      mFiles.push_back(new SerenFile(nd, true));
     }
     else if (mInFormat == "du"){
-      mFiles.push_back(new DragonFile(curArg, false));
+      mFiles.push_back(new DragonFile(nd, false));
     }
     else if (mInFormat == "df"){
-      mFiles.push_back(new DragonFile(curArg, true));
+      mFiles.push_back(new DragonFile(nd, true));
     }
     else {
       std::cout << "Unrecognised input file format, exiting...\n";
@@ -92,18 +108,27 @@ bool Application::Initialise() {
 void Application::Run() {
   // Set up file batches
   if (mFiles.size() < mNumThreads) mNumThreads = mFiles.size();
-  mFilesPerThread = mFiles.size() / (mNumThreads - 1);
-  mRemainder = mFiles.size() % (mNumThreads - 1);
+  mFilesPerThread = mFiles.size() / (mNumThreads);
+  mRemainder = mFiles.size() % (mNumThreads);
   std::thread threads[mNumThreads];
 
-  // Run threaded analysis, remainder on thread 0
-  threads[0] = std::thread(&Application::Analyse, this, 0, 0, mRemainder);
+  std::cout << "   Threads          : " << mNumThreads << "\n";
+  std::cout << "   Files            : " << mFiles.size() << "\n";
+  std::cout << "   Files per thread : " << mFilesPerThread << "\n";
+  std::cout << "   Remainder        : " << mRemainder << "\n\n";
+
+  std::cout << "   EOS table        : " << mOpacity->GetFileName() << "\n\n";
+
+  // Run threaded analysis, remainder added on to thread 0
+  threads[0] = std::thread(&Application::Analyse,
+                           this,
+                           0, 0, mRemainder + mFilesPerThread);
   for (int i = 1; i < mNumThreads; ++i) {
     threads[i] = std::thread(&Application::Analyse,
                              this,
                              i,
-                             mRemainder + (i - 1) * mFilesPerThread,
-                             mRemainder + (i + 0) * mFilesPerThread);
+                             mRemainder + ((i + 0) * mFilesPerThread),
+                             mRemainder + ((i + 1) * mFilesPerThread));
   }
 
   // Join the threads
@@ -111,28 +136,46 @@ void Application::Run() {
     threads[i].join();
   }
 
-  // CloudCollapse
-  std::sort(mMaxima.begin(), mMaxima.end(),
-            [](Maxima a, Maxima b) { return b.density > a.density; });
+  std::cout << "   Files analysed   : " << mFilesAnalysed << "\n\n";
 
-  std::ofstream outStream;
-  outStream.open("MaxDensity.dat");
-  for (int i = 0; i < mMaxima.size(); ++i) {
-    outStream << mMaxima.at(i).density << "\t" << mMaxima.at(i).temperature << "\n";
-  }
-  outStream.close();
+  // CloudCollapse
+  // std::sort(mMaxima.begin(), mMaxima.end(),
+  //           [](Maxima a, Maxima b) { return b.density > a.density; });
+  //
+  // std::ofstream outStream;
+  // outStream.open("MaxDensity.dat");
+  // for (int i = 0; i < mMaxima.size(); ++i) {
+  //   outStream << mMaxima.at(i).density << "\t" << mMaxima.at(i).temperature << "\n";
+  // }
+  // outStream.close();
 }
 
 void Application::Analyse(int task, int start, int end) {
   for (int i = start; i < end; ++i) {
     mFiles.at(i)->Read();
     if (mInFormat == "su") FindTemperatures((SnapshotFile *) mFiles.at(i));
-    CloudCollapse((SnapshotFile *) mFiles.at(i));
+    // CloudCollapse((SnapshotFile *) mFiles.at(i));
+    if (mConvert) ConvertFile((SnapshotFile *) mFiles.at(i));
+    ++mFilesAnalysed;
   }
 }
 
-void Application::ConvertFile(File *file, NameData nameData) {
+void Application::ConvertFile(SnapshotFile *file) {
+  NameData nd = file->GetNameData();
+  if (mOutFormat == "df") {
+    nd.format = "df";
+    std::string outputName = nd.dir + "/" + nd.id + "." +
+    nd.format + "." + nd.snap;
 
+    DragonFile *df = new DragonFile(nd, true);
+    df->SetParticles(file->GetParticles());
+    df->SetSinks(file->GetSinks());
+    df->SetNumGas(file->GetNumGas());
+    df->SetNumSinks(file->GetNumSinks());
+    df->SetNumTot(file->GetNumPart());
+    df->SetTime(file->GetTime());
+    df->Write(outputName, true);
+  }
 }
 
 void Application::CenterDisc(File *file, int sinkID) {

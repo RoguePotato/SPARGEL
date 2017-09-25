@@ -31,16 +31,17 @@ struct NameData {
 class File {
 public:
   File() {};
-  File(std::string fileName, bool formatted) {};
+  File(NameData nd, bool formatted) {};
   ~File() {};
 
   virtual bool Read() = 0;
   virtual bool Write(std::string fileName, bool formatted) = 0;
 
-  std::string GetFileName() { return mFileName; }
+  virtual NameData GetNameData() { return mNameData; }
+  virtual std::string GetFileName() { return mNameData.name; }
 
 protected:
-  std::string mFileName = "";
+  NameData mNameData = {};
 
   std::ifstream mInStream;
   std::ofstream mOutStream;
@@ -58,11 +59,9 @@ protected:
 class SnapshotFile : public File {
 public:
   SnapshotFile() {};
-  SnapshotFile(std::string fileName, bool formatted) {};
+  SnapshotFile(NameData nd, bool formatted) {};
   ~SnapshotFile() {};
 
-  virtual NameData GetNameData() { return mNameData; }
-  virtual std::string GetFileName() { return mFileName; }
   virtual std::vector<Particle *> GetParticles() { return mParticles; }
   virtual std::vector<Sink *> GetSinks() { return mSinks; }
   virtual double GetTime() { return mTime; }
@@ -110,7 +109,6 @@ protected:
   BinaryReader *mBR;
   BinaryWriter *mBW;
 
-  NameData mNameData = {};
   bool mFormatted = true;
 
   std::vector<Particle *> mParticles;

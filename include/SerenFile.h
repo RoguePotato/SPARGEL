@@ -26,7 +26,7 @@
 
 class SerenFile : public SnapshotFile {
 public:
-  SerenFile(std::string fileName, bool formatted);
+  SerenFile(NameData nd, bool formatted);
   ~SerenFile();
 
   bool Read();

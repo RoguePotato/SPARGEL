@@ -24,7 +24,7 @@ bool Parameters::Read(std::string fileName) {
   if (!mInStream.is_open()) {
     return false;
   }
-  std::cout << "Reading parameters file: " << fileName << "\n";
+  // std::cout << "Reading parameters file: " << fileName << "\n";
 
   std::string line = "";
 

@@ -24,7 +24,7 @@
 
 class DragonFile : public SnapshotFile {
 public:
-  DragonFile(std::string fileName, bool formatted);
+  DragonFile(NameData nd, bool formatted);
   ~DragonFile();
 
   bool Read();

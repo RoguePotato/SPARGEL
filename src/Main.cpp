@@ -23,9 +23,11 @@ int main(int argc, char *argv[]) {
   Arguments *args = new Arguments(argc, argv);
   Application *app = new Application(args);
 
+  app->StartSplash();
   if (app->Initialise()) {
     app->Run();
   }
+  app->EndSplash();
 
   delete app;
   delete args;

@@ -15,26 +15,26 @@
 
 #include "DragonFile.h"
 
-DragonFile::DragonFile(std::string fileName, bool formatted) {
-  mFileName = fileName;
+DragonFile::DragonFile(NameData nd, bool formatted) {
+  mNameData = nd;
   mFormatted = formatted;
 }
 
 DragonFile::~DragonFile() {}
 
 bool DragonFile::Read() {
-  mInStream.open(mFileName);
+  mInStream.open(mNameData.name);
   if (!mInStream.is_open()) {
+    std::cout << "   Could not open DRAGON file " << mNameData.name
+              << " for reading!\n\n";
     return false;
   }
   if (mFormatted) {
-    std::cout << "Reading formatted DRAGON file: " << mFileName << "\n";
     ReadHeaderForm();
     AllocateMemory();
     ReadParticleForm();
     ReadSinkForm();
   } else {
-    std::cout << "Reading unformatted DRAGON file: " << mFileName << "\n";
     std::cout << " NOT IMPLEMENTED YET \n";
     // ReadHeaderUnform();
     // AllocateMemory();
@@ -50,18 +50,17 @@ bool DragonFile::Read() {
 bool DragonFile::Write(std::string fileName, bool formatted) {
   mOutStream.open(fileName, (formatted) ? std::ios::out : std::ios::binary);
   if (!mOutStream.is_open()) {
-    std::cout << "Could not open: " << fileName << " for writing!\n";
+    std::cout << "   Could not open DRAGON file " << fileName
+              << " for writing!\n\n";
     return false;
   }
 
   if (formatted) {
-    std::cout << "Writing formatted DRAGON file: " << fileName << "\n";
     Formatter formatStream(mOutStream, 18, 2, 10);
     WriteHeaderForm(formatStream);
     WriteParticleForm(formatStream);
     WriteSinkForm(formatStream);
   } else {
-    std::cout << "Writing unformatted DRAGON file: " << mFileName << "\n";
     std::cout << " NOT IMPLEMENTED YET \n";
     // mBW = new BinaryWriter(mOutStream);
     // WriteHeaderUnform();

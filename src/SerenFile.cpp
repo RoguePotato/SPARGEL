@@ -15,8 +15,8 @@
 
 #include "SerenFile.h"
 
-SerenFile::SerenFile(std::string fileName, bool formatted) {
-  mFileName = fileName;
+SerenFile::SerenFile(NameData nd, bool formatted) {
+  mNameData = nd;
   mFormatted = formatted;
 }
 
@@ -25,12 +25,13 @@ SerenFile::~SerenFile() {
 }
 
 bool SerenFile::Read() {
-  mInStream.open(mFileName, (mFormatted) ? std::ios::in : std::ios::binary);
+  mInStream.open(mNameData.name,
+                 (mFormatted) ? std::ios::in : std::ios::binary);
   if (!mInStream.is_open()) {
-    std::cout << "Could not open: " << mFileName << " for reading!\n";
+    std::cout << "   Could not open SEREN file " << mNameData.name
+              << " for reading!\n\n";
     return false;
   }
-  std::cout << "Reading SEREN file: " << mFileName << "\n";
 
   if (mFormatted) {
     ReadHeaderForm();
@@ -51,11 +52,12 @@ bool SerenFile::Read() {
 
   // Set sink data
   for (int i = 0; i < mSinks.size(); ++i) {
-    Sink *s = mSinks.at(i);
-    mSinks.at(i)->SetX(Vec3(s->GetData(1), s->GetData(2), s->GetData(3)));
-    mSinks.at(i)->SetV(Vec3(s->GetData(4), s->GetData(5), s->GetData(6)));
-    mSinks.at(i)->SetM(s->GetData(7));
-    mSinks.at(i)->SetH(s->GetData(8));
+    double *curData = mSinks.at(i)->GetAllData();
+    mSinks.at(i)->SetX(Vec3(curData[1], curData[2], curData[3]));
+    mSinks.at(i)->SetV(Vec3(curData[4], curData[5], curData[6]));
+    mSinks.at(i)->SetM(curData[7]);
+    mSinks.at(i)->SetH(curData[8]);
+    mSinks.at(i)->SetType(-1);
   }
 
   return true;
@@ -64,18 +66,17 @@ bool SerenFile::Read() {
 bool SerenFile::Write(std::string fileName, bool formatted) {
   mOutStream.open(fileName, (formatted) ? std::ios::out : std::ios::binary);
   if (!mOutStream.is_open()) {
-    std::cout << "Could not open: " << fileName << " for writing!\n";
+    std::cout << "   Could not open SEREN file " << fileName
+              << " for writing!\n";
     return false;
   }
 
   if (formatted) {
-    std::cout << "Writing formatted SEREN file: " << fileName << "\n";
     Formatter formatStream(mOutStream, 18, 2, 10);
     WriteHeaderForm(formatStream);
     WriteParticleForm(formatStream);
     WriteSinkForm(formatStream);
   } else {
-    std::cout << "Writing unformatted SEREN file: " << fileName << "\n";
     mBW = new BinaryWriter(mOutStream);
     WriteHeaderUnform();
     WriteParticleUnform();

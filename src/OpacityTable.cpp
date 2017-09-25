@@ -16,7 +16,7 @@
 #include "OpacityTable.h"
 
 OpacityTable::OpacityTable(std::string fileName, bool formatted) {
-  mFileName = fileName;
+  mNameData.name = fileName;
 }
 
 OpacityTable::~OpacityTable() {
@@ -38,11 +38,15 @@ OpacityTable::~OpacityTable() {
 }
 
 bool OpacityTable::Read() {
-  mInStream.open(mFileName.c_str(), std::ios::in);
+  mInStream.open(mNameData.name.c_str(), std::ios::in);
+
+  if (!mInStream.is_open()) {
+    std::cout << "Could not open EOS table " << mNameData.name
+              << " for reading!\n\n";
+    return false;
+  }
 
   if (!mInStream.good()) return false;
-
-  std::cout << "Reading opacity table: " << mFileName << "\n";
 
   std::string line;
   int i, j, l;
