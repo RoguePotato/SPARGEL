@@ -145,7 +145,7 @@ double OpacityTable::GetTemp(double density, double energy) {
 
   if (tempIndex > mNumTemp - 1) tempIndex = mNumTemp - 1;
 
-  result = pow10(mTemp[tempIndex]);
+  result = pow(10.0, mTemp[tempIndex]);
 
   return result;
 }
