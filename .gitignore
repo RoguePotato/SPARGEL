@@ -3,7 +3,7 @@ build
 lib/*
 
 # Ignore any executables
-bin/*
+bin/spargel
 
 # Notes
 NOTES.txt
