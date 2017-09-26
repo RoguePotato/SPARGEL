@@ -18,7 +18,7 @@
 Application::Application(Arguments *args) : mArgs(args) {}
 
 Application::~Application() {
-  // Only delete if they exist
+  mFiles.clear();
   // if (mArgs != NULL) delete mArgs;
   // if (mParams != NULL) delete mParams;
   // if (mOpacity != NULL) delete mOpacity;
@@ -137,24 +137,12 @@ void Application::Run() {
   }
 
   std::cout << "   Files analysed   : " << mFilesAnalysed << "\n\n";
-
-  // CloudCollapse
-  // std::sort(mMaxima.begin(), mMaxima.end(),
-  //           [](Maxima a, Maxima b) { return b.density > a.density; });
-  //
-  // std::ofstream outStream;
-  // outStream.open("MaxDensity.dat");
-  // for (int i = 0; i < mMaxima.size(); ++i) {
-  //   outStream << mMaxima.at(i).density << "\t" << mMaxima.at(i).temperature << "\n";
-  // }
-  // outStream.close();
 }
 
 void Application::Analyse(int task, int start, int end) {
   for (int i = start; i < end; ++i) {
     mFiles.at(i)->Read();
     if (mInFormat == "su") FindTemperatures((SnapshotFile *) mFiles.at(i));
-    // CloudCollapse((SnapshotFile *) mFiles.at(i));
     if (mConvert) ConvertFile((SnapshotFile *) mFiles.at(i));
     ++mFilesAnalysed;
     delete mFiles.at(i);
@@ -176,7 +164,6 @@ void Application::ConvertFile(SnapshotFile *file) {
     df->SetNumTot(file->GetNumPart());
     df->SetTime(file->GetTime());
     df->Write(outputName, true);
-    delete df;
   }
 }
 
@@ -194,23 +181,4 @@ void Application::FindTemperatures(SnapshotFile *file) {
     part.at(i)->SetT(temp);
   }
   file->SetParticles(part);
-}
-
-void Application::CloudCollapse(SnapshotFile *file) {
-  std::vector<Particle *> part = file->GetParticles();
-
-  std::sort(part.begin(), part.end(),
-            [](Particle *a, Particle *b) { return b->GetD() < a->GetD(); });
-
-  Maxima max;
-  max.density = 0.0;
-  max.temperature = 0.0;
-  for (int i = 0; i < 400; ++i) {
-    max.density += part.at(i)->GetD();
-    max.temperature += part.at(i)->GetT();
-  }
-  max.density /= 400.0;
-  max.temperature /= 400.0;
-
-  mMaxima.push_back(max);
 }

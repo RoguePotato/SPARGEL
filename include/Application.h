@@ -26,11 +26,6 @@
 #include "Parameters.h"
 #include "SerenFile.h"
 
-struct Maxima {
-  FLOAT density;
-  FLOAT temperature;
-};
-
 class Application {
 public:
   Application(Arguments *args);
@@ -47,21 +42,17 @@ private:
   int mFilesPerThread = 0;
   int mRemainder = 0;
 
-  Arguments *mArgs;
-  Parameters *mParams;
-  FileNameExtractor *mFNE;
-  OpacityTable *mOpacity;
+  Arguments *mArgs = NULL;
+  Parameters *mParams = NULL;
+  FileNameExtractor *mFNE = NULL;
+  OpacityTable *mOpacity = NULL;
   // Generator *mGenerator;
   // RadialAnalyser *mRA;
 
   std::vector<File *> mFiles;
   int mFilesAnalysed = 0;
   std::vector<std::string> mFileNames;
-  std::vector<Maxima> mMaxima;
-	// std::vector<File *> mConvertedFiles;
   // std::vector<RadialAnalyser *> mRadialAnalysers;
-  //
-  // std::ofstream mOutStream;
   //
   std::string mInFormat = "";
   std::string mOutFormat = "";
@@ -74,6 +65,4 @@ private:
   void CenterDisc(File *file, int sinkID = 1);
   void ConvertFile(SnapshotFile *file);
   void FindTemperatures(SnapshotFile *file);
-  void CloudCollapse(SnapshotFile *file);
-	// void WriteConvertedFiles(void);
 };
