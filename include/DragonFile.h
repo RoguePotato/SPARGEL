@@ -40,11 +40,11 @@ private:
 
   void AllocateMemory(void);
 
-  void ReadHeaderForm(void);
+  bool ReadHeaderForm(void);
   void ReadParticleForm(void);
   void ReadSinkForm(void);
 
-  void ReadHeaderUnform(void);
+  bool ReadHeaderUnform(void);
   void ReadParticleUnform(void);
   void ReadSinkUnform(void);
 

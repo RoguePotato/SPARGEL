@@ -42,14 +42,20 @@ bool SerenFile::Read() {
   }
 
   if (mFormatted) {
-    ReadHeaderForm();
+    if (!ReadHeaderForm()) {
+      std::cout << "   Error reading SEREN header format!\n\n";
+      return false;
+    }
     AllocateMemory();
     ReadParticleForm();
     ReadSinkForm();
   }
   else {
     mBR = new BinaryReader(mInStream);
-    ReadHeaderUnform();
+    if (!ReadHeaderUnform()) {
+      std::cout << "   Error reading SEREN header format!\n\n";
+      return false;
+    }
     AllocateMemory();
     ReadParticleUnform();
     ReadSinkUnform();
@@ -216,10 +222,12 @@ void SerenFile::CreateHeader(void) {
   mDoubleData[10] = 0.0; // tlite lastsnap
 }
 
-void SerenFile::ReadHeaderForm(void) {
+bool SerenFile::ReadHeaderForm(void) {
   std::string temp = "";
 
   mInStream >> mFormatID;
+  if (mFormatID.compare("SERENASCIIDUMPV2")) return false;
+
   for (int i = 0; i < 4; ++i)
     mInStream >> mHeader[i];
   for (int i = 0; i < 50; ++i)
@@ -249,6 +257,8 @@ void SerenFile::ReadHeaderForm(void) {
       mInStream >> mTypeData[i][j];
     }
   }
+
+  return true;
 }
 
 void SerenFile::ReadParticleForm(void) {
@@ -321,11 +331,12 @@ void SerenFile::ReadSinkForm(void) {
   }
 }
 
-void SerenFile::ReadHeaderUnform(void) {
+bool SerenFile::ReadHeaderUnform(void) {
   std::vector<char> fileTag(STRING_LENGTH);
   mInStream.read(&fileTag[0], STRING_LENGTH);
   std::string concatString(fileTag.begin(), fileTag.end());
   mFormatID = TrimWhiteSpace(concatString);
+  if (mFormatID.compare("SERENBINARYDUMPV3")) return false;
 
   for (int i = 0; i < 4; ++i)
     mBR->ReadValue(mHeader[i]);
@@ -358,6 +369,8 @@ void SerenFile::ReadHeaderUnform(void) {
       mBR->ReadValue(mTypeData[i][j]);
     }
   }
+
+  return true;
 }
 
 void SerenFile::ReadParticleUnform(void) {

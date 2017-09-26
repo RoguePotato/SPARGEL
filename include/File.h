@@ -90,11 +90,11 @@ protected:
 
   virtual void AllocateMemory(void) {};
 
-  virtual void ReadHeaderForm(void) {};
+  virtual bool ReadHeaderForm(void) {};
   virtual void ReadParticleForm(void) {};
   virtual void ReadSinkForm(void) {};
 
-  virtual void ReadHeaderUnform(void) {};
+  virtual bool ReadHeaderUnform(void) {};
   virtual void ReadParticleUnform(void) {};
   virtual void ReadSinkUnform(void) {};
 

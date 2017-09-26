@@ -108,11 +108,13 @@ void DragonFile::CreateHeader(void) {
   mIntData[3] = mNumSink;
 }
 
-void DragonFile::ReadHeaderForm(void) {
+bool DragonFile::ReadHeaderForm(void) {
   for (int i = 0; i < 20; ++i)
     mInStream >> mIntData[i];
   for (int i = 0; i < 50; ++i)
     mInStream >> mFloatData[i];
+
+  return true;
 }
 
 void DragonFile::ReadParticleForm(void) {
@@ -174,7 +176,9 @@ void DragonFile::ReadSinkForm(void) {
   // inherit from. Polymorph the sink particles into sinks.
 }
 
-void DragonFile::ReadHeaderUnform(void) {}
+bool DragonFile::ReadHeaderUnform(void) {
+  return true;
+}
 
 void DragonFile::ReadParticleUnform() {}
 
