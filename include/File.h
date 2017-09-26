@@ -32,7 +32,7 @@ class File {
 public:
   File() {};
   File(NameData nd, bool formatted) {};
-  ~File() {};
+  virtual ~File() {};
 
   virtual bool Read() = 0;
   virtual bool Write(std::string fileName, bool formatted) = 0;
@@ -60,7 +60,7 @@ class SnapshotFile : public File {
 public:
   SnapshotFile() {};
   SnapshotFile(NameData nd, bool formatted) {};
-  ~SnapshotFile() {};
+  virtual ~SnapshotFile() {};
 
   virtual std::vector<Particle *> GetParticles() { return mParticles; }
   virtual std::vector<Sink *> GetSinks() { return mSinks; }
