@@ -175,7 +175,7 @@ void Application::ConvertFile(SnapshotFile *file) {
     df->SetNumSinks(file->GetNumSinks());
     df->SetNumTot(file->GetNumPart());
     df->SetTime(file->GetTime());
-    // df->Write(outputName, true);
+    df->Write(outputName, true);
     delete df;
   }
 }
