@@ -20,7 +20,17 @@ DragonFile::DragonFile(NameData nd, bool formatted) {
   mFormatted = formatted;
 }
 
-DragonFile::~DragonFile() {}
+DragonFile::~DragonFile() {
+  for (int i = 0; i < mParticles.size(); ++i) {
+    delete mParticles[i];
+  }
+  mParticles.clear();
+
+  for (int i = 0; i < mSinks.size(); ++i) {
+    delete mSinks[i];
+  }
+  mSinks.clear();
+}
 
 bool DragonFile::Read() {
   mInStream.open(mNameData.name);

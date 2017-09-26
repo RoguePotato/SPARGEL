@@ -157,6 +157,7 @@ void Application::Analyse(int task, int start, int end) {
     // CloudCollapse((SnapshotFile *) mFiles.at(i));
     if (mConvert) ConvertFile((SnapshotFile *) mFiles.at(i));
     ++mFilesAnalysed;
+    delete mFiles.at(i);
   }
 }
 
@@ -174,7 +175,8 @@ void Application::ConvertFile(SnapshotFile *file) {
     df->SetNumSinks(file->GetNumSinks());
     df->SetNumTot(file->GetNumPart());
     df->SetTime(file->GetTime());
-    df->Write(outputName, true);
+    // df->Write(outputName, true);
+    delete df;
   }
 }
 

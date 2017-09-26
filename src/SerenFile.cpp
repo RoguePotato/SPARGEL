@@ -21,7 +21,15 @@ SerenFile::SerenFile(NameData nd, bool formatted) {
 }
 
 SerenFile::~SerenFile() {
+  for (int i = 0; i < mParticles.size(); ++i) {
+    delete mParticles[i];
+  }
+  mParticles.clear();
 
+  for (int i = 0; i < mSinks.size(); ++i) {
+    delete mSinks[i];
+  }
+  mSinks.clear();
 }
 
 bool SerenFile::Read() {
