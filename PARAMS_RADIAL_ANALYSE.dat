@@ -1,0 +1,32 @@
+#------------------------------------------------------------------------------#
+# SParGeL: Smoothed Particle Generator and Loader                              #
+#------------------------------------------------------------------------------#
+#                                                                              #
+# This file is a complete list of parameters used within SParGeL.              #
+#------------------------------------------------------------------------------#
+
+ Number of threads       : THREADS = 1
+
+#------------------------------------------------------------------------------#
+# FILE IO                                                                      #
+#------------------------------------------------------------------------------#
+
+ Input file name         : INPUT_FILE = COMMAND_LINE
+ Input file format       : IN_FORMAT = su
+
+ Output in new format    : CONVERT = 0
+ Output file format      : OUT_FORMAT = su
+ Output new snapshots    : OUTPUT_FILES = 1
+
+ Opacity table path      : EOS_TABLE = eos.bell.cc.dat
+
+#------------------------------------------------------------------------------#
+# ANALYSIS                                                                     #
+#------------------------------------------------------------------------------#
+
+ Disc analysis           : DISC_ANALYSIS = 1
+ Center around sink      : DISC_CENTER = 1
+ Radial analysis         : RADIAL_ANALYSIS = 1
+ Inner radius            : RADIUS_IN = 0
+ Outer radius            : RADIUS_OUT = 500
+ Number of bins          : RADIAL_BINS = 500

@@ -66,7 +66,7 @@ bool Application::Initialise() {
   mCloudAnalyse = mParams->GetInt("CLOUD_ANALYSIS");
   mDiscAnalyse = mParams->GetInt("DISC_ANALYSIS");
   mCenter = mParams->GetInt("DISC_CENTER");
-  mRadial = mParams->GetInt("RADIAL_AVG");
+  mRadialAnalyse = mParams->GetInt("RADIAL_ANALYSIS");
 
   mOpacity = new OpacityTable(mEosFilePath, true);
   if (!mOpacity->Read()) return false;
@@ -77,6 +77,12 @@ bool Application::Initialise() {
 
   if (mDiscAnalyse) {
     mDiscAnalyser = new DiscAnalyser();
+  }
+
+  if (mRadialAnalyse) {
+    mRadialAnalyser = new RadialAnalyser(mParams->GetInt("RADIUS_IN"),
+                                         mParams->GetInt("RADIUS_OUT"),
+                                         mParams->GetInt("RADIAL_BINS"));
   }
 
   // mGenerator = new Generator(mParams, mOpacity);
@@ -153,25 +159,32 @@ void Application::Run() {
 
 void Application::Analyse(int task, int start, int end) {
   for (int i = start; i < end; ++i) {
+    // File read
     if (!mFiles.at(i)->Read()) break;
 
+    // U to T conversion for SEREN format
     if (mInFormat == "su" || mInFormat == "sf") {
       FindTemperatures((SnapshotFile *) mFiles.at(i));
     }
+    // Cloud analysis
     if (mCloudAnalyse) {
       mCloudAnalyser->FindCentralQuantities((SnapshotFile *) mFiles.at(i));
     }
+    // Disc analysis
     if (mDiscAnalyse) {
       if (mCenter) {
         mDiscAnalyser->Center((SnapshotFile *) mFiles.at(i), mCenter - 1);
       }
-      if (mRadial) {
-        mDiscAnalyser->Radial((SnapshotFile *) mFiles.at(i));
-      }
     }
+    // Radial analysis
+    if (mRadialAnalyse) {
+      mRadialAnalyser->Run((SnapshotFile *) mFiles.at(i));
+    }
+    // File conversion
     if (mConvert) {
       mFiles.at(i)->SetNameDataFormat(mOutFormat);
     }
+    // Snapshot output
     if (mOutput) {
       OutputFile((SnapshotFile *) mFiles.at(i));
     }

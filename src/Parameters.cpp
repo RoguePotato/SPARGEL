@@ -120,9 +120,8 @@ void Parameters::SetDefaultParameters() {
   mIntParams["CLOUD_ANALYSIS"] = 0;
   mIntParams["DISC_ANALYSIS"] = 0;
   mIntParams["DISC_CENTER"] = 0;
-  mIntParams["RADIAL_AVG"] = 0;
-  mIntParams["LOG_BINS"] = 0;
-  mIntParams["RADIUS_IN"] = 1;
+  mIntParams["RADIAL_ANALYSIS"] = 0;
+  mIntParams["RADIUS_IN"] = 0;
   mIntParams["RADIUS_OUT"] = 100;
   mIntParams["RADIAL_BINS"] = 100;
 

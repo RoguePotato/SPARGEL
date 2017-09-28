@@ -34,3 +34,4 @@ static double AU_TO_M = 1.495978707E11;
 static double AU_TO_KM = 1.495978707E8;
 static double MSOLAU_TO_KGM = 8.88803576E7;
 static double MSOLPERAU3_TO_GPERCM3 = 1.682E6;
+static double KMPERS_TO_MPERS = 1000.0;

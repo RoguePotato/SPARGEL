@@ -26,6 +26,7 @@
 #include "Generator.h"
 #include "OpacityTable.h"
 #include "Parameters.h"
+#include "RadialAnalyser.h"
 #include "SerenFile.h"
 
 class Application {
@@ -50,6 +51,7 @@ private:
   OpacityTable *mOpacity = NULL;
   CloudAnalyser *mCloudAnalyser = NULL;
   DiscAnalyser *mDiscAnalyser = NULL;
+  RadialAnalyser *mRadialAnalyser = NULL;
   // Generator *mGenerator;
 
   std::vector<File *> mFiles;
@@ -64,9 +66,10 @@ private:
   int mCloudAnalyse = 0;
   int mDiscAnalyse = 0;
   int mCenter = 0;
-  int mRadial = 0;
+  int mRadialAnalyse = 0;
 
   void Analyse(int task, int start, int end);
   void OutputFile(SnapshotFile *file);
   void FindTemperatures(SnapshotFile *file);
+  void FindToomre(SnapshotFile *file);
 };
