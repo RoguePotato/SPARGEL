@@ -61,9 +61,11 @@ bool Application::Initialise() {
   mConvert = mParams->GetInt("CONVERT");
   mInFormat = mParams->GetString("IN_FORMAT");
   mOutFormat = mParams->GetString("OUT_FORMAT");
+  mOutput = mParams->GetInt("OUTPUT_FILES");
   mEosFilePath = mParams->GetString("EOS_TABLE");
   mCloudAnalyse = mParams->GetInt("CLOUD_ANALYSIS");
-  mCenter = mParams->GetInt("CENTER_DISC");
+  mDiscAnalyse = mParams->GetInt("DISC_ANALYSIS");
+  mCenter = mParams->GetInt("DISC_CENTER");
   mRadial = mParams->GetInt("RADIAL_AVG");
 
   mOpacity = new OpacityTable(mEosFilePath, true);
@@ -71,6 +73,10 @@ bool Application::Initialise() {
 
   if (mCloudAnalyse) {
     mCloudAnalyser = new CloudAnalyser(mParams->GetString("CLOUD_OUTPUT"));
+  }
+
+  if (mDiscAnalyse) {
+    mDiscAnalyser = new DiscAnalyser();
   }
 
   // mGenerator = new Generator(mParams, mOpacity);
@@ -106,7 +112,6 @@ bool Application::Initialise() {
     std::cout << "No files selected, exiting...\n";
     return false;
   }
-
   return true;
 }
 
@@ -150,27 +155,38 @@ void Application::Analyse(int task, int start, int end) {
   for (int i = start; i < end; ++i) {
     if (!mFiles.at(i)->Read()) break;
 
-    if (mInFormat == "su") {
+    if (mInFormat == "su" || mInFormat == "sf") {
       FindTemperatures((SnapshotFile *) mFiles.at(i));
-    }
-    if (mConvert) {
-      ConvertFile((SnapshotFile *) mFiles.at(i));
     }
     if (mCloudAnalyse) {
       mCloudAnalyser->FindCentralQuantities((SnapshotFile *) mFiles.at(i));
+    }
+    if (mDiscAnalyse) {
+      if (mCenter) {
+        mDiscAnalyser->Center((SnapshotFile *) mFiles.at(i), mCenter - 1);
+      }
+      if (mRadial) {
+        mDiscAnalyser->Radial((SnapshotFile *) mFiles.at(i));
+      }
+    }
+    if (mConvert) {
+      mFiles.at(i)->SetNameDataFormat(mOutFormat);
+    }
+    if (mOutput) {
+      OutputFile((SnapshotFile *) mFiles.at(i));
     }
     ++mFilesAnalysed;
     delete mFiles.at(i);
   }
 }
 
-void Application::ConvertFile(SnapshotFile *file) {
+void Application::OutputFile(SnapshotFile *file) {
   NameData nd = file->GetNameData();
-  if (mOutFormat == "df") {
-    nd.format = "df";
-    std::string outputName = nd.dir + "/" + nd.id + "." +
-    nd.format + "." + nd.snap;
+  std::string outputName = nd.dir + "/" + nd.id + "." +
+  nd.format + "." + nd.snap + nd.append;
 
+  // TODO: reduce code duplication
+  if (nd.format == "df") {
     DragonFile *df = new DragonFile(nd, true);
     df->SetParticles(file->GetParticles());
     df->SetSinks(file->GetSinks());
@@ -180,10 +196,17 @@ void Application::ConvertFile(SnapshotFile *file) {
     df->SetTime(file->GetTime());
     df->Write(outputName, true);
   }
-}
 
-void Application::CenterDisc(File *file, int sinkID) {
-
+  if (nd.format == "su") {
+    SerenFile *su = new SerenFile(nd, false);
+    su->SetParticles(file->GetParticles());
+    su->SetSinks(file->GetSinks());
+    su->SetNumGas(file->GetNumGas());
+    su->SetNumSinks(file->GetNumSinks());
+    su->SetNumTot(file->GetNumPart());
+    su->SetTime(file->GetTime());
+    su->Write(outputName, false);
+  }
 }
 
 void Application::FindTemperatures(SnapshotFile *file) {

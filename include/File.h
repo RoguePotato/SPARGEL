@@ -26,6 +26,7 @@ struct NameData {
   std::string format = "";
   std::string id = "";
   std::string dir = "";
+  std::string append = "";
 };
 
 class File {
@@ -39,6 +40,9 @@ public:
 
   virtual NameData GetNameData() { return mNameData; }
   virtual std::string GetFileName() { return mNameData.name; }
+
+  virtual void SetNameDataFormat(std::string str) { mNameData.format = str; }
+  virtual void SetNameDataAppend(std::string str) { mNameData.append = str; }
 
 protected:
   NameData mNameData = {};

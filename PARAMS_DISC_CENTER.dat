@@ -5,7 +5,7 @@
 # This file is a complete list of parameters used within SParGeL.              #
 #------------------------------------------------------------------------------#
 
- Number of threads       : THREADS = -1
+ Number of threads       : THREADS = 1
 
 #------------------------------------------------------------------------------#
 # FILE IO                                                                      #
@@ -14,8 +14,15 @@
  Input file name         : INPUT_FILE = COMMAND_LINE
  Input file format       : IN_FORMAT = su
 
- Convert to out format   : CONVERT = 1
- Output file format      : OUT_FORMAT = df
+ Output in new format    : CONVERT = 0
+ Output file format      : OUT_FORMAT = su
  Output new snapshots    : OUTPUT_FILES = 1
 
  Opacity table path      : EOS_TABLE = eos.bell.cc.dat
+
+#------------------------------------------------------------------------------#
+# ANALYSIS                                                                     #
+#------------------------------------------------------------------------------#
+
+ Disc analysis           : DISC_ANALYSIS = 1
+ Center around sink      : DISC_CENTER = 1

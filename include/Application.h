@@ -18,6 +18,7 @@
 
 #include "Arguments.h"
 #include "CloudAnalyser.h"
+#include "DiscAnalyser.h"
 #include "Definitions.h"
 #include "DragonFile.h"
 #include "File.h"
@@ -48,24 +49,24 @@ private:
   FileNameExtractor *mFNE = NULL;
   OpacityTable *mOpacity = NULL;
   CloudAnalyser *mCloudAnalyser = NULL;
+  DiscAnalyser *mDiscAnalyser = NULL;
   // Generator *mGenerator;
-  // RadialAnalyser *mRA;
 
   std::vector<File *> mFiles;
   int mFilesAnalysed = 0;
   std::vector<std::string> mFileNames;
-  // std::vector<RadialAnalyser *> mRadialAnalysers;
-  //
+
   std::string mInFormat = "";
   std::string mOutFormat = "";
   std::string mEosFilePath = "";
+  int mOutput = 0;
   int mConvert = 0;
   int mCloudAnalyse = 0;
+  int mDiscAnalyse = 0;
   int mCenter = 0;
   int mRadial = 0;
 
   void Analyse(int task, int start, int end);
-  void CenterDisc(File *file, int sinkID = 1);
-  void ConvertFile(SnapshotFile *file);
+  void OutputFile(SnapshotFile *file);
   void FindTemperatures(SnapshotFile *file);
 };

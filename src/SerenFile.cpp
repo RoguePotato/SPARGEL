@@ -536,8 +536,6 @@ void SerenFile::WriteHeaderUnform(void) {
   for (int i = 0; i < 50; ++i)
     mBW->WriteValue(mDoubleData[i]);
 
-  std::cout << "Particles: " << mIntData[0] << "\n";
-
   for (int i = 0; i < mNumUnit; ++i) {
     std::ostringstream stream;
     stream << std::left << std::setw(STRING_LENGTH)

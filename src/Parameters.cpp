@@ -113,11 +113,13 @@ void Parameters::SetDefaultParameters() {
   mStringParams["OUTPUT_ID"] = "PDA";
   mIntParams["CONVERT"] = 0;
   mStringParams["OUT_FORMAT"] = "sf";
+  mIntParams["OUTPUT_FILES"] = 0;
   mStringParams["CLOUD_OUTPUT"] = "cloud.dat";
   mStringParams["EOS_TABLE"] = "eos.bell.cc.dat";
 
   mIntParams["CLOUD_ANALYSIS"] = 0;
-  mIntParams["CENTER_DISC"] = 0;
+  mIntParams["DISC_ANALYSIS"] = 0;
+  mIntParams["DISC_CENTER"] = 0;
   mIntParams["RADIAL_AVG"] = 0;
   mIntParams["LOG_BINS"] = 0;
   mIntParams["RADIUS_IN"] = 1;
