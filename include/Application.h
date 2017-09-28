@@ -17,6 +17,7 @@
 #pragma once
 
 #include "Arguments.h"
+#include "CloudAnalyser.h"
 #include "Definitions.h"
 #include "DragonFile.h"
 #include "File.h"
@@ -46,6 +47,7 @@ private:
   Parameters *mParams = NULL;
   FileNameExtractor *mFNE = NULL;
   OpacityTable *mOpacity = NULL;
+  CloudAnalyser *mCloudAnalyser = NULL;
   // Generator *mGenerator;
   // RadialAnalyser *mRA;
 
@@ -58,6 +60,7 @@ private:
   std::string mOutFormat = "";
   std::string mEosFilePath = "";
   int mConvert = 0;
+  int mCloudAnalyse = 0;
   int mCenter = 0;
   int mRadial = 0;
 

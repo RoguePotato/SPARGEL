@@ -62,11 +62,16 @@ bool Application::Initialise() {
   mInFormat = mParams->GetString("IN_FORMAT");
   mOutFormat = mParams->GetString("OUT_FORMAT");
   mEosFilePath = mParams->GetString("EOS_TABLE");
+  mCloudAnalyse = mParams->GetInt("CLOUD_ANALYSIS");
   mCenter = mParams->GetInt("CENTER_DISC");
   mRadial = mParams->GetInt("RADIAL_AVG");
 
   mOpacity = new OpacityTable(mEosFilePath, true);
-   if (!mOpacity->Read()) return false;
+  if (!mOpacity->Read()) return false;
+
+  if (mCloudAnalyse) {
+    mCloudAnalyser = new CloudAnalyser(mParams->GetString("CLOUD_OUTPUT"));
+  }
 
   // mGenerator = new Generator(mParams, mOpacity);
 
@@ -136,14 +141,24 @@ void Application::Run() {
     threads[i].join();
   }
 
+  if (mCloudAnalyse) mCloudAnalyser->Write();
+
   std::cout << "   Files analysed   : " << mFilesAnalysed << "\n\n";
 }
 
 void Application::Analyse(int task, int start, int end) {
   for (int i = start; i < end; ++i) {
-    mFiles.at(i)->Read();
-    if (mInFormat == "su") FindTemperatures((SnapshotFile *) mFiles.at(i));
-    if (mConvert) ConvertFile((SnapshotFile *) mFiles.at(i));
+    if (!mFiles.at(i)->Read()) break;
+
+    if (mInFormat == "su") {
+      FindTemperatures((SnapshotFile *) mFiles.at(i));
+    }
+    if (mConvert) {
+      ConvertFile((SnapshotFile *) mFiles.at(i));
+    }
+    if (mCloudAnalyse) {
+      mCloudAnalyser->FindCentralQuantities((SnapshotFile *) mFiles.at(i));
+    }
     ++mFilesAnalysed;
     delete mFiles.at(i);
   }
