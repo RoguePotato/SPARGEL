@@ -5,7 +5,7 @@
 # This file is a complete list of parameters used within SParGeL.              #
 #------------------------------------------------------------------------------#
 
- Number of threads       : THREADS = 1
+ Number of threads       : THREADS = -1
 
 #------------------------------------------------------------------------------#
 # FILE IO                                                                      #

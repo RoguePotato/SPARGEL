@@ -135,16 +135,14 @@ void Application::Run() {
 
   std::cout << "   EOS table        : " << mOpacity->GetFileName() << "\n\n";
 
-  // Run threaded analysis, remainder added on to thread 0
-  threads[0] = std::thread(&Application::Analyse,
-                           this,
-                           0, 0, mRemainder + mFilesPerThread);
-  for (int i = 1; i < mNumThreads; ++i) {
-    threads[i] = std::thread(&Application::Analyse,
-                             this,
-                             i,
-                             mRemainder + ((i + 0) * mFilesPerThread),
-                             mRemainder + ((i + 1) * mFilesPerThread));
+  int pos = 0;
+  for (int i = 0; i < mNumThreads; ++i) {
+    int start = pos;
+    int end = pos + mFilesPerThread + ((mRemainder > 0) ? 1 : 0);
+    pos = end;
+    --mRemainder;
+
+    threads[i] = std::thread(&Application::Analyse, this, i, start, end);
   }
 
   // Join the threads
