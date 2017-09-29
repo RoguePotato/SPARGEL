@@ -26,7 +26,7 @@
 
  Disc analysis           : DISC_ANALYSIS = 1
  Center around sink      : DISC_CENTER = 1
- Radial analysis         : RADIAL_ANALYSIS = 0
+ Radial analysis         : RADIAL_ANALYSIS = 1
  Inner radius            : RADIUS_IN = 0
  Outer radius            : RADIUS_OUT = 500
  Number of bins          : RADIAL_BINS = 500

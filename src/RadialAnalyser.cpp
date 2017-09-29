@@ -21,7 +21,10 @@ RadialAnalyser::RadialAnalyser(int in, int out, int bins) :
 }
 
 RadialAnalyser::~RadialAnalyser() {
-
+  for (int i = 0; i < mRadialBins.size(); ++i) {
+    delete mRadialBins[i];
+  }
+  mRadialBins.clear();
 }
 
 void RadialAnalyser::Run(SnapshotFile *file) {
@@ -41,7 +44,7 @@ void RadialAnalyser::Run(SnapshotFile *file) {
 
     int binID = GetBinID(r - mIn);
 
-    if (binID < mRadialBins.size()) {
+    if (binID < mRadialBins.size() && binID >= 0) {
       mRadialBins.at(binID)->AddParticle(part[i]);
     }
   }

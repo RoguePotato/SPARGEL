@@ -79,12 +79,6 @@ bool Application::Initialise() {
     mDiscAnalyser = new DiscAnalyser();
   }
 
-  if (mRadialAnalyse) {
-    mRadialAnalyser = new RadialAnalyser(mParams->GetInt("RADIUS_IN"),
-                                         mParams->GetInt("RADIUS_OUT"),
-                                         mParams->GetInt("RADIAL_BINS"));
-  }
-
   // mGenerator = new Generator(mParams, mOpacity);
 
   // Create files
@@ -176,7 +170,11 @@ void Application::Analyse(int task, int start, int end) {
     }
     // Radial analysis
     if (mRadialAnalyse) {
-      mRadialAnalyser->Run((SnapshotFile *) mFiles.at(i));
+      RadialAnalyser *ra = new RadialAnalyser(mParams->GetInt("RADIUS_IN"),
+                                              mParams->GetInt("RADIUS_OUT"),
+                                              mParams->GetInt("RADIAL_BINS"));
+      ra->Run((SnapshotFile *) mFiles.at(i));
+      delete ra;
     }
     // File conversion
     if (mConvert) {
