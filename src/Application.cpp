@@ -99,6 +99,9 @@ bool Application::Initialise() {
     else if (mInFormat == "df"){
       mFiles.push_back(new DragonFile(nd, true));
     }
+    else if (mInFormat == "column"){
+      mFiles.push_back(new ColumnFile(nd));
+    }
     else {
       std::cout << "Unrecognised input file format, exiting...\n";
       return false;

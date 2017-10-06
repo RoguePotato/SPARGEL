@@ -18,6 +18,7 @@
 
 #include "Arguments.h"
 #include "CloudAnalyser.h"
+#include "ColumnFile.h"
 #include "DiscAnalyser.h"
 #include "Definitions.h"
 #include "DragonFile.h"
