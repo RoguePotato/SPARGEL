@@ -70,6 +70,7 @@ public:
   virtual std::vector<Sink *> GetSinks() { return mSinks; }
   virtual double GetTime() { return mTime; }
   virtual int GetNumGas() { return mNumGas; }
+  virtual int GetNumDust() { return mNumDust; }
   virtual int GetNumSinks() { return mNumSink; }
   virtual int GetNumPart() { return mNumTot; }
   virtual bool GetFormatted() { return mFormatted; }
@@ -119,6 +120,7 @@ protected:
   std::vector<Sink *> mSinks;
 
   int mNumGas = 0;
+  int mNumDust = 0;
   int mNumSink = 0;
   int mNumTot = 0;
 
