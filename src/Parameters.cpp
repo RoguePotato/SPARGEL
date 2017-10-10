@@ -118,6 +118,7 @@ void Parameters::SetDefaultParameters() {
   mStringParams["EOS_TABLE"] = "eos.bell.cc.dat";
 
   mIntParams["CLOUD_ANALYSIS"] = 0;
+  mIntParams["SINK_ANALYSIS"] = 0;
   mIntParams["DISC_ANALYSIS"] = 0;
   mIntParams["DISC_CENTER"] = 0;
   mIntParams["RADIAL_ANALYSIS"] = 0;

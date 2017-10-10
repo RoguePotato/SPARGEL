@@ -65,6 +65,7 @@ bool Application::Initialise() {
   mEosFilePath = mParams->GetString("EOS_TABLE");
   mCloudAnalyse = mParams->GetInt("CLOUD_ANALYSIS");
   mDiscAnalyse = mParams->GetInt("DISC_ANALYSIS");
+  mSinkAnalyse = mParams->GetInt("SINK_ANALYSIS");
   mCenter = mParams->GetInt("DISC_CENTER");
   mRadialAnalyse = mParams->GetInt("RADIAL_ANALYSIS");
 
@@ -77,6 +78,10 @@ bool Application::Initialise() {
 
   if (mDiscAnalyse) {
     mDiscAnalyser = new DiscAnalyser();
+  }
+
+  if (mSinkAnalyse) {
+    mSinkAnalyser = new SinkAnalyser();
   }
 
   // mGenerator = new Generator(mParams, mOpacity);
@@ -101,6 +106,9 @@ bool Application::Initialise() {
     }
     else if (mInFormat == "column"){
       mFiles.push_back(new ColumnFile(nd));
+    }
+    else if (mInFormat == "sink") {
+      mFiles.push_back(new SinkFile(nd));
     }
     else {
       std::cout << "Unrecognised input file format, exiting...\n";
@@ -148,6 +156,10 @@ void Application::Run() {
   }
 
   if (mCloudAnalyse) mCloudAnalyser->Write();
+  if (mSinkAnalyse) {
+    mSinkAnalyser->WriteMassRadius();
+    mSinkAnalyser->WriteNbody();
+  }
 
   std::cout << "   Files analysed   : " << mFilesAnalysed << "\n\n";
 }
@@ -170,6 +182,11 @@ void Application::Analyse(int task, int start, int end) {
       if (mCenter) {
         mDiscAnalyser->Center((SnapshotFile *) mFiles.at(i), mCenter - 1);
       }
+    }
+    // Sink analysis
+    if (mSinkAnalyse) {
+      mSinkAnalyser->AddMassRadius((SinkFile *) mFiles.at(i));
+      mSinkAnalyser->AddNbody((SinkFile *) mFiles.at(i));
     }
     // Radial analysis
     if (mRadialAnalyse) {

@@ -29,6 +29,8 @@
 #include "Parameters.h"
 #include "RadialAnalyser.h"
 #include "SerenFile.h"
+#include "SinkAnalyser.h"
+#include "SinkFile.h"
 
 class Application {
 public:
@@ -52,6 +54,7 @@ private:
   OpacityTable *mOpacity = NULL;
   CloudAnalyser *mCloudAnalyser = NULL;
   DiscAnalyser *mDiscAnalyser = NULL;
+  SinkAnalyser *mSinkAnalyser = NULL;
   RadialAnalyser *mRadialAnalyser = NULL;
   // Generator *mGenerator;
 
@@ -66,6 +69,7 @@ private:
   int mConvert = 0;
   int mCloudAnalyse = 0;
   int mDiscAnalyse = 0;
+  int mSinkAnalyse = 0;
   int mCenter = 0;
   int mRadialAnalyse = 0;
 
