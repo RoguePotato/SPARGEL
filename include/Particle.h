@@ -33,6 +33,7 @@ public:
   double GetD() { return mD; }
   double GetM() { return mM; }
   double GetU() { return mU; }
+  double GetTau() { return mTau; }
   int GetType() { return mType; }
 
   void SetID(int id) { mID = id; }
@@ -43,6 +44,7 @@ public:
   void SetD(double D) { mD = D; }
   void SetM(double M) { mM = M; }
   void SetU(double U) { mU = U; }
+  void SetTau(double tau) { mTau = tau; }
   void SetType(int type) { mType = type; }
 
 private:
@@ -59,6 +61,7 @@ private:
   double mQ = 0.0;
   double mGamma = 0.0;
   double mMu = 0.0;
+  double mTau = 0.0;
   int mType = 1;
 };
 

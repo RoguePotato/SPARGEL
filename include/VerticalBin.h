@@ -1,4 +1,4 @@
-//===-- RadialBin.h -------------------------------------------------------===//
+//===-- VerticalBin.h -----------------------------------------------------===//
 //
 //                                  SPARGEL
 //                   Smoothed Particle Generator and Loader
@@ -9,13 +9,14 @@
 //===----------------------------------------------------------------------===//
 ///
 /// \file
-/// RadialBin.h stores particles (and sinks if chosen) in containers constrained
-/// by radial value. Average quantites are calculated within this class. The
-/// average indices are as thus:
+/// VerticalBin.h stores particles in containers constrained by height above the
+/// disc. Average quantites are calculated within this class. The average
+/// indices are as thus:
 /// 0 : Density
 /// 1 : Temperature
 /// 2 : Mass
-/// 3 : Toomre parameter
+/// 3 : -
+/// 4 : Optical depth
 ///
 //===----------------------------------------------------------------------===//
 
@@ -25,32 +26,25 @@
 #include "Definitions.h"
 #include "File.h"
 #include "Particle.h"
-#include "VerticalBin.h"
 
-class RadialBin {
+class VerticalBin {
 public:
-  RadialBin(FLOAT starMass, int in, int out, FLOAT width);
-  ~RadialBin();
+  VerticalBin(FLOAT in, FLOAT out, FLOAT width);
+  ~VerticalBin();
 
   void AddParticle(Particle *p) { mParticles.push_back(p); }
-  void AddSink(Sink *s) { mSinks.push_back(s); }
 
   void CalculateValues(void);
 
   FLOAT GetMid() { return mIn + (mWidth / 2.0); }
   FLOAT GetAverage(int index) { return mAverages[index]; }
   int GetNumParticles() { return mParticles.size(); }
-  std::vector<VerticalBin *> GetVerticalBins() { return mVerticalBins; }
 
 private:
-  int mIn = 0;
-  int mOut = 0;
+  FLOAT mIn = 0;
+  FLOAT mOut = 0;
   FLOAT mWidth = 0.0;
-  FLOAT mStarMass = 0.0;
-  int mMidplanes = 0;
 
   std::vector<Particle *> mParticles;
-  std::vector<Sink *> mSinks;
-  std::vector<VerticalBin *> mVerticalBins;
   FLOAT mAverages[16] = {};
 };

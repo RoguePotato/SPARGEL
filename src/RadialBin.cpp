@@ -26,6 +26,11 @@ RadialBin::~RadialBin() {
 void RadialBin::CalculateValues(void) {
   if (mParticles.size() <= 0) return;
 
+  // Create vertical bins
+  for (int i = 0; i < 100; ++i) {
+    mVerticalBins.push_back(new VerticalBin(i/10.0, (i + 1)/10.0, 0.1));
+  }
+
   for (int i = 0; i < mParticles.size(); ++i) {
     Particle *p = mParticles[i];
 
@@ -36,6 +41,17 @@ void RadialBin::CalculateValues(void) {
       ++mMidplanes;
     }
     mAverages[2] += p->GetM() * MSUN_TO_KG;
+    mAverages[4] += p->GetTau();
+
+    for (int j = 0; j < 100; ++j) {
+      if (p->GetX().z > (j/10.0) && p->GetX().z < (j + 1)/10.0) {
+        mVerticalBins.at(j)->AddParticle(p);
+      }
+    }
+  }
+
+  for (int i = 0; i < mVerticalBins.size(); ++i) {
+    mVerticalBins[i]->CalculateValues();
   }
 
   // Toomre, requires total bin mass

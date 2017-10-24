@@ -20,6 +20,7 @@
 #include "Definitions.h"
 #include "File.h"
 #include "RadialBin.h"
+#include "VerticalBin.h"
 
 class RadialAnalyser {
 public:

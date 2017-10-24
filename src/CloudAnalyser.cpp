@@ -29,13 +29,14 @@ void CloudAnalyser::FindCentralQuantities(SnapshotFile *file) {
   std::sort(part.begin(), part.end(),
             [](Particle *a, Particle *b) { return b->GetD() < a->GetD(); });
 
+  int avgNum = 128;//part.size() / 128;
   CentralValue m;
-  for (int i = 0; i < 128; ++i) {
+  for (int i = 0; i < avgNum; ++i) {
     m.density += part[i]->GetD();
     m.temperature += part[i]->GetT();
   }
-  m.density /= 128.0;
-  m.temperature /= 128.0;
+  m.density /= avgNum;
+  m.temperature /= avgNum;
   mMaxima.push_back(m);
 }
 

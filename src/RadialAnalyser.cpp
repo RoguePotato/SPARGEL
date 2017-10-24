@@ -54,12 +54,13 @@ void RadialAnalyser::Run(SnapshotFile *file) {
     mRadialBins[i]->CalculateValues();
   }
 
-  // Output
+  // Output radial
   // 1: Radius
   // 2: Density
   // 3: Temperature
   // 4: Mass
   // 5: Toomre
+  // 6: Optical depth
   NameData nd = file->GetNameData();
   std::string outputName = nd.dir + "/" + nd.id + "." +
   nd.format + "." + nd.snap + nd.append + ".radial";
@@ -72,6 +73,21 @@ void RadialAnalyser::Run(SnapshotFile *file) {
     out << b->GetMid() << "\t";
     for (int j = 0; j < 16; ++j) {
       out << b->GetAverage(j) << "\t";
+    }
+    out << "\n";
+  }
+  out.close();
+
+  // Output vertical
+  outputName = nd.dir + "/" + nd.id + "." +
+  nd.format + "." + nd.snap + nd.append + ".vertical";
+  out.open(outputName);
+  RadialBin *b = mRadialBins[9]; //10 AU or so
+  for (int i = 0; i < b->GetVerticalBins().size(); ++i) {
+    VerticalBin *v = b->GetVerticalBins()[i];
+    out << v->GetMid() << "\t";
+    for (int j = 0; j < 16; ++j) {
+      out << v->GetAverage(j) << "\t";
     }
     out << "\n";
   }
