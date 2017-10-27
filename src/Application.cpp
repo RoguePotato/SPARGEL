@@ -64,6 +64,7 @@ bool Application::Initialise() {
   mOutput = mParams->GetInt("OUTPUT_FILES");
   mEosFilePath = mParams->GetString("EOS_TABLE");
   mCloudAnalyse = mParams->GetInt("CLOUD_ANALYSIS");
+  mCloudCenter = mParams->GetInt("CLOUD_CENTER");
   mDiscAnalyse = mParams->GetInt("DISC_ANALYSIS");
   mSinkAnalyse = mParams->GetInt("SINK_ANALYSIS");
   mCenter = mParams->GetInt("DISC_CENTER");
@@ -176,6 +177,9 @@ void Application::Analyse(int task, int start, int end) {
     // Cloud analysis
     if (mCloudAnalyse) {
       mCloudAnalyser->FindCentralQuantities((SnapshotFile *) mFiles.at(i));
+      if (mCloudCenter) {
+        mCloudAnalyser->CenterAroundDensest((SnapshotFile *) mFiles.at(i));
+      }
     }
     // Disc analysis
     if (mDiscAnalyse) {
@@ -192,7 +196,8 @@ void Application::Analyse(int task, int start, int end) {
     if (mRadialAnalyse) {
       RadialAnalyser *ra = new RadialAnalyser(mParams->GetInt("RADIUS_IN"),
                                               mParams->GetInt("RADIUS_OUT"),
-                                              mParams->GetInt("RADIAL_BINS"));
+                                              mParams->GetInt("RADIAL_BINS"),
+                                              mParams->GetInt("RADIAL_LOG"));
       ra->Run((SnapshotFile *) mFiles.at(i));
       delete ra;
     }

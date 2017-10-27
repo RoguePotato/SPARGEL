@@ -38,6 +38,24 @@ void CloudAnalyser::FindCentralQuantities(SnapshotFile *file) {
   m.density /= avgNum;
   m.temperature /= avgNum;
   mMaxima.push_back(m);
+
+  file->SetParticles(part);
+}
+
+void CloudAnalyser::CenterAroundDensest(SnapshotFile *file) {
+  std::vector<Particle *> part = file->GetParticles();
+
+  Vec3 pos = part[0]->GetX();
+  Vec3 vel = part[0]->GetV();
+
+  for (int i = 0; i < part.size(); ++i) {
+    Vec3 posDiff = part[i]->GetX() - pos;
+    Vec3 velDiff = part[i]->GetV() - vel;
+    part[i]->SetX(posDiff);
+    part[i]->SetV(velDiff);
+  }
+
+  file->SetParticles(part);
 }
 
 bool CloudAnalyser::Write() {

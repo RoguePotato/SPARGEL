@@ -24,7 +24,6 @@ bool Parameters::Read(std::string fileName) {
   if (!mInStream.is_open()) {
     return false;
   }
-  // std::cout << "Reading parameters file: " << fileName << "\n";
 
   std::string line = "";
 
@@ -118,6 +117,8 @@ void Parameters::SetDefaultParameters() {
   mStringParams["EOS_TABLE"] = "eos.bell.cc.dat";
 
   mIntParams["CLOUD_ANALYSIS"] = 0;
+  mIntParams["CLOUD_CENTER"] = 0;
+
   mIntParams["SINK_ANALYSIS"] = 0;
   mIntParams["DISC_ANALYSIS"] = 0;
   mIntParams["DISC_CENTER"] = 0;
@@ -125,6 +126,7 @@ void Parameters::SetDefaultParameters() {
   mIntParams["RADIUS_IN"] = 0;
   mIntParams["RADIUS_OUT"] = 100;
   mIntParams["RADIAL_BINS"] = 100;
+  mIntParams["RADIAL_LOG"] = 0;
 
   mIntParams["GENERATE"] = 0;
   mStringParams["IC_TYPE"] = "disc";

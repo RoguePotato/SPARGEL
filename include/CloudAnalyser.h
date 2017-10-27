@@ -31,6 +31,7 @@ public:
   ~CloudAnalyser();
 
   void FindCentralQuantities(SnapshotFile *file);
+  void CenterAroundDensest(SnapshotFile *file);
   bool Write();
 
 private:

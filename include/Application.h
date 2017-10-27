@@ -68,6 +68,7 @@ private:
   int mOutput = 0;
   int mConvert = 0;
   int mCloudAnalyse = 0;
+  int mCloudCenter = 0;
   int mDiscAnalyse = 0;
   int mSinkAnalyse = 0;
   int mCenter = 0;

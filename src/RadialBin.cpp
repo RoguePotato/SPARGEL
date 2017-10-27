@@ -15,7 +15,7 @@
 
 #include "RadialBin.h"
 
-RadialBin::RadialBin(FLOAT starMass, int in, int out, FLOAT width) :
+RadialBin::RadialBin(FLOAT starMass, FLOAT in, FLOAT out, FLOAT width) :
   mStarMass(starMass * MSUN_TO_KG), mIn(in), mOut(out), mWidth(width) {
 }
 
@@ -37,12 +37,14 @@ void RadialBin::CalculateValues(void) {
     mAverages[0] += p->GetD();
     // Midplane temperature
     if (p->GetX().z < 0.05 * p->GetR()) {
-      mAverages[1] += p->GetT();
       ++mMidplanes;
     }
-    mAverages[2] += p->GetM() * MSUN_TO_KG;
-    mAverages[4] += p->GetTau();
+    mAverages[1] += p->GetT();
+    mAverages[2] += p->GetV().Norm();
+    mAverages[3] += p->GetM() * MSUN_TO_KG;
+    mAverages[5] += p->GetTau();
 
+    // Vertical bins
     for (int j = 0; j < 100; ++j) {
       if (p->GetX().z > (j/10.0) && p->GetX().z < (j + 1)/10.0) {
         mVerticalBins.at(j)->AddParticle(p);
@@ -73,6 +75,6 @@ void RadialBin::CalculateValues(void) {
   }
 
   for (int i = 0; i < 16; ++i) {
-    mAverages[i] /= ((i != 1) ? mParticles.size() : mMidplanes);
+    mAverages[i] /= mParticles.size();
   }
 }

@@ -15,9 +15,9 @@
 
 #include "RadialAnalyser.h"
 
-RadialAnalyser::RadialAnalyser(int in, int out, int bins) :
-  mIn(in), mOut(out), mBins(bins) {
-    mWidth = (mOut - mIn) / mBins;
+RadialAnalyser::RadialAnalyser(int in, int out, int bins, int log) :
+  mIn(in), mOut(out), mBins(bins), mLog(log) {
+    mWidth = (FLOAT) (mOut - mIn) / mBins;
 }
 
 RadialAnalyser::~RadialAnalyser() {
@@ -29,11 +29,20 @@ RadialAnalyser::~RadialAnalyser() {
 
 void RadialAnalyser::Run(SnapshotFile *file) {
   // Create bins
-  for (int i = mIn; i < mOut; i += mWidth) {
-    FLOAT inner = mIn + (i * mWidth);
-    FLOAT outer = mIn + ((i + 1) * mWidth);
-    mRadialBins.push_back(new RadialBin(file->GetSinks()[0]->GetM(),
-                                        inner, outer, mWidth));
+  if (mLog) {
+    for (FLOAT i = mIn; i < mOut; i += mWidth) {
+      FLOAT inner = pow(10.0, i);
+      FLOAT outer = pow(10.0, i +  mWidth);
+      mRadialBins.push_back(new RadialBin(0.0, inner, outer, mWidth));
+    }
+  }
+  else {
+    for (int i = mIn; i < mOut; i += mWidth) {
+      FLOAT inner = mIn + (i * mWidth);
+      FLOAT outer = mIn + ((i + 1) * mWidth);
+      mRadialBins.push_back(new RadialBin(file->GetSinks()[0]->GetM(),
+                                          inner, outer, mWidth));
+    }
   }
 
   // Allocate particles to bins
@@ -41,6 +50,7 @@ void RadialAnalyser::Run(SnapshotFile *file) {
   std::vector<Sink *> sink = file->GetSinks();
   for (int i = 0; i < part.size(); ++i) {
     FLOAT r = part[i]->GetX().Norm();
+    if (mLog) r = log10(r);
 
     int binID = GetBinID(r - mIn);
 
@@ -58,11 +68,12 @@ void RadialAnalyser::Run(SnapshotFile *file) {
   // 1: Radius
   // 2: Density
   // 3: Temperature
-  // 4: Mass
-  // 5: Toomre
-  // 6: Optical depth
+  // 4: Velocity
+  // 5: Mass
+  // 6: Toomre
+  // 7: Optical depth
   NameData nd = file->GetNameData();
-  std::string outputName = nd.dir + "/" + nd.id + "." +
+  std::string outputName = nd.dir + "/SPARGEL." + nd.id + "." +
   nd.format + "." + nd.snap + nd.append + ".radial";
 
   std::ofstream out;
@@ -79,7 +90,7 @@ void RadialAnalyser::Run(SnapshotFile *file) {
   out.close();
 
   // Output vertical
-  outputName = nd.dir + "/" + nd.id + "." +
+  outputName = nd.dir + "/SPARGEL." + nd.id + "." +
   nd.format + "." + nd.snap + nd.append + ".vertical";
   out.open(outputName);
   RadialBin *b = mRadialBins[9]; //10 AU or so

@@ -13,3 +13,6 @@ splash.*
 
 # Data files
 *.dat
+
+Bash scripts
+*.sh
