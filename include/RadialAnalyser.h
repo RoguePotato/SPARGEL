@@ -24,7 +24,7 @@
 
 class RadialAnalyser {
 public:
-  RadialAnalyser(int in, int out, int bins, int log);
+  RadialAnalyser(int in, int out, int bins, int log, int vert);
   ~RadialAnalyser();
 
   void Run(SnapshotFile *file);
@@ -34,6 +34,7 @@ private:
   int mOut = 0;
   int mBins = 0;
   int mLog = 0;
+  int mVert = 0;
   FLOAT mWidth = 0.0f;
 
   std::vector<RadialBin *> mRadialBins;

@@ -194,10 +194,12 @@ void Application::Analyse(int task, int start, int end) {
     }
     // Radial analysis
     if (mRadialAnalyse) {
-      RadialAnalyser *ra = new RadialAnalyser(mParams->GetInt("RADIUS_IN"),
-                                              mParams->GetInt("RADIUS_OUT"),
-                                              mParams->GetInt("RADIAL_BINS"),
-                                              mParams->GetInt("RADIAL_LOG"));
+      RadialAnalyser *ra = new RadialAnalyser(
+        mParams->GetInt("RADIUS_IN"),
+        mParams->GetInt("RADIUS_OUT"),
+        mParams->GetInt("RADIAL_BINS"),
+        mParams->GetInt("RADIAL_LOG"),
+        mParams->GetInt("VERTICAL_ANALYSIS"));
       ra->Run((SnapshotFile *) mFiles.at(i));
       delete ra;
     }

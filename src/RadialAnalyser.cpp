@@ -15,8 +15,8 @@
 
 #include "RadialAnalyser.h"
 
-RadialAnalyser::RadialAnalyser(int in, int out, int bins, int log) :
-  mIn(in), mOut(out), mBins(bins), mLog(log) {
+RadialAnalyser::RadialAnalyser(int in, int out, int bins, int log, int vert) :
+  mIn(in), mOut(out), mBins(bins), mLog(log), mVert(vert) {
     mWidth = (FLOAT) (mOut - mIn) / mBins;
 }
 
@@ -90,19 +90,21 @@ void RadialAnalyser::Run(SnapshotFile *file) {
   out.close();
 
   // Output vertical
-  outputName = nd.dir + "/SPARGEL." + nd.id + "." +
-  nd.format + "." + nd.snap + nd.append + ".vertical";
-  out.open(outputName);
-  RadialBin *b = mRadialBins[9]; //10 AU or so
-  for (int i = 0; i < b->GetVerticalBins().size(); ++i) {
-    VerticalBin *v = b->GetVerticalBins()[i];
-    out << v->GetMid() << "\t";
-    for (int j = 0; j < 16; ++j) {
-      out << v->GetAverage(j) << "\t";
+  if (mVert) {
+    outputName = nd.dir + "/SPARGEL." + nd.id + "." +
+    nd.format + "." + nd.snap + nd.append + ".vertical";
+    out.open(outputName);
+    RadialBin *b = mRadialBins[9]; //10 AU or so
+    for (int i = 0; i < b->GetVerticalBins().size(); ++i) {
+      VerticalBin *v = b->GetVerticalBins()[i];
+      out << v->GetMid() << "\t";
+      for (int j = 0; j < 16; ++j) {
+        out << v->GetAverage(j) << "\t";
+      }
+      out << "\n";
     }
-    out << "\n";
+    out.close();
   }
-  out.close();
 }
 
 int RadialAnalyser::GetBinID(FLOAT r) {

@@ -123,6 +123,7 @@ void Parameters::SetDefaultParameters() {
   mIntParams["DISC_ANALYSIS"] = 0;
   mIntParams["DISC_CENTER"] = 0;
   mIntParams["RADIAL_ANALYSIS"] = 0;
+  mIntParams["VERTICAL_ANALYSIS"] = 0;
   mIntParams["RADIUS_IN"] = 0;
   mIntParams["RADIUS_OUT"] = 100;
   mIntParams["RADIAL_BINS"] = 100;
