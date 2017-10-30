@@ -26,42 +26,51 @@ public:
   int GetID() { return mID; }
   Vec3 GetX() { return mX; }
   Vec3 GetV() { return mV; }
-  double GetR() { return mX.Norm(); }
-  double GetS() { return mV.Norm(); }
-  double GetT() { return mT; }
-  double GetH() { return mH; }
-  double GetD() { return mD; }
-  double GetM() { return mM; }
-  double GetU() { return mU; }
-  double GetTau() { return mTau; }
+  FLOAT GetR() { return mX.Norm(); }
+  FLOAT GetS() { return mV.Norm(); }
+  FLOAT GetT() { return mT; }
+  FLOAT GetH() { return mH; }
+  FLOAT GetD() { return mD; }
+  FLOAT GetM() { return mM; }
+  FLOAT GetU() { return mU; }
+  FLOAT GetP() { return mP; }
+  FLOAT GetSigma() { return mSigma; }
+  FLOAT GetTau() { return mTau; }
+  FLOAT GetHydroAcc() { return mHydroAcc; }
   int GetType() { return mType; }
 
   void SetID(int id) { mID = id; }
   void SetX(Vec3 x) { mX = x; }
   void SetV(Vec3 v) { mV = v; }
-  void SetT(double T) { mT = T; }
-  void SetH(double H) { mH = H; }
-  void SetD(double D) { mD = D; }
-  void SetM(double M) { mM = M; }
-  void SetU(double U) { mU = U; }
-  void SetTau(double tau) { mTau = tau; }
+  void SetT(FLOAT T) { mT = T; }
+  void SetH(FLOAT H) { mH = H; }
+  void SetD(FLOAT D) { mD = D; }
+  void SetM(FLOAT M) { mM = M; }
+  void SetU(FLOAT U) { mU = U; }
+  void SetP(FLOAT P) { mP = P; }
+  void SetSigma(FLOAT s) { mSigma = s; }
+  void SetTau(FLOAT tau) { mTau = tau; }
+  void SetHydroAcc(FLOAT a) { mHydroAcc = a; }
   void SetType(int type) { mType = type; }
 
 private:
   int mID = 0;
   Vec3 mX = Vec3(0.0, 0.0, 0.0);
   Vec3 mV = Vec3(0.0, 0.0, 0.0);
-  double mR = 0.0;
-  double mS = 0.0;
-  double mT = 0.0;
-  double mH = 0.0;
-  double mD = 0.0;
-  double mM = 0.0;
-  double mU = 0.0;
-  double mQ = 0.0;
-  double mGamma = 0.0;
-  double mMu = 0.0;
-  double mTau = 0.0;
+  FLOAT mR = 0.0;
+  FLOAT mS = 0.0;
+  FLOAT mT = 0.0;
+  FLOAT mH = 0.0;
+  FLOAT mD = 0.0;
+  FLOAT mM = 0.0;
+  FLOAT mU = 0.0;
+  FLOAT mP = 0.0;
+  FLOAT mQ = 0.0;
+  FLOAT mGamma = 0.0;
+  FLOAT mMu = 0.0;
+  FLOAT mSigma = 0.0;
+  FLOAT mTau = 0.0;
+  FLOAT mHydroAcc = 0.0;
   int mType = 1;
 };
 
@@ -79,9 +88,9 @@ public:
   Sink();
   ~Sink();
 
-  double *GetAllData() { return mSerenData; }
-  double GetData(int index) { return mSerenData[index]; }
-  void SetData(int index, double data) { mSerenData[index] = data; }
+  FLOAT *GetAllData() { return mSerenData; }
+  FLOAT GetData(int index) { return mSerenData[index]; }
+  void SetData(int index, FLOAT data) { mSerenData[index] = data; }
 private:
-  double mSerenData[255] = {0.0};
+  FLOAT mSerenData[255] = {0.0};
 };

@@ -170,9 +170,9 @@ void Application::Analyse(int task, int start, int end) {
     // File read
     if (!mFiles.at(i)->Read()) break;
 
-    // U to T conversion for SEREN format
+    // Extra quantity calculation
     if (mInFormat == "su" || mInFormat == "sf") {
-      FindTemperatures((SnapshotFile *) mFiles.at(i));
+      FindThermo((SnapshotFile *) mFiles.at(i));
     }
     // Cloud analysis
     if (mCloudAnalyse) {
@@ -245,14 +245,24 @@ void Application::OutputFile(SnapshotFile *file) {
   }
 }
 
-void Application::FindTemperatures(SnapshotFile *file) {
+void Application::FindThermo(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part.at(i);
     FLOAT density = p->GetD();
     FLOAT energy = p->GetU();
+    FLOAT sigma = p->GetSigma();
     FLOAT temp = mOpacity->GetTemp(density, energy);
+    FLOAT gamma = mOpacity->GetGamma(density, temp);
+    FLOAT kappa = mOpacity->GetKappa(density, temp);
+    FLOAT press = (gamma - 1.0) * density * energy;
+    FLOAT tau = kappa * sigma;
+    FLOAT ahydro = (1.0 / sigma) * 1.06 * press;
+
     part.at(i)->SetT(temp);
+    part.at(i)->SetP(press);
+    part.at(i)->SetTau(tau);
+    part.at(i)->SetHydroAcc(ahydro);
   }
   file->SetParticles(part);
 }

@@ -111,6 +111,10 @@ bool OpacityTable::Read() {
   return true;
 }
 
+double OpacityTable::GetKappa(double density, double temperature) {
+  return mKappa[GetIDens(density)][GetITemp(temperature)];
+}
+
 double OpacityTable::GetMuBar(double density, double temperature) {
   return mMu[GetIDens(density)][GetITemp(temperature)];
 }

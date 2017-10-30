@@ -70,8 +70,9 @@ void RadialAnalyser::Run(SnapshotFile *file) {
   // 3: Temperature
   // 4: Velocity
   // 5: Mass
-  // 6: Toomre
+  // 6: Pressure
   // 7: Optical depth
+  // 8: Hydrodynamical acceleration
   NameData nd = file->GetNameData();
   std::string outputName = nd.dir + "/SPARGEL." + nd.id + "." +
   nd.format + "." + nd.snap + nd.append + ".radial";
@@ -80,7 +81,7 @@ void RadialAnalyser::Run(SnapshotFile *file) {
   out.open(outputName);
   for (int i = 0; i < mRadialBins.size(); ++i) {
     RadialBin *b = mRadialBins[i];
-    if (b->GetNumParticles() <= 16) continue;
+    if (b->GetNumParticles() <= 0) continue;
     out << b->GetMid() << "\t";
     for (int j = 0; j < 16; ++j) {
       out << b->GetAverage(j) << "\t";

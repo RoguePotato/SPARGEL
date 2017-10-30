@@ -76,6 +76,6 @@ private:
 
   void Analyse(int task, int start, int end);
   void OutputFile(SnapshotFile *file);
-  void FindTemperatures(SnapshotFile *file);
+  void FindThermo(SnapshotFile *file);
   void FindToomre(SnapshotFile *file);
 };

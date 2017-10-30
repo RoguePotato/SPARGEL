@@ -415,12 +415,10 @@ void SerenFile::ReadParticleUnform(void) {
     mParticles.at(i)->SetU(temp[0]);
   }
 
-  if (0) {
-    std::cout << "   READING TAU VALUES!\n\n";
-    for (int i = 0; i < mNumGas + mNumDust; ++i) {
-      mBR->ReadValue(temp[0]);
-      mParticles.at(i)->SetTau(temp[0]);
-    }
+  std::cout << "    Reading pseudo-column density!\n";
+  for (int i = 0; i < mNumGas + mNumDust; ++i) {
+    mBR->ReadValue(temp[0]);
+    mParticles.at(i)->SetSigma(temp[0]);
   }
 }
 
