@@ -21,8 +21,8 @@
 #include "Particle.h"
 
 struct CentralValue {
-  double density;
-  double temperature;
+  FLOAT density = 0.0;
+  FLOAT temperature = 0.0;
 };
 
 class CloudAnalyser {
