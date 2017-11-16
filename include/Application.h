@@ -56,7 +56,7 @@ private:
   DiscAnalyser *mDiscAnalyser = NULL;
   SinkAnalyser *mSinkAnalyser = NULL;
   RadialAnalyser *mRadialAnalyser = NULL;
-  // Generator *mGenerator;
+  Generator *mGenerator = NULL;
 
   std::vector<File *> mFiles;
   int mFilesAnalysed = 0;
@@ -75,7 +75,10 @@ private:
   int mRadialAnalyse = 0;
 
   void Analyse(int task, int start, int end);
-  void OutputFile(SnapshotFile *file);
+  void OutputFile(SnapshotFile *file, std::string fileName = "");
   void FindThermo(SnapshotFile *file);
-  void FindToomre(SnapshotFile *file);
+  void FindRealSigma(SnapshotFile *file);
+  std::vector<Particle *> FindNeighbours(std::vector<Particle *> part,
+                                         Vec3 pos,
+                                         int part_index);
 };

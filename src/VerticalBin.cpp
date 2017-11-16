@@ -32,6 +32,7 @@ void VerticalBin::CalculateValues(void) {
     mAverages[0] += p->GetD();
     mAverages[1] += p->GetT();
     mAverages[2] += p->GetM() * MSUN_TO_KG;
+    mAverages[3] += p->GetOpacity();
     mAverages[4] += p->GetTau();
   }
 

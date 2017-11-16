@@ -112,24 +112,28 @@ bool OpacityTable::Read() {
 }
 
 double OpacityTable::GetKappa(double density, double temperature) {
-  return mKappa[GetIDens(density)][GetITemp(temperature)];
+  return mKappa[GetIDens(log10(density))][GetITemp(log10(temperature))];
+}
+
+double OpacityTable::GetKappar(double density, double temperature) {
+  return mKappar[GetIDens(log10(density))][GetITemp(log10(temperature))];
 }
 
 double OpacityTable::GetMuBar(double density, double temperature) {
-  return mMu[GetIDens(density)][GetITemp(temperature)];
+  return mMu[GetIDens(log10(density))][GetITemp(log10(temperature))];
 }
 
 double OpacityTable::GetGamma(double density, double temperature) {
-  return mGamma[GetIDens(density)][GetITemp(temperature)];
+  return mGamma[GetIDens(log10(density))][GetITemp(log10(temperature))];
 }
 
 double OpacityTable::GetEnergy(double density, double temperature) {
-  return mEnergy[GetIDens(density)][GetITemp(temperature)];
+  return mEnergy[GetIDens(log10(density))][GetITemp(log10(temperature))] / 1E4;
 }
 
 double OpacityTable::GetTemp(double density, double energy) {
   double result = 0.0;
-  energy *= 1E4; // cgs conversion
+  energy *= 1E4; // cgs conversion, K/g to ergs/g
 
   double logdens = log10(density);
   int idens = GetIDens(logdens);

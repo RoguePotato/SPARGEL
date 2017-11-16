@@ -118,6 +118,7 @@ void ColumnFile::WriteHeaderForm(Formatter formatStream) {
   formatStream << mNumGas << "\n";
   formatStream << mNumSink << "\n";
   formatStream << mDimensions << "\n";
+  formatStream << mTime << "\n";
 }
 
 void ColumnFile::WriteParticleForm(Formatter formatStream) {
@@ -138,14 +139,14 @@ void ColumnFile::WriteParticleForm(Formatter formatStream) {
 void ColumnFile::WriteSinkForm(Formatter formatStream) {
   for (int i = 0; i < mNumSink; ++i) {
     for (int j = 0; j < mDimensions; ++j) {
-      formatStream << mParticles[i]->GetX()[j] << "\t";
+      formatStream << mSinks[i]->GetX()[j] << "\t";
     }
     for (int j = 0; j < mDimensions; ++j) {
-      formatStream << mParticles[i]->GetV()[j] << "\t";
+      formatStream << mSinks[i]->GetV()[j] << "\t";
     }
-    formatStream << mParticles[i]->GetM() << "\t";
-    formatStream << mParticles[i]->GetH() << "\t";
-    formatStream << mParticles[i]->GetD() << "\t";
-    formatStream << mParticles[i]->GetU() << "\n";
+    formatStream << mSinks[i]->GetM() << "\t";
+    formatStream << mSinks[i]->GetH() << "\t";
+    formatStream << mSinks[i]->GetD() << "\t";
+    formatStream << mSinks[i]->GetU() << "\n";
   }
 }

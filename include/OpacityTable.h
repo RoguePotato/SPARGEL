@@ -29,6 +29,7 @@ public:
   int GetNDens() { return mNumDens; }
 
   double GetKappa(double density, double temperature);
+  double GetKappar(double density, double temperature);
   double GetEnergy(double density, double temperature);
   double GetMuBar(double density, double temperature);
   double GetGamma(double density, double temperature);

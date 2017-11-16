@@ -71,7 +71,7 @@ void Generator::SetupParams(void) {
 void Generator::GenerateRandoms() {
   // TODO: Add Mersenne twister
   for (int i = 0; i < 3; ++i) {
-    mRands[i] = rand() / (double) RAND_MAX;
+    mRands[i] = rand() / (FLOAT) RAND_MAX;
   }
 }
 
@@ -84,53 +84,81 @@ void Generator::CreateDisc(void) {
   for (int i = 0; i < mNumHydro; ++i) {
     GenerateRandoms();
 
-    double index[2];
+    FLOAT index[2];
     index[0] = 1.0f - (mP / 2.0f);
     index[1] = 2.0f / (2.0f - mP);
 
-    double omegaIn = pow(1.0 + mOmegaIn, index[0]);
-    double omegaOut = pow(1.0 + mOmegaOut, index[0]);
-    double inner = (omegaIn + mRands[0] * (omegaOut - omegaIn));
+    FLOAT omegaIn = pow(1.0 + mOmegaIn, index[0]);
+    FLOAT omegaOut = pow(1.0 + mOmegaOut, index[0]);
+    FLOAT inner = (omegaIn + mRands[0] * (omegaOut - omegaIn));
 
-    double omega = pow(inner, index[1]) - 1.0;
-    double R = mR0 * pow(omega, 0.5f);
-    double phi = 2 * PI * mRands[1];
+    FLOAT omega = pow(inner, index[1]) - 1.0;
+    FLOAT R = mR0 * pow(omega, 0.5f);
+    FLOAT phi = 2 * PI * mRands[1];
 
-    double x = R * cos(phi);
-    double y = R * sin(phi);
+    FLOAT x = R * cos(phi);
+    FLOAT y = R * sin(phi);
 
-    double sigma = mSigma0 *
-                   pow((mR0 * mR0) / (mR0 * mR0 + R * R), mP / 2);
+    FLOAT sigma = mSigma0 *
+                   pow((mR0 * mR0) / (mR0 * mR0 + R * R), mP / 2.0);
 
-    double T = pow(pow(mTinf, 4.0) + pow(mT0, 4.0) *
+    FLOAT T = pow(pow(mTinf, 4.0) + pow(mT0, 4.0) *
                pow(pow(R, 2.0) + pow(mR0, 2.0), -2.0 * mQ), 0.25);
-    double cS2 = ((K * T) / (MU * M_P)) / (AU_TO_M * AU_TO_M);
+    FLOAT cS2 = ((K * T) / (MU * M_P)) / (AU_TO_M * AU_TO_M);
 
-    double z_0 = -((PI * sigma * R * R * R) / (2 * mMStar)) +
-                 pow(pow((PI * sigma * R * R * R) / (2 * mMStar), 2.0f) +
-                 ((cS2 * R * R * R) / (G_AU * mMStar)), 0.5f);
+    FLOAT z_0 = -((PI * sigma * R * R * R) / (2.0 * mMStar)) +
+                 pow(pow((PI * sigma * R * R * R) / (2.0 * mMStar), 2.0) +
+                 ((cS2 * R * R * R) / (G_AU * mMStar)), 0.5);
 
-    double z = (2 / PI) * z_0 * asin(2 * mRands[2] - 1);
+    FLOAT z = (2.0 / PI) * z_0 * asin(2.0 * mRands[2] - 1.0);
 
-    double rho = ((PI * mSigma0) / (4 * z_0)) *
-                 pow((mR0 * mR0) / (mR0 * mR0 + R * R), 0.5) *
-                 cos((PI * z) / (2 * z_0));
+    FLOAT rho_0 = ((PI * mSigma0) / (4.0 * z_0)) *
+                  pow((mR0 * mR0) / (mR0 * mR0 + R * R), mP / 2.0) *
+                  MSOLPERAU3_TO_GPERCM3;
 
-    double m = mMDisc / mNumHydro;
+    FLOAT rho = (rho_0 * cos((PI * z) / (2 * z_0))) ;
 
-    double h = pow((3 * mNumNeigh * m) / (32 * PI * rho), (1.0f / 3.0f));
+    FLOAT m = mMDisc / mNumHydro;
 
-    double U = mOpacity->GetEnergy(rho, T);
+    FLOAT h = pow((3 * mNumNeigh * m) / (32.0 * PI * rho), (1.0 / 3.0));
 
-    mParticles.at(i)->SetID(i);
-    mParticles.at(i)->SetX(Vec3(x, y, z));
-    mParticles.at(i)->SetT(T);
-    mParticles.at(i)->SetH(h);
-    mParticles.at(i)->SetD(rho);
-    mParticles.at(i)->SetM(m);
-    mParticles.at(i)->SetU(U);
-    mParticles.at(i)->SetType(1);
+    FLOAT U = mOpacity->GetEnergy(rho, T);
+
+    FLOAT kappa =  mOpacity->GetKappar(rho, T);
+    FLOAT tau_0 = kappa * rho_0 * z_0 * AU_TO_CM * (2.0 / PI);
+    FLOAT tau = 0.0;
+    if (z >= 0.0) {
+      tau = tau_0 * (1.0 - sin((PI * fabs(z)) / (2.0 * z_0)));
+    }
+    else {
+      tau = tau_0 * (1.0 + sin((-PI * fabs(z)) / (2.0 * z_0)));
+    }
+
+    mParticles[i]->SetID(i);
+    mParticles[i]->SetX(Vec3(x, y, z));
+    mParticles[i]->SetT(T);
+    mParticles[i]->SetH(h);
+    mParticles[i]->SetD(rho);
+    mParticles[i]->SetM(m);
+    mParticles[i]->SetU(U);
+    mParticles[i]->SetSigma(sigma);
+    mParticles[i]->SetTau(tau);
+    mParticles[i]->SetType(1);
   }
+
+  std::ofstream out;
+  out.open("disc.dat");
+  for (int i = 0; i < mParticles.size(); ++i) {
+    out << mParticles[i]->GetR() << "\t"
+        << mParticles[i]->GetX().x << "\t"
+        << mParticles[i]->GetX().y << "\t"
+        << mParticles[i]->GetX().z << "\t"
+        << mParticles[i]->GetTau() << "\t"
+        << mParticles[i]->GetRealTau() << "\t"
+        << mParticles[i]->GetD() << "\t"
+        << mParticles[i]->GetT() << "\n";
+  }
+  out.close();
 }
 
 void Generator::CreateCloud(void) {
@@ -139,7 +167,7 @@ void Generator::CreateCloud(void) {
 
 void Generator::CreateStars(void) {
   Sink* s = new Sink();
-  s->SetID(mNumHydro + 1);
+  s->SetID(mParticles.size() + 1);
   s->SetH(1.0);
   s->SetM(mMStar);
   s->SetType(-1);
@@ -147,15 +175,15 @@ void Generator::CreateStars(void) {
 }
 
 void Generator::CalculateVelocity(void) {
-  double shift = mRout * 2.0;
+  FLOAT shift = mRout * 2.0;
   mOctree = new Octree(Vec3(0.0, 0.0, 0.0), Vec3(5000.0, 5000.0, 5000.0));
 
   mOctreePoints = new OctreePoint[mParticles.size()];
   for(int i = 0; i < mParticles.size(); ++i) {
-    double x = mParticles.at(i)->GetX()[0];
-    double y = mParticles.at(i)->GetX()[1];
-    double z = mParticles.at(i)->GetX()[2];
-    double M = mParticles.at(i)->GetM();
+    FLOAT x = mParticles.at(i)->GetX()[0];
+    FLOAT y = mParticles.at(i)->GetX()[1];
+    FLOAT z = mParticles.at(i)->GetX()[2];
+    FLOAT M = mParticles.at(i)->GetM();
 
     // shift the positions such that they are positive
     x += shift;
@@ -170,10 +198,10 @@ void Generator::CalculateVelocity(void) {
   for (int i = 0; i < mParticles.size(); ++i) {
     Vec3 acc = Vec3(0.0, 0.0, 0.0);
     Vec3 pos = mParticles.at(i)->GetX();
-    double R = mParticles.at(i)->GetR();
-    double x = mParticles.at(i)->GetX()[0];
-    double y = mParticles.at(i)->GetX()[1];
-    double h = mParticles.at(i)->GetH();
+    FLOAT R = mParticles.at(i)->GetR();
+    FLOAT x = mParticles.at(i)->GetX()[0];
+    FLOAT y = mParticles.at(i)->GetX()[1];
+    FLOAT h = mParticles.at(i)->GetH();
 
     pos[0] += shift;
     pos[1] += shift;
@@ -181,9 +209,9 @@ void Generator::CalculateVelocity(void) {
 
     mOctree->TraverseTree(pos, acc, h);
 
-    double v = sqrt(acc.Norm() * R) * AU_TO_KM;
-    double vX = (-v * y) / (R + 0.000001);
-    double vY = (v * x) / (R + 0.000001);
+    FLOAT v = sqrt(acc.Norm() * R) * AU_TO_KM;
+    FLOAT vX = (-v * y) / (R + 0.000001);
+    FLOAT vY = (v * x) / (R + 0.000001);
 
     mParticles.at(i)->SetV(Vec3(vX, vY, 0.0));
   }

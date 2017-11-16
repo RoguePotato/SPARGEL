@@ -27,7 +27,7 @@ void RadialBin::CalculateValues(void) {
   if (mParticles.size() <= 0) return;
 
   // Create vertical bins
-  for (int i = 0; i < 100; ++i) {
+  for (int i = 0; i < 10; ++i) {
     mVerticalBins.push_back(new VerticalBin(i/10.0, (i + 1)/10.0, 0.1));
   }
 
@@ -35,19 +35,18 @@ void RadialBin::CalculateValues(void) {
     Particle *p = mParticles[i];
 
     mAverages[0] += p->GetD();
-    // Midplane temperature
-    if (p->GetX().z < 0.05 * p->GetR()) {
-      ++mMidplanes;
-    }
     mAverages[1] += p->GetT();
     mAverages[2] += p->GetV().Norm();
     mAverages[3] += p->GetM() * MSUN_TO_KG;
     mAverages[4] += p->GetP();
     mAverages[5] += p->GetTau();
     mAverages[6] += p->GetHydroAcc();
+    mAverages[7] += p->GetSigma();
+    mAverages[8] += p->GetRealSigma();
+    mAverages[9] += p->GetRealTau();
 
     // Vertical bins
-    for (int j = 0; j < 100; ++j) {
+    for (int j = 0; j < mVerticalBins.size(); ++j) {
       if (p->GetX().z > (j/10.0) && p->GetX().z < (j + 1)/10.0) {
         mVerticalBins.at(j)->AddParticle(p);
       }
