@@ -181,8 +181,8 @@ void Application::Analyse(int task, int start, int end) {
     if (!mFiles.at(i)->Read()) break;
 
     // Extra quantity calculation
+    FindThermo((SnapshotFile *) mFiles.at(i));
     if (mInFormat == "su" || mInFormat == "sf") {
-      FindThermo((SnapshotFile *) mFiles.at(i));
     }
     // Cloud analysis
     if (mCloudAnalyse) {
@@ -290,6 +290,9 @@ void Application::FindThermo(SnapshotFile *file) {
     FLOAT tau = kappa * sigma;
     FLOAT ahydro = (1.0 / sigma) * 1.06 * press;
 
+    part[i]->SetR(sqrt(pow(p->GetX().x, 2.0) +
+                       pow(p->GetX().y, 2.0) +
+                       pow(p->GetX().z, 2.0)));
     part[i]->SetT(temp);
     part[i]->SetP(press);
     part[i]->SetOpacity(kappa);
@@ -300,12 +303,13 @@ void Application::FindThermo(SnapshotFile *file) {
   file->SetParticles(part);
 }
 
-/*void Application::FindRealSigma(SnapshotFile *file) {
+#if (0)
+void Application::FindRealSigma(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
   std::sort(part.begin(), part.end(),
             [](Particle *a, Particle *b) { return b->GetX().z < a->GetX().z; });
 
-  FLOAT h_fac = 2.0;
+  FLOAT h_fac = 4.0;
 
   // POSITIVE Z
   for (int i = 0; i < part.size(); ++i) {
@@ -399,63 +403,90 @@ void Application::FindThermo(SnapshotFile *file) {
   for (int i = 0; i < part.size(); ++i) {
     Particle *a = part[i];
     out << a->GetR() << "\t"
-        << a->GetRealSigma() << "\t"
-        << a->GetSigma() << "\t"
+        << a->GetX().x << "\t"
+        << a->GetX().y << "\t"
         << a->GetX().z << "\t"
         << a->GetTau() << "\t"
         << a->GetRealTau() << "\t"
-        << a->GetD() << "\n";
+        << a->GetD() << "\t"
+        << a->GetT() << "\n";
   }
   out.close();
-}*/
+}
+
+#else
 
 void Application::FindRealSigma(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
+
+  FLOAT min_dens = 1E30, min_temp = 1E30;
+  for (int i = 0; i < part.size(); ++i) {
+    FLOAT dens = part[i]->GetD();
+    FLOAT temp = part[i]->GetT();
+    if (dens < min_dens) min_dens = dens;
+    if (temp < min_temp) min_temp = temp;
+  }
+
+  std::cout << min_dens << "\t" << min_temp << '\n';
 
   // Sort full particle array by x for quicker neighbour find
   std::sort(part.begin(), part.end(),
   [](Particle *a, Particle *b) { return b->GetX().x > a->GetX().x; });
 
-  // Number of intermediate points to test in the z-direction
-  const int Z_TEST_POINTS = 1;
-
-  // Assume a disc height and calculate the bin height
+  // Assume a disc height
   const FLOAT DISC_HEIGHT = 10.0;
-  FLOAT bin_height = DISC_HEIGHT / Z_TEST_POINTS;
-  FLOAT bin_height_scaled = bin_height * AU_TO_CM;
 
+  std::vector<Particle *> interps;
   for (int i = 0; i < part.size(); ++i) {
-    if (i % 100 == 0) std::cout << ".";
+    if (i > 0 && i % 100 == 0) std::cout << ((FLOAT) i / part.size()) * 100.0 << " \%\n";
     Particle *a = part[i];
-    FLOAT tau = 0.0;
     FLOAT x = a->GetX().x;
     FLOAT y = a->GetX().y;
     FLOAT z = a->GetX().z;
+
+    int test_points = (int)((1.0 / a->GetR()) * 100);
+    // if (test_points > 200) test_points = 200;
+    // if (test_points < 10) test_points = 10;
+    FLOAT bin_height = DISC_HEIGHT / test_points;
+    FLOAT bin_height_scaled = bin_height * AU_TO_CM;
+
     int start_bin = fabs(z) / bin_height;
 
-    for (int j = start_bin; j < Z_TEST_POINTS; ++j) {
+    FLOAT tau = 0.0;
+    for (int j = start_bin; j < test_points; ++j) {
       FLOAT curZ = j * bin_height;
       if (z < 0.0) curZ *= -1;
       Vec3 testPoint = Vec3(x, y, curZ);
 
       // Get nearest neighbours around the current interpolation point
-      std::vector<Particle *> neighbours =
-        FindNeighbours(part, testPoint, i);
+      std::vector<Particle *> neighbours = FindNeighbours(part, testPoint, i);
+
+      // Sort the neighbours by distance to the current interpolation point
+      for (int n = 0; n < neighbours.size(); ++n) {
+        Particle *neib = neighbours[n];
+        neighbours[n]->SetR((testPoint - neib->GetX()).Norm());
+      }
+      std::sort(neighbours.begin(), neighbours.end(),
+      [](Particle *a, Particle *b) { return b->GetR() > a->GetR(); });
 
       // Use smoothing length from the closest neighbour as we don't know
       // the smoothing length of the interpolating point
-      FLOAT h = a->GetH();
+
+      FLOAT h = neighbours[0]->GetH();
       FLOAT invh = 1.0 / h;
       FLOAT dim_fac =  PI * pow(h * AU_TO_CM, 3.0);
+      FLOAT rho = 0.0, temp = 0.0;
       for (int n = 0; n < neighbours.size(); ++n) {
         Particle *neib = neighbours[n];
-        FLOAT q = sqrt(pow(testPoint.x - neib->GetX().x, 2.0) +
-                       pow(testPoint.y - neib->GetX().y, 2.0) +
-                       pow(testPoint.z - neib->GetX().z, 2.0)) * invh;
-        if (q > 2.0) continue;
+
+        FLOAT q = neib->GetR() * invh;
+        if (q > 2.0) break;
+        FLOAT mass_j = neib->GetM() * MSUN_TO_G;
+        FLOAT rho_j = neib->GetD();
+        FLOAT temp_j = neib->GetT();
 
         FLOAT w = 0.0;
-        if (q > 0.0 && q <= 1.0) {
+        if (q >= 0.0 && q <= 1.0) {
           w = 0.25 * pow(2.0 - q, 3.0) - pow(1.0 - q, 3.0);
         }
         else if (q > 1.0 && q <= 2.0) {
@@ -463,21 +494,31 @@ void Application::FindRealSigma(SnapshotFile *file) {
         }
 
         FLOAT W = w / dim_fac;
-        FLOAT M = neib->GetM() * MSUN_TO_G;
-        FLOAT rho = W * M;
-        FLOAT T = neib->GetT();
-        FLOAT kappa = mOpacity->GetKappar(rho, T);
-        tau += rho * kappa * bin_height_scaled;
+
+        rho += W * mass_j;
+        temp += (mass_j / rho_j) * W * temp_j;
       }
+      // Can quit going through points when there is no contribution to tau left
+      if (rho < min_dens || temp < min_temp) break;
+
+      FLOAT kappa = mOpacity->GetKappar(rho, temp);
+      tau += rho * kappa * bin_height_scaled;
+      // Particle *p = new Particle();
+      //
+      // p->SetX(testPoint);
+      // p->SetRealTau(tau);
+      // interps.push_back(p);
     }
 
     part[i]->SetRealTau(tau);
   }
 
+// WHY IS REAL TAY ZERO
+
   std::ofstream out;
   out.open("new_sigma.dat");
   for (int i = 0; i < part.size(); ++i) {
-    out << part[i]->GetR() << "\t"
+    out << part[i]->GetX().Norm() << "\t"
         << part[i]->GetX().x << "\t"
         << part[i]->GetX().y << "\t"
         << part[i]->GetX().z << "\t"
@@ -486,6 +527,20 @@ void Application::FindRealSigma(SnapshotFile *file) {
         << part[i]->GetD() << "\t"
         << part[i]->GetT() << "\n";
   }
+  out.close();
+
+  out.open("interps.dat");
+  for (int i = 0; i < interps.size(); ++i) {
+    out << interps[i]->GetX().Norm() << "\t"
+        << interps[i]->GetX().x << "\t"
+        << interps[i]->GetX().y << "\t"
+        << interps[i]->GetX().z << "\t"
+        << interps[i]->GetTau() << "\t"
+        << interps[i]->GetRealTau() << "\t"
+        << interps[i]->GetD() << "\t"
+        << interps[i]->GetT() << "\n";
+  }
+  out.close();
 }
 
 std::vector<Particle *> Application::FindNeighbours(
@@ -494,10 +549,10 @@ std::vector<Particle *> Application::FindNeighbours(
  int part_index)
 {
   std::vector<Particle *> result;
-  FLOAT h = part[part_index]->GetH() * 2.0;
-  int n_neigh = 0;
+  // A smaller h results in underestimation, too high h and we are wasting time
+  FLOAT h = 2.0 * part[part_index]->GetH();
   for (int i = part_index + 1; i < part.size(); ++i) {
-    if (fabs(part[i]->GetX().x - pos.x > h)) break;
+    if (fabs(part[i]->GetX().x - pos.x) > h) break;
     result.push_back(part[i]);
   }
 
@@ -508,3 +563,5 @@ std::vector<Particle *> Application::FindNeighbours(
 
   return result;
 }
+
+#endif

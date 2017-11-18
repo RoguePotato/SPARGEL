@@ -12,7 +12,7 @@
 #------------------------------------------------------------------------------#
 
  Input file name         : INPUT_FILE = COMMAND_LINE
- Input file format       : IN_FORMAT = su
+ Input file format       : IN_FORMAT = column
 
  Output in new format    : CONVERT = 0
  Output file format      : OUT_FORMAT = su

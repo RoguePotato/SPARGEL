@@ -68,7 +68,7 @@ bool ColumnFile::Write(std::string fileName) {
 }
 
 void ColumnFile::AllocateMemory(void) {
-  for (int i = 0; i < mNumTot; ++i) {
+  for (int i = 0; i < mNumGas; ++i) {
     Particle *p = new Particle();
     mParticles.push_back(p);
   }
@@ -80,7 +80,7 @@ void ColumnFile::AllocateMemory(void) {
 }
 
 bool ColumnFile::ReadHeaderForm(void) {
-  mInStream >> mNumGas >> mNumSink >> mDimensions;
+  mInStream >> mNumGas >> mNumSink >> mDimensions >> mTime;
   mNumTot = mNumGas + mNumSink;
 }
 

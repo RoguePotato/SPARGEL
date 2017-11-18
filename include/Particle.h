@@ -26,8 +26,8 @@ public:
   int GetID() { return mID; }
   Vec3 GetX() { return mX; }
   Vec3 GetV() { return mV; }
-  FLOAT GetR() { return mX.Norm(); }
-  FLOAT GetS() { return mV.Norm(); }
+  FLOAT GetR() { return mR; }
+  FLOAT GetS() { return mS; }
   FLOAT GetT() { return mT; }
   FLOAT GetH() { return mH; }
   FLOAT GetD() { return mD; }
