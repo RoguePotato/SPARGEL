@@ -77,12 +77,15 @@ bool Application::Initialise() {
     mGenerator = new Generator(mParams, mOpacity);
     mGenerator->Create();
     NameData nd;
+    nd.dir = "./";
+    nd.id = "SPA";
+    nd.format = "su";
+    nd.snap = "00000";
 
-    ColumnFile *cf = new ColumnFile(nd);
-    cf->SetParticles(mGenerator->GetParticles());
-    cf->SetSinks(mGenerator->GetSinks());
-    OutputFile((SnapshotFile *) cf, "./disc_column.dat");
-    return false;
+    SerenFile *sf = new SerenFile(nd, false);
+    sf->SetParticles(mGenerator->GetParticles());
+    sf->SetSinks(mGenerator->GetSinks());
+    mFiles.push_back(sf);
   }
 
   if (mCloudAnalyse) {
@@ -178,7 +181,9 @@ void Application::Run() {
 void Application::Analyse(int task, int start, int end) {
   for (int i = start; i < end; ++i) {
     // File read
-    if (!mFiles.at(i)->Read()) break;
+    if (mGenerator == NULL) {
+      if (!mFiles.at(i)->Read()) break;
+    }
 
     // Extra quantity calculation
     FindThermo((SnapshotFile *) mFiles.at(i));
@@ -444,7 +449,7 @@ void Application::FindRealSigma(SnapshotFile *file) {
     FLOAT y = a->GetX().y;
     FLOAT z = a->GetX().z;
 
-    int test_points = (int)((1.0 / a->GetR()) * 100);
+    int test_points = 10;//(int)((1.0 / a->GetR()) * 100);
     // if (test_points > 200) test_points = 200;
     // if (test_points < 10) test_points = 10;
     FLOAT bin_height = DISC_HEIGHT / test_points;

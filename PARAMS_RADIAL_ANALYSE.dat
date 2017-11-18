@@ -12,13 +12,18 @@
 #------------------------------------------------------------------------------#
 
  Input file name         : INPUT_FILE = COMMAND_LINE
- Input file format       : IN_FORMAT = column
+ Input file format       : IN_FORMAT = su
 
  Output in new format    : CONVERT = 0
  Output file format      : OUT_FORMAT = su
  Output new snapshots    : OUTPUT_FILES = 0
 
  Opacity table path      : EOS_TABLE = eos.bell.cc.dat
+
+ Create ICs              : GENERATE = 1
+ Type of IC              : IC_TYPE = disc
+ Random seed             : SEED = 4112
+ Gas particles           : N_HYDRO = 32768
 
 #------------------------------------------------------------------------------#
 # ANALYSIS                                                                     #

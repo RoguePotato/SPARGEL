@@ -136,6 +136,7 @@ void Generator::CreateDisc(void) {
 
     mParticles[i]->SetID(i);
     mParticles[i]->SetX(Vec3(x, y, z));
+    mParticles[i]->SetR(Vec3(x, y, z).Norm());
     mParticles[i]->SetT(T);
     mParticles[i]->SetH(h);
     mParticles[i]->SetD(rho);
