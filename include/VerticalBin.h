@@ -37,6 +37,8 @@ public:
   void CalculateValues(void);
 
   FLOAT GetMid() { return mIn + (mWidth / 2.0); }
+  FLOAT GetLow() { return mIn; }
+  FLOAT GetHigh() { return mOut; }
   FLOAT GetAverage(int index) { return mAverages[index]; }
   int GetNumParticles() { return mParticles.size(); }
 

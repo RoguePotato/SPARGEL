@@ -20,10 +20,10 @@
 
  Opacity table path      : EOS_TABLE = eos.bell.cc.dat
 
- Create ICs              : GENERATE = 1
+ Create ICs              : GENERATE = 0
  Type of IC              : IC_TYPE = disc
  Random seed             : SEED = 4112
- Gas particles           : N_HYDRO = 32768
+ Gas particles           : N_HYDRO = 4096
 
 #------------------------------------------------------------------------------#
 # ANALYSIS                                                                     #
@@ -32,6 +32,7 @@
  Disc analysis           : DISC_ANALYSIS = 1
  Center around sink      : DISC_CENTER = 1
  Radial analysis         : RADIAL_ANALYSIS = 1
+ Vertical analysis       : VERTICAL_ANALYSIS = 1
  Inner radius            : RADIUS_IN = 0
- Outer radius            : RADIUS_OUT = 500
- Number of bins          : RADIAL_BINS = 500
+ Outer radius            : RADIUS_OUT = 100
+ Number of bins          : RADIAL_BINS = 100

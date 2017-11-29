@@ -27,12 +27,16 @@ void RadialBin::CalculateValues(void) {
   if (mParticles.size() <= 0) return;
 
   // Create vertical bins
-  for (int i = 0; i < 10; ++i) {
-    mVerticalBins.push_back(new VerticalBin(i/10.0, (i + 1)/10.0, 0.1));
+  FLOAT MAX_HEIGHT = 10.0;
+  int VERT_BINS = 1000;
+  FLOAT BIN_HEIGHT = MAX_HEIGHT / VERT_BINS;
+  for (FLOAT i = 0; i < MAX_HEIGHT; i += BIN_HEIGHT) {
+    mVerticalBins.push_back(new VerticalBin(i, i + BIN_HEIGHT, BIN_HEIGHT));
   }
 
   for (int i = 0; i < mParticles.size(); ++i) {
     Particle *p = mParticles[i];
+    FLOAT z = fabs(p->GetX().z);
 
     mAverages[0] += p->GetD();
     mAverages[1] += p->GetT();
@@ -40,16 +44,17 @@ void RadialBin::CalculateValues(void) {
     mAverages[3] += p->GetM() * MSUN_TO_KG;
     mAverages[4] += p->GetP();
     mAverages[5] += p->GetTau();
-    mAverages[6] += p->GetHydroAcc();
+    mAverages[6] += p->GetCooling();
     mAverages[7] += p->GetSigma();
     mAverages[8] += p->GetRealSigma();
     mAverages[9] += p->GetRealTau();
 
     // Vertical bins
     for (int j = 0; j < mVerticalBins.size(); ++j) {
-      if (p->GetX().z > (j/10.0) && p->GetX().z < (j + 1)/10.0) {
-        mVerticalBins.at(j)->AddParticle(p);
-      }
+      FLOAT lo = mVerticalBins[j]->GetLow();
+      FLOAT hi = mVerticalBins[j]->GetHigh();
+
+      if (z > lo && z <= hi) mVerticalBins.at(j)->AddParticle(p);
     }
   }
 

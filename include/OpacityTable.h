@@ -28,26 +28,26 @@ public:
 
   int GetNDens() { return mNumDens; }
 
-  double GetKappa(double density, double temperature);
-  double GetKappar(double density, double temperature);
-  double GetEnergy(double density, double temperature);
-  double GetMuBar(double density, double temperature);
-  double GetGamma(double density, double temperature);
-  double GetTemp(double density, double energy);
+  FLOAT GetKappa(FLOAT density, FLOAT temperature);
+  FLOAT GetKappar(FLOAT density, FLOAT temperature);
+  FLOAT GetEnergy(FLOAT density, FLOAT temperature);
+  FLOAT GetMuBar(FLOAT density, FLOAT temperature);
+  FLOAT GetGamma(FLOAT density, FLOAT temperature);
+  FLOAT GetTemp(FLOAT density, FLOAT energy);
 
 private:
   int mNumDens = 0;
   int mNumTemp = 0;
-  double mFcol = 0.0;
-  double *mDens;
-  double *mTemp;
-  double **mEnergy;
-  double **mMu;
-  double **mKappa;
-  double **mKappar;
-  double **mKappap;
-  double **mGamma;
+  FLOAT mFcol = 0.0;
+  FLOAT *mDens;
+  FLOAT *mTemp;
+  FLOAT **mEnergy;
+  FLOAT **mMu;
+  FLOAT **mKappa;
+  FLOAT **mKappar;
+  FLOAT **mKappap;
+  FLOAT **mGamma;
 
-  int GetIDens(const double density);
-  int GetITemp(const double temperature);
+  int GetIDens(const FLOAT density);
+  int GetITemp(const FLOAT temperature);
 };

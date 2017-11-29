@@ -16,3 +16,6 @@ splash.*
 
 Bash scripts
 *.sh
+
+Python scripts
+*.py

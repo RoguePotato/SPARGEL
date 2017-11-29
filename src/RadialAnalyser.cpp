@@ -37,7 +37,7 @@ void RadialAnalyser::Run(SnapshotFile *file) {
     }
   }
   else {
-    for (int i = mIn; i < mOut; i += mWidth) {
+    for (FLOAT i = mIn; i < mOut; i += mWidth) {
       FLOAT inner = mIn + (i * mWidth);
       FLOAT outer = mIn + ((i + 1) * mWidth);
       mRadialBins.push_back(new RadialBin(file->GetSinks()[0]->GetM(),
@@ -90,21 +90,27 @@ void RadialAnalyser::Run(SnapshotFile *file) {
   }
   out.close();
 
-  // Output vertical
+  // Output vertical bins
   if (mVert) {
-    outputName = nd.dir + "/SPARGEL." + nd.id + "." +
-    nd.format + "." + nd.snap + nd.append + ".vertical";
-    out.open(outputName);
-    RadialBin *b = mRadialBins[9]; //10 AU or so
-    for (int i = 0; i < b->GetVerticalBins().size(); ++i) {
-      VerticalBin *v = b->GetVerticalBins()[i];
-      out << v->GetMid() << "\t";
-      for (int j = 0; j < 16; ++j) {
-        out << v->GetAverage(j) << "\t";
+    for (int r = 0; r < mRadialBins.size(); ++r) {
+      RadialBin *b = mRadialBins[r];
+      if (b->GetNumParticles() <= 0) continue;
+
+      outputName = nd.dir + "/SPARGEL." + nd.id + "." +
+      nd.format + "." + nd.snap + nd.append + ".vertical." + std::to_string(r);
+      out.open(outputName);
+      for (int i = 0; i < b->GetVerticalBins().size(); ++i) {
+        VerticalBin *v = b->GetVerticalBins()[i];
+        if (v->GetNumParticles() <= 0) continue;
+
+        out << v->GetMid() << "\t";
+        for (int j = 0; j < 16; ++j) {
+          out << v->GetAverage(j) << "\t";
+        }
+        out << "\n";
       }
-      out << "\n";
+      out.close();
     }
-    out.close();
   }
 }
 

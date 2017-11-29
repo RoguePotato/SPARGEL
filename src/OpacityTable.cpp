@@ -50,28 +50,28 @@ bool OpacityTable::Read() {
 
   std::string line;
   int i, j, l;
-  double dens, temp, energy, mu, kappa, kappar, kappap, gamma;
+  FLOAT dens, temp, energy, mu, kappa, kappar, kappap, gamma;
 
   getline(mInStream, line);
   std::istringstream istr(line);
   istr >> mNumDens >> mNumTemp >> mFcol;
 
-  mDens   = new double[mNumDens];
-  mTemp   = new double[mNumTemp];
-  mEnergy = new double*[mNumDens];
-  mMu     = new double*[mNumDens];
-  mGamma  = new double*[mNumDens];
-  mKappa  = new double*[mNumDens];
-  mKappar = new double*[mNumDens];
-  mKappap = new double*[mNumDens];
+  mDens   = new FLOAT[mNumDens];
+  mTemp   = new FLOAT[mNumTemp];
+  mEnergy = new FLOAT*[mNumDens];
+  mMu     = new FLOAT*[mNumDens];
+  mGamma  = new FLOAT*[mNumDens];
+  mKappa  = new FLOAT*[mNumDens];
+  mKappar = new FLOAT*[mNumDens];
+  mKappap = new FLOAT*[mNumDens];
 
   for (i = 0; i < mNumDens; ++i) {
-    mEnergy[i] = new double[mNumTemp];
-    mMu[i]     = new double[mNumTemp];
-    mGamma[i]  = new double[mNumTemp];
-    mKappa[i]  = new double[mNumTemp];
-    mKappar[i] = new double[mNumTemp];
-    mKappap[i] = new double[mNumTemp];
+    mEnergy[i] = new FLOAT[mNumTemp];
+    mMu[i]     = new FLOAT[mNumTemp];
+    mGamma[i]  = new FLOAT[mNumTemp];
+    mKappa[i]  = new FLOAT[mNumTemp];
+    mKappar[i] = new FLOAT[mNumTemp];
+    mKappap[i] = new FLOAT[mNumTemp];
   }
 
   // read table
@@ -111,31 +111,31 @@ bool OpacityTable::Read() {
   return true;
 }
 
-double OpacityTable::GetKappa(double density, double temperature) {
+FLOAT OpacityTable::GetKappa(FLOAT density, FLOAT temperature) {
   return mKappa[GetIDens(log10(density))][GetITemp(log10(temperature))];
 }
 
-double OpacityTable::GetKappar(double density, double temperature) {
+FLOAT OpacityTable::GetKappar(FLOAT density, FLOAT temperature) {
   return mKappar[GetIDens(log10(density))][GetITemp(log10(temperature))];
 }
 
-double OpacityTable::GetMuBar(double density, double temperature) {
+FLOAT OpacityTable::GetMuBar(FLOAT density, FLOAT temperature) {
   return mMu[GetIDens(log10(density))][GetITemp(log10(temperature))];
 }
 
-double OpacityTable::GetGamma(double density, double temperature) {
+FLOAT OpacityTable::GetGamma(FLOAT density, FLOAT temperature) {
   return mGamma[GetIDens(log10(density))][GetITemp(log10(temperature))];
 }
 
-double OpacityTable::GetEnergy(double density, double temperature) {
+FLOAT OpacityTable::GetEnergy(FLOAT density, FLOAT temperature) {
   return mEnergy[GetIDens(log10(density))][GetITemp(log10(temperature))] / 1E4;
 }
 
-double OpacityTable::GetTemp(double density, double energy) {
-  double result = 0.0;
+FLOAT OpacityTable::GetTemp(FLOAT density, FLOAT energy) {
+  FLOAT result = 0.0;
   energy *= 1E4; // cgs conversion, K/g to ergs/g
 
-  double logdens = log10(density);
+  FLOAT logdens = log10(density);
   int idens = GetIDens(logdens);
 
   if (energy == 0.0) return result;
@@ -143,7 +143,7 @@ double OpacityTable::GetTemp(double density, double energy) {
   // gets nearest temperature in table from density and specific
   // internal energy
   int tempIndex = -1;
-  double diff = 1e20;
+  FLOAT diff = 1e20;
   for (int i = 0; i < mNumTemp; ++i) {
     if (fabs(energy - mEnergy[idens][i]) < diff) {
       diff = fabs(energy - mEnergy[idens][i]);
@@ -183,7 +183,7 @@ std::size_t GetClosestIndex(BidirectionalIterator first,
   return std::distance(first, GetClosest(first, last, value));
 }
 
-int OpacityTable::GetIDens(const double density) {
+int OpacityTable::GetIDens(const FLOAT density) {
   int idens = GetClosestIndex(mDens, mDens + mNumDens, density);
 
   if (density < mDens[idens]) {
@@ -192,7 +192,7 @@ int OpacityTable::GetIDens(const double density) {
   return idens;
 }
 
-int OpacityTable::GetITemp(const double temperature) {
+int OpacityTable::GetITemp(const FLOAT temperature) {
   int itemp = GetClosestIndex(mTemp, mTemp + mNumTemp , temperature);
 
   if (temperature <= mTemp[itemp]) {

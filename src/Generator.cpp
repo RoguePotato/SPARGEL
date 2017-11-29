@@ -120,7 +120,8 @@ void Generator::CreateDisc(void) {
 
     FLOAT m = mMDisc / mNumHydro;
 
-    FLOAT h = pow((3 * mNumNeigh * m) / (32.0 * PI * rho), (1.0 / 3.0));
+    FLOAT h = pow((3 * mNumNeigh * m) /
+              (32.0 * PI * (rho / MSOLPERAU3_TO_GPERCM3)), (1.0 / 3.0));
 
     FLOAT U = mOpacity->GetEnergy(rho, T);
 
@@ -146,6 +147,9 @@ void Generator::CreateDisc(void) {
     mParticles[i]->SetTau(tau);
     mParticles[i]->SetType(1);
   }
+
+  std::sort(mParticles.begin(), mParticles.end(),
+  [](Particle *a, Particle *b) { return b->GetID() > a->GetID(); });
 
   std::ofstream out;
   out.open("disc.dat");

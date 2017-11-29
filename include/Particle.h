@@ -34,13 +34,15 @@ public:
   FLOAT GetM() { return mM; }
   FLOAT GetU() { return mU; }
   FLOAT GetP() { return mP; }
+  FLOAT GetQ() { return mQ; }
   FLOAT GetOpacity() { return mOpacity; }
   FLOAT GetRealOpacity() { return mRealOpacity; }
   FLOAT GetSigma() { return mSigma; }
   FLOAT GetRealSigma() { return mRealSigma; }
   FLOAT GetTau() { return mTau; }
   FLOAT GetRealTau() { return mRealTau; }
-  FLOAT GetHydroAcc() { return mHydroAcc; }
+  FLOAT GetCooling() { return mCooling; }
+  FLOAT GetRealCooling() { return mRealCooling; }
   int GetType() { return mType; }
 
   void SetID(int id) { mID = id; }
@@ -53,13 +55,15 @@ public:
   void SetM(FLOAT M) { mM = M; }
   void SetU(FLOAT U) { mU = U; }
   void SetP(FLOAT P) { mP = P; }
+  void SetQ(FLOAT Q) { mQ = Q; }
   void SetOpacity(FLOAT o) { mOpacity = o; }
   void SetRealOpacity(FLOAT o) { mRealOpacity = o; }
   void SetSigma(FLOAT s) { mSigma = s; }
   void SetRealSigma(FLOAT s) { mRealSigma = s; }
   void SetTau(FLOAT tau) { mTau = tau; }
   void SetRealTau(FLOAT tau) { mRealTau = tau; }
-  void SetHydroAcc(FLOAT a) { mHydroAcc = a; }
+  void SetCooling(FLOAT c) { mCooling = c; }
+  void SetRealCooling(FLOAT c) { mRealCooling = c; }
   void SetType(int type) { mType = type; }
 
 private:
@@ -83,7 +87,8 @@ private:
   FLOAT mRealSigma = 0.0;
   FLOAT mTau = 0.0;
   FLOAT mRealTau = 0.0;
-  FLOAT mHydroAcc = 0.0;
+  FLOAT mCooling = 0.0;
+  FLOAT mRealCooling = 0.0;
   int mType = 1;
 };
 

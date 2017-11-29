@@ -79,13 +79,14 @@ bool Application::Initialise() {
     NameData nd;
     nd.dir = "./";
     nd.id = "SPA";
-    nd.format = "su";
+    nd.format = "column";
     nd.snap = "00000";
 
-    SerenFile *sf = new SerenFile(nd, false);
-    sf->SetParticles(mGenerator->GetParticles());
-    sf->SetSinks(mGenerator->GetSinks());
-    mFiles.push_back(sf);
+    SerenFile *cf = new SerenFile(nd, false);
+    cf->SetParticles(mGenerator->GetParticles());
+    cf->SetSinks(mGenerator->GetSinks());
+    OutputFile(cf, "./disc_column.dat");
+    mFiles.push_back(cf);
   }
 
   if (mCloudAnalyse) {
@@ -130,9 +131,6 @@ bool Application::Initialise() {
     }
   }
 
-  // TODO: Handle case where user does not want to read files just generate
-  // one. Possible run generator above here, and create the file, then
-  // perform analysis. If no analysis is selected, it will just write.
   if (mFiles.size() < 1) {
     std::cout << "No files selected, exiting...\n";
     return false;
@@ -201,8 +199,9 @@ void Application::Analyse(int task, int start, int end) {
       if (mCenter) {
         mDiscAnalyser->Center((SnapshotFile *) mFiles.at(i), mCenter - 1);
       }
-      FindRealSigma((SnapshotFile *) mFiles.at(i));
     }
+    FindColumnDensity((SnapshotFile *) mFiles.at(i));
+    FindOpticalDepth((SnapshotFile *) mFiles.at(i));
     // Sink analysis
     if (mSinkAnalyse) {
       mSinkAnalyser->AddMassRadius((SinkFile *) mFiles.at(i));
@@ -293,7 +292,8 @@ void Application::FindThermo(SnapshotFile *file) {
     FLOAT kappar = mOpacity->GetKappar(density, temp);
     FLOAT press = (gamma - 1.0) * density * energy;
     FLOAT tau = kappa * sigma;
-    FLOAT ahydro = (1.0 / sigma) * 1.06 * press;
+    FLOAT dudt = (4.0 * SB * (temp - 10.0)) /
+                 ((sigma * sigma * kappa) + (1 / kappar));
 
     part[i]->SetR(sqrt(pow(p->GetX().x, 2.0) +
                        pow(p->GetX().y, 2.0) +
@@ -303,13 +303,12 @@ void Application::FindThermo(SnapshotFile *file) {
     part[i]->SetOpacity(kappa);
     part[i]->SetRealOpacity(kappar);
     part[i]->SetTau(tau);
-    part[i]->SetHydroAcc(ahydro);
+    part[i]->SetCooling(dudt);
   }
   file->SetParticles(part);
 }
 
-#if (0)
-void Application::FindRealSigma(SnapshotFile *file) {
+void Application::FindColumnDensity(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
   std::sort(part.begin(), part.end(),
             [](Particle *a, Particle *b) { return b->GetX().z < a->GetX().z; });
@@ -324,20 +323,20 @@ void Application::FindRealSigma(SnapshotFile *file) {
     FLOAT search = h_fac * a->GetH();
     FLOAT m = a->GetM(), cd = 0.0, dz = 0.0;
     FLOAT tau = a->GetD() * a->GetRealOpacity() * a->GetX().z;
-    FLOAT d = a->GetD(), T = a->GetT();
+    FLOAT d = a->GetD(), T = a->GetT(), kappa = a->GetRealOpacity();
     FLOAT maxZ = -1E30;
     int Npart = 1;
 
     for (int j = 0; j < i; ++j) {
       Particle *b = part[j];
-      FLOAT dist = sqrt(pow(a->GetX().x - b->GetX().x, 2.0) +
-                        pow(a->GetX().y - b->GetX().y, 2.0));
+      FLOAT dist = (a->GetX() - b->GetX()).Norm2();
       if (dist > search) continue;
 
       m += b->GetM();
       dz = fabs(b->GetX().z - a->GetX().z);
       d += b->GetD();
       T += b->GetT();
+      kappa += b->GetRealOpacity();
       tau += b->GetD() * b->GetRealOpacity() * dz * AU_TO_CM;
 
       if (b->GetX().z > maxZ) maxZ = b->GetX().z;
@@ -352,12 +351,11 @@ void Application::FindRealSigma(SnapshotFile *file) {
     part.at(i)->SetRealSigma(
       (m / (PI * search * search)) * MSOLPERAU2_TO_GPERCM2);
 
-    d /= Npart;
-    T /= Npart;
-    // tau /= Npart;
-    tau = d * mOpacity->GetKappar(d, T) * fabs(a->GetX().z - maxZ) * AU_TO_CM;
-
-    part[i]->SetRealTau(tau);
+    // d /= Npart;
+    // T /= Npart;
+    // kappa /= Npart;
+    // tau = d * kappa * fabs(a->GetX().z - maxZ) * AU_TO_CM;
+    // part[i]->SetRealTau(tau);
   }
 
   // NEGATIVE Z
@@ -374,8 +372,7 @@ void Application::FindRealSigma(SnapshotFile *file) {
 
     for (int j = part.size() - 1; j > i; --j) {
       Particle *b = part[j];
-      FLOAT dist = sqrt(pow(a->GetX().x - b->GetX().x, 2.0) +
-                        pow(a->GetX().y - b->GetX().y, 2.0));
+      FLOAT dist = (a->GetX() - b->GetX()).Norm2();
       if (dist > search) continue;
 
       m += b->GetM();
@@ -392,47 +389,20 @@ void Application::FindRealSigma(SnapshotFile *file) {
     part[i]->SetRealSigma(
       (m / (PI * search * search)) * MSOLPERAU2_TO_GPERCM2);
 
-    d /= Npart;
-    T /= Npart;
-    // Opacity average or calculate opacity from average rho and T
-    // tau /= Npart;
-    tau = d * mOpacity->GetKappar(d, T) * fabs(a->GetX().z - minZ) * AU_TO_CM;
-
-    part[i]->SetRealTau(tau);
+    // d /= Npart;
+    // T /= Npart;
+    // tau = d * mOpacity->GetKappar(d, T) * fabs(a->GetX().z - minZ) * AU_TO_CM;
+    // part[i]->SetRealTau(tau);
   }
 
   file->SetParticles(part);
-
-  std::ofstream out;
-  out.open("sigma.dat");
-  for (int i = 0; i < part.size(); ++i) {
-    Particle *a = part[i];
-    out << a->GetR() << "\t"
-        << a->GetX().x << "\t"
-        << a->GetX().y << "\t"
-        << a->GetX().z << "\t"
-        << a->GetTau() << "\t"
-        << a->GetRealTau() << "\t"
-        << a->GetD() << "\t"
-        << a->GetT() << "\n";
-  }
-  out.close();
 }
 
-#else
+void Application::FindOpticalDepth(SnapshotFile *file) {
+  // For a single core and ~2E6 particles, this will take around 3 years to
+  // run as it stands
 
-void Application::FindRealSigma(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
-
-  FLOAT min_dens = 1E30, min_temp = 1E30;
-  for (int i = 0; i < part.size(); ++i) {
-    FLOAT dens = part[i]->GetD();
-    FLOAT temp = part[i]->GetT();
-    if (dens < min_dens) min_dens = dens;
-    if (temp < min_temp) min_temp = temp;
-  }
-
-  std::cout << min_dens << "\t" << min_temp << '\n';
 
   // Sort full particle array by x for quicker neighbour find
   std::sort(part.begin(), part.end(),
@@ -440,112 +410,116 @@ void Application::FindRealSigma(SnapshotFile *file) {
 
   // Assume a disc height
   const FLOAT DISC_HEIGHT = 10.0;
+  const int TEST_POINTS = 20;
+  const FLOAT BIN_HEIGHT = DISC_HEIGHT / TEST_POINTS;
+  const FLOAT BIN_HEIGHT_SCALED = BIN_HEIGHT * AU_TO_CM;
 
-  std::vector<Particle *> interps;
   for (int i = 0; i < part.size(); ++i) {
     if (i > 0 && i % 100 == 0) std::cout << ((FLOAT) i / part.size()) * 100.0 << " \%\n";
     Particle *a = part[i];
     FLOAT x = a->GetX().x;
     FLOAT y = a->GetX().y;
     FLOAT z = a->GetX().z;
+    FLOAT ah = a->GetH();
 
-    int test_points = 10;//(int)((1.0 / a->GetR()) * 100);
-    // if (test_points > 200) test_points = 200;
-    // if (test_points < 10) test_points = 10;
-    FLOAT bin_height = DISC_HEIGHT / test_points;
-    FLOAT bin_height_scaled = bin_height * AU_TO_CM;
-
-    int start_bin = fabs(z) / bin_height;
+    int start_bin = fabs(z) / BIN_HEIGHT;
 
     FLOAT tau = 0.0;
-    for (int j = start_bin; j < test_points; ++j) {
-      FLOAT curZ = j * bin_height;
+    for (int j = start_bin; j < TEST_POINTS; ++j) {
+      Particle *b = part[j];
+      FLOAT curZ = j * BIN_HEIGHT;
       if (z < 0.0) curZ *= -1;
       Vec3 testPoint = Vec3(x, y, curZ);
 
       // Get nearest neighbours around the current interpolation point
       std::vector<Particle *> neighbours = FindNeighbours(part, testPoint, i);
+      // if (neighbours.size() == 0) break;
 
       // Sort the neighbours by distance to the current interpolation point
       for (int n = 0; n < neighbours.size(); ++n) {
         Particle *neib = neighbours[n];
         neighbours[n]->SetR((testPoint - neib->GetX()).Norm());
       }
+
       std::sort(neighbours.begin(), neighbours.end(),
       [](Particle *a, Particle *b) { return b->GetR() > a->GetR(); });
 
-      // Use smoothing length from the closest neighbour as we don't know
-      // the smoothing length of the interpolating point
-
-      FLOAT h = neighbours[0]->GetH();
+      FLOAT h = a->GetH();
       FLOAT invh = 1.0 / h;
-      FLOAT dim_fac =  PI * pow(h * AU_TO_CM, 3.0);
+      FLOAT dim_fac = PI * pow(h * AU_TO_CM, 3.0);
       FLOAT rho = 0.0, temp = 0.0;
+      int num_neib = 0;
+
       for (int n = 0; n < neighbours.size(); ++n) {
         Particle *neib = neighbours[n];
 
-        FLOAT q = neib->GetR() * invh;
+        Vec3 dr = neib->GetX() - testPoint;
+
+        FLOAT q = neib->GetR()  * invh;
         if (q > 2.0) break;
         FLOAT mass_j = neib->GetM() * MSUN_TO_G;
         FLOAT rho_j = neib->GetD();
         FLOAT temp_j = neib->GetT();
 
         FLOAT w = 0.0;
-        if (q >= 0.0 && q <= 1.0) {
-          w = 0.25 * pow(2.0 - q, 3.0) - pow(1.0 - q, 3.0);
+        if (q >= 0.0 && q < 1.0) {
+          w = 1.0 - (1.5 * pow(q, 2.0)) + (0.75 * pow(q, 3.0));
         }
-        else if (q > 1.0 && q <= 2.0) {
+        else if (q >= 1.0 && q < 2.0) {
           w = 0.25 * pow(2.0 - q, 3.0);
         }
 
         FLOAT W = w / dim_fac;
 
         rho += W * mass_j;
-        temp += (mass_j / rho_j) * W * temp_j;
+
+        // Find an average temperature rather than using the innacurate SPH sum
+        temp += neib->GetT();
+
+        ++num_neib;
       }
       // Can quit going through points when there is no contribution to tau left
-      if (rho < min_dens || temp < min_temp) break;
+      // if (rho < 1E-17 || temp < 10.0) break;
+      temp /= num_neib;
+      tau += rho * mOpacity->GetKappar(rho, temp) * BIN_HEIGHT_SCALED;
 
-      FLOAT kappa = mOpacity->GetKappar(rho, temp);
-      tau += rho * kappa * bin_height_scaled;
-      // Particle *p = new Particle();
-      //
-      // p->SetX(testPoint);
-      // p->SetRealTau(tau);
-      // interps.push_back(p);
+      if (j == start_bin) {
+        part[i]->SetQ(rho);
+        part[i]->SetP(temp);
+      }
     }
 
     part[i]->SetRealTau(tau);
-  }
 
-// WHY IS REAL TAY ZERO
+    FLOAT kappar = mOpacity->GetKappar(part[i]->GetD(), part[i]->GetT());
+    FLOAT dudt = (4.0 * SB * (part[i]->GetT() - 10.0)) /
+                 (((1.0 / (part[i]->GetSigma() * kappar)) + tau) * part[i]->GetRealSigma());
+
+    part[i]->SetRealCooling(dudt);
+  }
+  std::sort(part.begin(), part.end(),
+  [](Particle *a, Particle *b) { return b->GetID() > a->GetID(); });
 
   std::ofstream out;
   out.open("new_sigma.dat");
   for (int i = 0; i < part.size(); ++i) {
-    out << part[i]->GetX().Norm() << "\t"
-        << part[i]->GetX().x << "\t"
-        << part[i]->GetX().y << "\t"
-        << part[i]->GetX().z << "\t"
-        << part[i]->GetTau() << "\t"
-        << part[i]->GetRealTau() << "\t"
-        << part[i]->GetD() << "\t"
-        << part[i]->GetT() << "\n";
+    Particle *p = part[i];
+    out << p->GetX().Norm() << "\t"     // 0
+        << p->GetX().x << "\t"          // 1
+        << p->GetX().y << "\t"          // 2
+        << p->GetX().z << "\t"          // 3
+        << p->GetTau() << "\t"          // 4
+        << p->GetRealTau() << "\t"      // 5
+        << p->GetD() << "\t"            // 6
+        << p->GetT() << "\t"            // 7
+        << p->GetQ() << "\t"            // 8
+        << p->GetP() << "\t"            // 9
+        << p->GetCooling() << "\t"      // 10
+        << p->GetRealCooling() << "\n"; // 11
   }
   out.close();
 
-  out.open("interps.dat");
-  for (int i = 0; i < interps.size(); ++i) {
-    out << interps[i]->GetX().Norm() << "\t"
-        << interps[i]->GetX().x << "\t"
-        << interps[i]->GetX().y << "\t"
-        << interps[i]->GetX().z << "\t"
-        << interps[i]->GetTau() << "\t"
-        << interps[i]->GetRealTau() << "\t"
-        << interps[i]->GetD() << "\t"
-        << interps[i]->GetT() << "\n";
-  }
-  out.close();
+  file->SetParticles(part);
 }
 
 std::vector<Particle *> Application::FindNeighbours(
@@ -554,7 +528,6 @@ std::vector<Particle *> Application::FindNeighbours(
  int part_index)
 {
   std::vector<Particle *> result;
-  // A smaller h results in underestimation, too high h and we are wasting time
   FLOAT h = 2.0 * part[part_index]->GetH();
   for (int i = part_index + 1; i < part.size(); ++i) {
     if (fabs(part[i]->GetX().x - pos.x) > h) break;
@@ -568,5 +541,3 @@ std::vector<Particle *> Application::FindNeighbours(
 
   return result;
 }
-
-#endif
