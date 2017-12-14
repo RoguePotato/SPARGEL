@@ -20,11 +20,6 @@
 
  Opacity table path      : EOS_TABLE = eos.bell.cc.dat
 
- Create ICs              : GENERATE = 0
- Type of IC              : IC_TYPE = disc
- Random seed             : SEED = 4112
- Gas particles           : N_HYDRO = 4096
-
 #------------------------------------------------------------------------------#
 # ANALYSIS                                                                     #
 #------------------------------------------------------------------------------#

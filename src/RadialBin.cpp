@@ -20,7 +20,10 @@ RadialBin::RadialBin(FLOAT starMass, FLOAT in, FLOAT out, FLOAT width) :
 }
 
 RadialBin::~RadialBin() {
-
+  for (int i = 0; i < mVerticalBins.size(); ++i) {
+    delete mVerticalBins[i];
+  }
+  mVerticalBins.clear();
 }
 
 void RadialBin::CalculateValues(void) {

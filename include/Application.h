@@ -26,6 +26,7 @@
 #include "FileNameExtractor.h"
 #include "Generator.h"
 #include "OpacityTable.h"
+#include "OpticalDepthOctree.h"
 #include "Parameters.h"
 #include "RadialAnalyser.h"
 #include "SerenFile.h"

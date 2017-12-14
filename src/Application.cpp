@@ -200,7 +200,7 @@ void Application::Analyse(int task, int start, int end) {
         mDiscAnalyser->Center((SnapshotFile *) mFiles.at(i), mCenter - 1);
       }
     }
-    FindColumnDensity((SnapshotFile *) mFiles.at(i));
+    // FindColumnDensity((SnapshotFile *) mFiles.at(i));
     FindOpticalDepth((SnapshotFile *) mFiles.at(i));
     // Sink analysis
     if (mSinkAnalyse) {
@@ -227,7 +227,7 @@ void Application::Analyse(int task, int start, int end) {
       OutputFile((SnapshotFile *) mFiles.at(i));
     }
     ++mFilesAnalysed;
-    delete mFiles.at(i);
+    delete mFiles[i];
   }
 }
 
@@ -295,9 +295,7 @@ void Application::FindThermo(SnapshotFile *file) {
     FLOAT dudt = (4.0 * SB * (temp - 10.0)) /
                  ((sigma * sigma * kappa) + (1 / kappar));
 
-    part[i]->SetR(sqrt(pow(p->GetX().x, 2.0) +
-                       pow(p->GetX().y, 2.0) +
-                       pow(p->GetX().z, 2.0)));
+    part[i]->SetR(part[i]->GetX().Norm());
     part[i]->SetT(temp);
     part[i]->SetP(press);
     part[i]->SetOpacity(kappa);
@@ -321,9 +319,7 @@ void Application::FindColumnDensity(SnapshotFile *file) {
     if (a->GetX().z < 0.0) break;
 
     FLOAT search = h_fac * a->GetH();
-    FLOAT m = a->GetM(), cd = 0.0, dz = 0.0;
-    FLOAT tau = a->GetD() * a->GetRealOpacity() * a->GetX().z;
-    FLOAT d = a->GetD(), T = a->GetT(), kappa = a->GetRealOpacity();
+    FLOAT m = a->GetM();
     FLOAT maxZ = -1E30;
     int Npart = 1;
 
@@ -333,11 +329,6 @@ void Application::FindColumnDensity(SnapshotFile *file) {
       if (dist > search) continue;
 
       m += b->GetM();
-      dz = fabs(b->GetX().z - a->GetX().z);
-      d += b->GetD();
-      T += b->GetT();
-      kappa += b->GetRealOpacity();
-      tau += b->GetD() * b->GetRealOpacity() * dz * AU_TO_CM;
 
       if (b->GetX().z > maxZ) maxZ = b->GetX().z;
 
@@ -350,12 +341,6 @@ void Application::FindColumnDensity(SnapshotFile *file) {
 
     part.at(i)->SetRealSigma(
       (m / (PI * search * search)) * MSOLPERAU2_TO_GPERCM2);
-
-    // d /= Npart;
-    // T /= Npart;
-    // kappa /= Npart;
-    // tau = d * kappa * fabs(a->GetX().z - maxZ) * AU_TO_CM;
-    // part[i]->SetRealTau(tau);
   }
 
   // NEGATIVE Z
@@ -364,9 +349,7 @@ void Application::FindColumnDensity(SnapshotFile *file) {
     if (a->GetX().z > 0.0) break;
 
     FLOAT search = h_fac * a->GetH();
-    FLOAT m = a->GetM(), cd = 0.0, dz = 0.0;
-    FLOAT tau = a->GetD() * a->GetRealOpacity() * fabs(a->GetX().z);
-    FLOAT d = a->GetD(), T = a->GetT();
+    FLOAT m = a->GetM();
     FLOAT minZ = 1E30;
     int Npart = 1;
 
@@ -376,10 +359,6 @@ void Application::FindColumnDensity(SnapshotFile *file) {
       if (dist > search) continue;
 
       m += b->GetM();
-      dz = fabs(b->GetX().z - a->GetX().z);
-      d += b->GetD();
-      T += b->GetT();
-      tau += b->GetD() * b->GetRealOpacity() * dz * AU_TO_CM;
       if (b->GetX().z < minZ) minZ = b->GetX().z;
 
       ++Npart;
@@ -388,122 +367,74 @@ void Application::FindColumnDensity(SnapshotFile *file) {
 
     part[i]->SetRealSigma(
       (m / (PI * search * search)) * MSOLPERAU2_TO_GPERCM2);
-
-    // d /= Npart;
-    // T /= Npart;
-    // tau = d * mOpacity->GetKappar(d, T) * fabs(a->GetX().z - minZ) * AU_TO_CM;
-    // part[i]->SetRealTau(tau);
   }
 
   file->SetParticles(part);
 }
 
 void Application::FindOpticalDepth(SnapshotFile *file) {
-  // For a single core and ~2E6 particles, this will take around 3 years to
-  // run as it stands
-
   std::vector<Particle *> part = file->GetParticles();
 
-  // Sort full particle array by x for quicker neighbour find
+  OpticalDepthOctree *octree = new OpticalDepthOctree(
+    Vec3(0.0, 0.0, 0.0),
+    Vec3(1024.0, 1024.0, 1024.0),
+    NULL, NULL);
+
+  std::vector<OpticalDepthOctree *> list;
+
+  // Get the maximum distance to a particle
   std::sort(part.begin(), part.end(),
-  [](Particle *a, Particle *b) { return b->GetX().x > a->GetX().x; });
+            [](Particle *a, Particle *b) { return b->GetR() < a->GetR(); });
+  FLOAT shift = 0.0;//std::ceil(fabs(part[0]->GetR()));
 
-  // Assume a disc height
-  const FLOAT DISC_HEIGHT = 10.0;
-  const int TEST_POINTS = 20;
-  const FLOAT BIN_HEIGHT = DISC_HEIGHT / TEST_POINTS;
-  const FLOAT BIN_HEIGHT_SCALED = BIN_HEIGHT * AU_TO_CM;
+  // Sort by z descending
+  std::sort(part.begin(), part.end(),
+            [](Particle *a, Particle *b) { return b->GetX().x < a->GetX().x; });
 
+  std::vector<Particle *> positive, negative;
   for (int i = 0; i < part.size(); ++i) {
-    if (i > 0 && i % 100 == 0) std::cout << ((FLOAT) i / part.size()) * 100.0 << " \%\n";
-    Particle *a = part[i];
-    FLOAT x = a->GetX().x;
-    FLOAT y = a->GetX().y;
-    FLOAT z = a->GetX().z;
-    FLOAT ah = a->GetH();
-
-    int start_bin = fabs(z) / BIN_HEIGHT;
-
-    FLOAT tau = 0.0;
-    for (int j = start_bin; j < TEST_POINTS; ++j) {
-      Particle *b = part[j];
-      FLOAT curZ = j * BIN_HEIGHT;
-      if (z < 0.0) curZ *= -1;
-      Vec3 testPoint = Vec3(x, y, curZ);
-
-      // Get nearest neighbours around the current interpolation point
-      std::vector<Particle *> neighbours = FindNeighbours(part, testPoint, i);
-      // if (neighbours.size() == 0) break;
-
-      // Sort the neighbours by distance to the current interpolation point
-      for (int n = 0; n < neighbours.size(); ++n) {
-        Particle *neib = neighbours[n];
-        neighbours[n]->SetR((testPoint - neib->GetX()).Norm());
-      }
-
-      std::sort(neighbours.begin(), neighbours.end(),
-      [](Particle *a, Particle *b) { return b->GetR() > a->GetR(); });
-
-      FLOAT h = a->GetH();
-      FLOAT invh = 1.0 / h;
-      FLOAT dim_fac = PI * pow(h * AU_TO_CM, 3.0);
-      FLOAT rho = 0.0, temp = 0.0;
-      int num_neib = 0;
-
-      for (int n = 0; n < neighbours.size(); ++n) {
-        Particle *neib = neighbours[n];
-
-        Vec3 dr = neib->GetX() - testPoint;
-
-        FLOAT q = neib->GetR()  * invh;
-        if (q > 2.0) break;
-        FLOAT mass_j = neib->GetM() * MSUN_TO_G;
-        FLOAT rho_j = neib->GetD();
-        FLOAT temp_j = neib->GetT();
-
-        FLOAT w = 0.0;
-        if (q >= 0.0 && q < 1.0) {
-          w = 1.0 - (1.5 * pow(q, 2.0)) + (0.75 * pow(q, 3.0));
-        }
-        else if (q >= 1.0 && q < 2.0) {
-          w = 0.25 * pow(2.0 - q, 3.0);
-        }
-
-        FLOAT W = w / dim_fac;
-
-        rho += W * mass_j;
-
-        // Find an average temperature rather than using the innacurate SPH sum
-        temp += neib->GetT();
-
-        ++num_neib;
-      }
-      // Can quit going through points when there is no contribution to tau left
-      // if (rho < 1E-17 || temp < 10.0) break;
-      temp /= num_neib;
-      tau += rho * mOpacity->GetKappar(rho, temp) * BIN_HEIGHT_SCALED;
-
-      if (j == start_bin) {
-        part[i]->SetQ(rho);
-        part[i]->SetP(temp);
-      }
+    if (part[i]->GetX().z >= 0.0) {
+      positive.push_back(part[i]);
     }
-
-    part[i]->SetRealTau(tau);
-
-    FLOAT kappar = mOpacity->GetKappar(part[i]->GetD(), part[i]->GetT());
-    FLOAT dudt = (4.0 * SB * (part[i]->GetT() - 10.0)) /
-                 (((1.0 / (part[i]->GetSigma() * kappar)) + tau) * part[i]->GetRealSigma());
-
-    part[i]->SetRealCooling(dudt);
+    else {
+      negative.push_back(part[i]);
+    }
   }
+
+  // Construct, link and walk twice. First for particles with z > 0. Then take
+  // particles with z < 0 and reflect about the z-axis using absolute z values.
+  octree->Construct(positive, shift);
+  octree->LinkTree(list);
+  octree->Walk(positive, shift, mOpacity);
+  for (int i = 0; i < positive.size(); ++i) part[i] = positive[i];
+
+  for (int i = 0; i < negative.size(); ++i) {
+    Particle *p = negative[i];
+    FLOAT x = p->GetX().x;
+    FLOAT y = p->GetX().y;
+    FLOAT z = -(p->GetX().z);
+    negative[i]->SetX(Vec3(x, y, z));
+  }
+  octree->Construct(negative, shift);
+  octree->LinkTree(list);
+  octree->Walk(negative, shift, mOpacity);
+  // The particles below the disc which have been flipped above now require
+  // being flipped back.
+  for (int i = 0; i < negative.size(); ++i) {
+    FLOAT x = negative[i]->GetX().x;
+    FLOAT y = negative[i]->GetX().y;
+    FLOAT z = -(negative[i]->GetX().z);
+    negative[i]->SetX(Vec3(x, y, z));
+    part[i + positive.size()] = negative[i];
+  }
+
   std::sort(part.begin(), part.end(),
   [](Particle *a, Particle *b) { return b->GetID() > a->GetID(); });
-
   std::ofstream out;
   out.open("new_sigma.dat");
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part[i];
+    if (p->GetRealTau() == 0.0) continue;
     out << p->GetX().Norm() << "\t"     // 0
         << p->GetX().x << "\t"          // 1
         << p->GetX().y << "\t"          // 2
@@ -515,29 +446,13 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
         << p->GetQ() << "\t"            // 8
         << p->GetP() << "\t"            // 9
         << p->GetCooling() << "\t"      // 10
-        << p->GetRealCooling() << "\n"; // 11
+        << p->GetRealCooling() << "\t"  // 11
+        << p->GetSigma() << "\t"        // 12
+        << p->GetRealSigma() << "\n";   // 13
   }
   out.close();
 
   file->SetParticles(part);
-}
 
-std::vector<Particle *> Application::FindNeighbours(
- std::vector<Particle *> part,
- Vec3 pos,
- int part_index)
-{
-  std::vector<Particle *> result;
-  FLOAT h = 2.0 * part[part_index]->GetH();
-  for (int i = part_index + 1; i < part.size(); ++i) {
-    if (fabs(part[i]->GetX().x - pos.x) > h) break;
-    result.push_back(part[i]);
-  }
-
-  for (int i = part_index - 1; i > 0; --i) {
-    if (fabs(pos.x - part[i]->GetX().x) > h) break;
-    result.push_back(part[i]);
-  }
-
-  return result;
+  delete octree;
 }
