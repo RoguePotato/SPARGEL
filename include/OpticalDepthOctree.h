@@ -28,7 +28,6 @@
 
 struct OpticalDepthPoint {
   Vec3 pos;
-  FLOAT h;
   FLOAT dens;
   FLOAT temp;
 };
@@ -42,15 +41,15 @@ public:
 	OpticalDepthOctree(const OpticalDepthOctree& Copy);
 	~OpticalDepthOctree();
 
-	void Construct(std::vector<Particle*> Particles, const FLOAT Shift);
+	void Construct(std::vector<Particle*> Particles);
 	void Walk(std::vector<Particle*> &Particles,
-            const FLOAT Shift,
             OpacityTable* opacity);
 
 	void Insert(OpticalDepthPoint* Point);
 	void LinkTree(std::vector<OpticalDepthOctree*> &List);
 	void TraverseTree(const Vec3 ParticlePos,
-                    FLOAT &Contrib,
+                    FLOAT &Sigma,
+                    FLOAT &Tau,
                     OpacityTable* opacity);
 	int GetOctantContainingPoint(const Vec3& Point) const;
 	bool IsLeafNode() const;

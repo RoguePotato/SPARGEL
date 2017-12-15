@@ -200,8 +200,10 @@ void Application::Analyse(int task, int start, int end) {
         mDiscAnalyser->Center((SnapshotFile *) mFiles.at(i), mCenter - 1);
       }
     }
-    // FindColumnDensity((SnapshotFile *) mFiles.at(i));
+
+    // Find vertically integrated quantities
     FindOpticalDepth((SnapshotFile *) mFiles.at(i));
+
     // Sink analysis
     if (mSinkAnalyse) {
       mSinkAnalyser->AddMassRadius((SinkFile *) mFiles.at(i));
@@ -306,86 +308,15 @@ void Application::FindThermo(SnapshotFile *file) {
   file->SetParticles(part);
 }
 
-void Application::FindColumnDensity(SnapshotFile *file) {
-  std::vector<Particle *> part = file->GetParticles();
-  std::sort(part.begin(), part.end(),
-            [](Particle *a, Particle *b) { return b->GetX().z < a->GetX().z; });
-
-  FLOAT h_fac = 4.0;
-
-  // POSITIVE Z
-  for (int i = 0; i < part.size(); ++i) {
-    Particle *a = part[i];
-    if (a->GetX().z < 0.0) break;
-
-    FLOAT search = h_fac * a->GetH();
-    FLOAT m = a->GetM();
-    FLOAT maxZ = -1E30;
-    int Npart = 1;
-
-    for (int j = 0; j < i; ++j) {
-      Particle *b = part[j];
-      FLOAT dist = (a->GetX() - b->GetX()).Norm2();
-      if (dist > search) continue;
-
-      m += b->GetM();
-
-      if (b->GetX().z > maxZ) maxZ = b->GetX().z;
-
-      ++Npart;
-    }
-    // Sometimes there is no particle above in the neighbour list
-    // so the particle is the highest around i.e. it is a surface particle.
-    // As such, the distance to the surface is it's own z.
-    if (Npart == 1) maxZ = 0.0;
-
-    part.at(i)->SetRealSigma(
-      (m / (PI * search * search)) * MSOLPERAU2_TO_GPERCM2);
-  }
-
-  // NEGATIVE Z
-  for (int i = part.size() - 1; i >= 0; --i) {
-    Particle *a = part[i];
-    if (a->GetX().z > 0.0) break;
-
-    FLOAT search = h_fac * a->GetH();
-    FLOAT m = a->GetM();
-    FLOAT minZ = 1E30;
-    int Npart = 1;
-
-    for (int j = part.size() - 1; j > i; --j) {
-      Particle *b = part[j];
-      FLOAT dist = (a->GetX() - b->GetX()).Norm2();
-      if (dist > search) continue;
-
-      m += b->GetM();
-      if (b->GetX().z < minZ) minZ = b->GetX().z;
-
-      ++Npart;
-    }
-    if (Npart == 1) minZ = 0.0;
-
-    part[i]->SetRealSigma(
-      (m / (PI * search * search)) * MSOLPERAU2_TO_GPERCM2);
-  }
-
-  file->SetParticles(part);
-}
-
 void Application::FindOpticalDepth(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
 
   OpticalDepthOctree *octree = new OpticalDepthOctree(
     Vec3(0.0, 0.0, 0.0),
-    Vec3(1024.0, 1024.0, 1024.0),
+    Vec3(2048.0, 2048.0, 2048.0),
     NULL, NULL);
 
   std::vector<OpticalDepthOctree *> list;
-
-  // Get the maximum distance to a particle
-  std::sort(part.begin(), part.end(),
-            [](Particle *a, Particle *b) { return b->GetR() < a->GetR(); });
-  FLOAT shift = 0.0;//std::ceil(fabs(part[0]->GetR()));
 
   // Sort by z descending
   std::sort(part.begin(), part.end(),
@@ -403,9 +334,9 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
 
   // Construct, link and walk twice. First for particles with z > 0. Then take
   // particles with z < 0 and reflect about the z-axis using absolute z values.
-  octree->Construct(positive, shift);
+  octree->Construct(positive);
   octree->LinkTree(list);
-  octree->Walk(positive, shift, mOpacity);
+  octree->Walk(positive, mOpacity);
   for (int i = 0; i < positive.size(); ++i) part[i] = positive[i];
 
   for (int i = 0; i < negative.size(); ++i) {
@@ -415,9 +346,9 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
     FLOAT z = -(p->GetX().z);
     negative[i]->SetX(Vec3(x, y, z));
   }
-  octree->Construct(negative, shift);
+  octree->Construct(negative);
   octree->LinkTree(list);
-  octree->Walk(negative, shift, mOpacity);
+  octree->Walk(negative, mOpacity);
   // The particles below the disc which have been flipped above now require
   // being flipped back.
   for (int i = 0; i < negative.size(); ++i) {
@@ -431,7 +362,7 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
   std::sort(part.begin(), part.end(),
   [](Particle *a, Particle *b) { return b->GetID() > a->GetID(); });
   std::ofstream out;
-  out.open("new_sigma.dat");
+  out.open("OctreeData.dat");
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part[i];
     if (p->GetRealTau() == 0.0) continue;

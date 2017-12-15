@@ -125,16 +125,6 @@ void Generator::CreateDisc(void) {
 
     FLOAT U = mOpacity->GetEnergy(rho, T);
 
-    FLOAT kappa =  mOpacity->GetKappar(rho, T);
-    FLOAT tau_0 = kappa * rho_0 * z_0 * AU_TO_CM * (2.0 / PI);
-    FLOAT tau = 0.0;
-    if (z >= 0.0) {
-      tau = tau_0 * (1.0 - sin((PI * fabs(z)) / (2.0 * z_0)));
-    }
-    else {
-      tau = tau_0 * (1.0 + sin((-PI * fabs(z)) / (2.0 * z_0)));
-    }
-
     mParticles[i]->SetID(i);
     mParticles[i]->SetX(Vec3(x, y, z));
     mParticles[i]->SetR(Vec3(x, y, z).Norm());
@@ -147,23 +137,6 @@ void Generator::CreateDisc(void) {
     mParticles[i]->SetTau(tau);
     mParticles[i]->SetType(1);
   }
-
-  std::sort(mParticles.begin(), mParticles.end(),
-  [](Particle *a, Particle *b) { return b->GetID() > a->GetID(); });
-
-  std::ofstream out;
-  out.open("disc.dat");
-  for (int i = 0; i < mParticles.size(); ++i) {
-    out << mParticles[i]->GetR() << "\t"
-        << mParticles[i]->GetX().x << "\t"
-        << mParticles[i]->GetX().y << "\t"
-        << mParticles[i]->GetX().z << "\t"
-        << mParticles[i]->GetTau() << "\t"
-        << mParticles[i]->GetRealTau() << "\t"
-        << mParticles[i]->GetD() << "\t"
-        << mParticles[i]->GetT() << "\n";
-  }
-  out.close();
 }
 
 void Generator::CreateCloud(void) {

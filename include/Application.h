@@ -78,9 +78,5 @@ private:
   void Analyse(int task, int start, int end);
   void OutputFile(SnapshotFile *file, std::string fileName = "");
   void FindThermo(SnapshotFile *file);
-  void FindColumnDensity(SnapshotFile *file);
   void FindOpticalDepth(SnapshotFile *file);
-  std::vector<Particle *> FindNeighbours(std::vector<Particle *> part,
-                                         Vec3 pos,
-                                         int part_index);
 };
