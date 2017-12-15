@@ -134,7 +134,6 @@ void Generator::CreateDisc(void) {
     mParticles[i]->SetM(m);
     mParticles[i]->SetU(U);
     mParticles[i]->SetSigma(sigma);
-    mParticles[i]->SetTau(tau);
     mParticles[i]->SetType(1);
   }
 }
