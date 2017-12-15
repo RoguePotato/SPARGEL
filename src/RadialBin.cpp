@@ -47,10 +47,11 @@ void RadialBin::CalculateValues(void) {
     mAverages[3] += p->GetM() * MSUN_TO_KG;
     mAverages[4] += p->GetP();
     mAverages[5] += p->GetTau();
-    mAverages[6] += p->GetCooling();
+    mAverages[6] += p->GetRealTau();
     mAverages[7] += p->GetSigma();
     mAverages[8] += p->GetRealSigma();
-    mAverages[9] += p->GetRealTau();
+    mAverages[9] += p->GetCooling();
+    mAverages[10] += p->GetRealCooling();
 
     // Vertical bins
     for (int j = 0; j < mVerticalBins.size(); ++j) {

@@ -283,6 +283,7 @@ void Application::OutputFile(SnapshotFile *file, std::string fileName) {
 
 void Application::FindThermo(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
+  FLOAT temp_inf = mParams->GetFloat("T_INF");
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part[i];
     FLOAT density = p->GetD();
@@ -294,7 +295,7 @@ void Application::FindThermo(SnapshotFile *file) {
     FLOAT kappar = mOpacity->GetKappar(density, temp);
     FLOAT press = (gamma - 1.0) * density * energy;
     FLOAT tau = kappa * sigma;
-    FLOAT dudt = (4.0 * SB * (temp - 10.0)) /
+    FLOAT dudt = (4.0 * SB * (temp - temp_inf)) /
                  ((sigma * sigma * kappa) + (1 / kappar));
 
     part[i]->SetR(part[i]->GetX().Norm());
@@ -359,31 +360,43 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
     part[i + positive.size()] = negative[i];
   }
 
-  std::sort(part.begin(), part.end(),
-  [](Particle *a, Particle *b) { return b->GetID() > a->GetID(); });
-  std::ofstream out;
-  out.open("OctreeData.dat");
+  // Set cooling rate via equation 7 of Wilkins & Clarke (2012)
+  FLOAT temp_inf = mParams->GetFloat("T_INF");
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part[i];
-    if (p->GetRealTau() == 0.0) continue;
-    out << p->GetX().Norm() << "\t"     // 0
-        << p->GetX().x << "\t"          // 1
-        << p->GetX().y << "\t"          // 2
-        << p->GetX().z << "\t"          // 3
-        << p->GetTau() << "\t"          // 4
-        << p->GetRealTau() << "\t"      // 5
-        << p->GetD() << "\t"            // 6
-        << p->GetT() << "\t"            // 7
-        << p->GetQ() << "\t"            // 8
-        << p->GetP() << "\t"            // 9
-        << p->GetCooling() << "\t"      // 10
-        << p->GetRealCooling() << "\t"  // 11
-        << p->GetSigma() << "\t"        // 12
-        << p->GetRealSigma() << "\n";   // 13
-  }
-  out.close();
+    FLOAT temp = p->GetT();
+    FLOAT pseudo = 1.0 / (p->GetTau());
+    FLOAT numer = (4.0 * PI * SB) * (temp - temp_inf);
+    FLOAT denom = p->GetRealSigma() * (pseudo + p->GetRealTau());
 
-  file->SetParticles(part);
+    part[i]->SetRealCooling(numer / denom);
+  }
+
+  // std::sort(part.begin(), part.end(),
+  // [](Particle *a, Particle *b) { return b->GetID() > a->GetID(); });
+  // std::ofstream out;
+  // out.open("OctreeData.dat");
+  // for (int i = 0; i < part.size(); ++i) {
+  //   Particle *p = part[i];
+  //   if (p->GetRealTau() == 0.0) continue;
+  //   out << p->GetX().Norm() << "\t"     // 0
+  //       << p->GetX().x << "\t"          // 1
+  //       << p->GetX().y << "\t"          // 2
+  //       << p->GetX().z << "\t"          // 3
+  //       << p->GetTau() << "\t"          // 4
+  //       << p->GetRealTau() << "\t"      // 5
+  //       << p->GetD() << "\t"            // 6
+  //       << p->GetT() << "\t"            // 7
+  //       << p->GetQ() << "\t"            // 8
+  //       << p->GetP() << "\t"            // 9
+  //       << p->GetCooling() << "\t"      // 10
+  //       << p->GetRealCooling() << "\t"  // 11
+  //       << p->GetSigma() << "\t"        // 12
+  //       << p->GetRealSigma() << "\n";   // 13
+  // }
+  // out.close();
+  //
+  // file->SetParticles(part);
 
   delete octree;
 }

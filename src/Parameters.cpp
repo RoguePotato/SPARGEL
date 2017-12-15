@@ -142,8 +142,8 @@ void Parameters::SetDefaultParameters() {
   mFloatParams["R_IN"] = 5.0;
   mFloatParams["R_OUT"] = 100.0;
   mFloatParams["R_0"] = 0.01;
-  mFloatParams["T_0"] = 250;
-  mFloatParams["T_INF"] = 10;
+  mFloatParams["T_0"] = 250.0;
+  mFloatParams["T_INF"] = 5.0;
   mIntParams["N_NEIGH"] = 50;
   mFloatParams["P"] = 1.0;
   mFloatParams["Q"] = 0.75;
