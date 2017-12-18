@@ -152,22 +152,25 @@ void Generator::CreateStars(void) {
 }
 
 void Generator::CalculateVelocity(void) {
-  FLOAT shift = mRout * 2.0;
-  mOctree = new Octree(Vec3(0.0, 0.0, 0.0), Vec3(5000.0, 5000.0, 5000.0));
+  mOctree = new Octree(Vec3(0.0, 0.0, 0.0), Vec3(512.0, 512.0, 512.0));
 
-  mOctreePoints = new OctreePoint[mParticles.size()];
-  for(int i = 0; i < mParticles.size(); ++i) {
-    FLOAT x = mParticles.at(i)->GetX()[0];
-    FLOAT y = mParticles.at(i)->GetX()[1];
-    FLOAT z = mParticles.at(i)->GetX()[2];
+  // Insert particles
+  mOctreePoints = new OctreePoint[mParticles.size() + mSinks.size()];
+  for (int i = 0; i < mParticles.size(); ++i) {
+    Vec3 pos = mParticles.at(i)->GetX();
     FLOAT M = mParticles.at(i)->GetM();
 
-    // shift the positions such that they are positive
-    x += shift;
-    y += shift;
-    z += shift;
+    mOctreePoints[i].SetPosition(pos);
+    mOctreePoints[i].SetMass(M);
+    mOctree->Insert(mOctreePoints + i);
+  }
 
-    mOctreePoints[i].SetPosition(Vec3(x, y, z));
+  // Insert sinks
+  for (int i = 0; i < mSinks.size(); ++i) {
+    Vec3 pos = mSinks.at(i)->GetX();
+    FLOAT M = mSinks.at(i)->GetM();
+
+    mOctreePoints[i].SetPosition(pos);
     mOctreePoints[i].SetMass(M);
     mOctree->Insert(mOctreePoints + i);
   }
@@ -179,10 +182,6 @@ void Generator::CalculateVelocity(void) {
     FLOAT x = mParticles.at(i)->GetX()[0];
     FLOAT y = mParticles.at(i)->GetX()[1];
     FLOAT h = mParticles.at(i)->GetH();
-
-    pos[0] += shift;
-    pos[1] += shift;
-    pos[2] += shift;
 
     mOctree->TraverseTree(pos, acc, h);
 
