@@ -50,8 +50,8 @@ void RadialBin::CalculateValues(void) {
     mAverages[6] += p->GetRealTau();
     mAverages[7] += p->GetSigma();
     mAverages[8] += p->GetRealSigma();
-    mAverages[9] += p->GetCooling();
-    mAverages[10] += p->GetRealCooling();
+    mAverages[9] += p->GetDUDT();
+    mAverages[10] += p->GetRealDUDT();
 
     // Vertical bins
     for (int j = 0; j < mVerticalBins.size(); ++j) {

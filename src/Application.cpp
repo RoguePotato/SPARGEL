@@ -304,7 +304,7 @@ void Application::FindThermo(SnapshotFile *file) {
     part[i]->SetOpacity(kappa);
     part[i]->SetRealOpacity(kappar);
     part[i]->SetTau(tau);
-    part[i]->SetCooling(dudt);
+    part[i]->SetDUDT(dudt);
   }
   file->SetParticles(part);
 }
@@ -369,7 +369,7 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
     FLOAT numer = (4.0 * PI * SB) * (temp - temp_inf);
     FLOAT denom = p->GetRealSigma() * (pseudo + p->GetRealTau());
 
-    part[i]->SetRealCooling(numer / denom);
+    part[i]->SetRealDUDT(numer / denom);
   }
 
   // std::sort(part.begin(), part.end(),
@@ -389,8 +389,8 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
   //       << p->GetT() << "\t"            // 7
   //       << p->GetQ() << "\t"            // 8
   //       << p->GetP() << "\t"            // 9
-  //       << p->GetCooling() << "\t"      // 10
-  //       << p->GetRealCooling() << "\t"  // 11
+  //       << p->GetDUDT() << "\t"      // 10
+  //       << p->GetRealDUDT() << "\t"  // 11
   //       << p->GetSigma() << "\t"        // 12
   //       << p->GetRealSigma() << "\n";   // 13
   // }

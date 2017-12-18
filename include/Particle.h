@@ -41,8 +41,8 @@ public:
   FLOAT GetRealSigma() { return mRealSigma; }
   FLOAT GetTau() { return mTau; }
   FLOAT GetRealTau() { return mRealTau; }
-  FLOAT GetCooling() { return mCooling; }
-  FLOAT GetRealCooling() { return mRealCooling; }
+  FLOAT GetDUDT() { return mDUDT; }
+  FLOAT GetRealDUDT() { return mRealDUDT; }
   int GetType() { return mType; }
 
   void SetID(int id) { mID = id; }
@@ -62,8 +62,8 @@ public:
   void SetRealSigma(FLOAT s) { mRealSigma = s; }
   void SetTau(FLOAT tau) { mTau = tau; }
   void SetRealTau(FLOAT tau) { mRealTau = tau; }
-  void SetCooling(FLOAT c) { mCooling = c; }
-  void SetRealCooling(FLOAT c) { mRealCooling = c; }
+  void SetDUDT(FLOAT c) { mDUDT = c; }
+  void SetRealDUDT(FLOAT c) { mRealDUDT = c; }
   void SetType(int type) { mType = type; }
 
 private:
@@ -87,8 +87,8 @@ private:
   FLOAT mRealSigma = 0.0;
   FLOAT mTau = 0.0;
   FLOAT mRealTau = 0.0;
-  FLOAT mCooling = 0.0;
-  FLOAT mRealCooling = 0.0;
+  FLOAT mDUDT = 0.0;
+  FLOAT mRealDUDT = 0.0;
   int mType = 1;
 };
 
