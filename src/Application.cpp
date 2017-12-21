@@ -283,7 +283,6 @@ void Application::OutputFile(SnapshotFile *file, std::string fileName) {
 
 void Application::FindThermo(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
-  FLOAT temp_inf = mParams->GetFloat("T_INF");
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part[i];
     FLOAT density = p->GetD();
@@ -297,8 +296,7 @@ void Application::FindThermo(SnapshotFile *file) {
     FLOAT press = (gamma - 1.0) * density * energy;
     FLOAT cs = sqrtf((K * temp) / (M_P * mu_bar));
     FLOAT tau = kappa * sigma;
-    FLOAT dudt = (4.0 * SB * (temp - temp_inf)) /
-                 ((sigma * sigma * kappa) + (1 / kappar));
+    FLOAT dudt = 1.0 / ((sigma * sigma * kappa) + (1 / kappar));
 
     part[i]->SetR(part[i]->GetX().Norm());
     part[i]->SetT(temp);
@@ -363,17 +361,14 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
     part[i + positive.size()] = negative[i];
   }
 
-  // Set cooling rate via equation 7 of Wilkins & Clarke (2012)
-  FLOAT temp_inf = mParams->GetFloat("T_INF");
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part[i];
     FLOAT temp = p->GetT();
     FLOAT sigma = p->GetRealSigma();
     FLOAT tau = p->GetRealTau();
-    FLOAT numer = (4.0 * PI * SB) * (temp - temp_inf);
-    FLOAT denom = sigma * (tau + (1.0 / tau));
+    FLOAT dudt = 1.0 / (sigma * (tau + (1.0 / tau)));
 
-    part[i]->SetRealDUDT(numer / denom);
+    part[i]->SetRealDUDT(dudt);
   }
 
   // std::sort(part.begin(), part.end(),
