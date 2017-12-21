@@ -34,6 +34,7 @@ public:
   FLOAT GetM() { return mM; }
   FLOAT GetU() { return mU; }
   FLOAT GetP() { return mP; }
+  FLOAT GetCS() { return mCS; }
   FLOAT GetQ() { return mQ; }
   FLOAT GetOpacity() { return mOpacity; }
   FLOAT GetRealOpacity() { return mRealOpacity; }
@@ -55,6 +56,7 @@ public:
   void SetM(FLOAT M) { mM = M; }
   void SetU(FLOAT U) { mU = U; }
   void SetP(FLOAT P) { mP = P; }
+  void SetCS(FLOAT cs) { mCS = cs; }
   void SetQ(FLOAT Q) { mQ = Q; }
   void SetOpacity(FLOAT o) { mOpacity = o; }
   void SetRealOpacity(FLOAT o) { mRealOpacity = o; }
@@ -62,8 +64,8 @@ public:
   void SetRealSigma(FLOAT s) { mRealSigma = s; }
   void SetTau(FLOAT tau) { mTau = tau; }
   void SetRealTau(FLOAT tau) { mRealTau = tau; }
-  void SetDUDT(FLOAT c) { mDUDT = c; }
-  void SetRealDUDT(FLOAT c) { mRealDUDT = c; }
+  void SetDUDT(FLOAT dudt) { mDUDT = dudt; }
+  void SetRealDUDT(FLOAT dudt) { mRealDUDT = dudt; }
   void SetType(int type) { mType = type; }
 
 private:
@@ -78,6 +80,7 @@ private:
   FLOAT mM = 0.0;
   FLOAT mU = 0.0;
   FLOAT mP = 0.0;
+  FLOAT mCS = 0.0;
   FLOAT mQ = 0.0;
   FLOAT mGamma = 0.0;
   FLOAT mMu = 0.0;

@@ -293,7 +293,9 @@ void Application::FindThermo(SnapshotFile *file) {
     FLOAT gamma = mOpacity->GetGamma(density, temp);
     FLOAT kappa = mOpacity->GetKappa(density, temp);
     FLOAT kappar = mOpacity->GetKappar(density, temp);
+    FLOAT mu_bar = mOpacity->GetMuBar(density, temp);
     FLOAT press = (gamma - 1.0) * density * energy;
+    FLOAT cs = sqrtf((K * temp) / (M_P * mu_bar));
     FLOAT tau = kappa * sigma;
     FLOAT dudt = (4.0 * SB * (temp - temp_inf)) /
                  ((sigma * sigma * kappa) + (1 / kappar));
@@ -301,6 +303,7 @@ void Application::FindThermo(SnapshotFile *file) {
     part[i]->SetR(part[i]->GetX().Norm());
     part[i]->SetT(temp);
     part[i]->SetP(press);
+    part[i]->SetCS(cs);
     part[i]->SetOpacity(kappa);
     part[i]->SetRealOpacity(kappar);
     part[i]->SetTau(tau);
@@ -365,9 +368,10 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part[i];
     FLOAT temp = p->GetT();
-    FLOAT pseudo = 1.0 / (p->GetTau());
+    FLOAT sigma = p->GetRealSigma();
+    FLOAT tau = p->GetRealTau();
     FLOAT numer = (4.0 * PI * SB) * (temp - temp_inf);
-    FLOAT denom = p->GetRealSigma() * (pseudo + p->GetRealTau());
+    FLOAT denom = sigma * (tau + (1.0 / tau));
 
     part[i]->SetRealDUDT(numer / denom);
   }
