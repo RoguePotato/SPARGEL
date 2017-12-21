@@ -115,6 +115,7 @@ void Parameters::SetDefaultParameters() {
   mIntParams["OUTPUT_FILES"] = 0;
   mStringParams["CLOUD_OUTPUT"] = "cloud.dat";
   mStringParams["EOS_TABLE"] = "eos.bell.cc.dat";
+  mIntParams["OUTPUT_COOLING"] = 0;
 
   mIntParams["CLOUD_ANALYSIS"] = 0;
   mIntParams["CLOUD_CENTER"] = 0;

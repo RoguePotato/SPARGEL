@@ -74,6 +74,7 @@ void RadialAnalyser::Run(SnapshotFile *file) {
   // 7: Optical depth
   // 8: Hydrodynamical acceleration
   NameData nd = file->GetNameData();
+  if (nd.dir == "") nd.dir = ".";
   std::string outputName = nd.dir + "/SPARGEL." + nd.id + "." +
   nd.format + "." + nd.snap + nd.append + ".radial";
 
@@ -96,6 +97,7 @@ void RadialAnalyser::Run(SnapshotFile *file) {
       RadialBin *b = mRadialBins[r];
       if (b->GetNumParticles() <= 0) continue;
 
+      if (nd.dir == "") nd.dir = ".";
       outputName = nd.dir + "/SPARGEL." + nd.id + "." +
       nd.format + "." + nd.snap + nd.append + ".vertical." + std::to_string(r);
       out.open(outputName);

@@ -237,6 +237,8 @@ void Application::OutputFile(SnapshotFile *file, std::string fileName) {
   NameData nd = file->GetNameData();
   std::string outputName;
 
+  if (nd.dir == "") nd.dir = ".";
+
   if (fileName == "") {
     outputName = nd.dir + "/" + nd.id + "." +
     nd.format + "." + nd.snap + nd.append;
@@ -371,6 +373,20 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
     part[i]->SetRealDUDT(dudt);
   }
 
+  // Replaces 3D velocity data with the ratios of estimated to real values for
+  // optical depth, column density and cooling rate. This is useful for plotting
+  // 2D maps for the above in SPLASH.
+  if (mParams->GetInt("OUTPUT_COOLING")) {
+    file->SetNameDataAppend(".modified");
+    for (int i = 0; i < part.size(); ++i) {
+      Particle *p = part[i];
+      FLOAT tau_ratio = p->GetTau() / p->GetRealTau();
+      FLOAT sigma_ratio = p->GetSigma() / p->GetRealSigma();
+      FLOAT cooling_ratio = p->GetDUDT() / p->GetRealDUDT();
+      part[i]->SetV(Vec3(tau_ratio, sigma_ratio, cooling_ratio));
+    }
+  }
+
   // std::sort(part.begin(), part.end(),
   // [](Particle *a, Particle *b) { return b->GetID() > a->GetID(); });
   // std::ofstream out;
@@ -395,7 +411,7 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
   // }
   // out.close();
   //
-  // file->SetParticles(part);
+  file->SetParticles(part);
 
   delete octree;
 }
