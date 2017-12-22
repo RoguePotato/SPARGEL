@@ -85,6 +85,7 @@ bool SerenFile::Write(std::string fileName, bool formatted) {
     return false;
   }
 
+  CreateHeader();
   if (formatted) {
     Formatter formatStream(mOutStream, 18, 2, 10);
     WriteHeaderForm(formatStream);
@@ -132,6 +133,11 @@ void SerenFile::AllocateMemory(void) {
 void SerenFile::CreateHeader(void) {
   mNumGas = mParticles.size();
   mNumSink = mSinks.size();
+
+  mHeader[0] = mPrecision;
+  mHeader[1] = mPosDim;
+  mHeader[2] = mVelDim;
+  mHeader[3] = mMagDim;
 
   // TODO: Replace string vectors
   // with array size 50
@@ -530,7 +536,7 @@ void SerenFile::WriteHeaderUnform(void) {
   std::ostringstream stream;
   stream << std::left << std::setw(STRING_LENGTH)
          << std::setfill(' ') << BINARY_FORMAT;
-  mOutStream << stream.str();
+  mBW->WriteValue(stream.str());
 
   for (int i = 0; i < 4; ++i)
     mBW->WriteValue(mHeader[i]);

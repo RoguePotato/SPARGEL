@@ -79,7 +79,7 @@ bool Application::Initialise() {
     NameData nd;
     nd.dir = "./";
     nd.id = "SPA";
-    nd.format = "column";
+    nd.format = "su";
     nd.snap = "00000";
 
     SerenFile *cf = new SerenFile(nd, false);
@@ -245,7 +245,7 @@ void Application::OutputFile(SnapshotFile *file, std::string fileName) {
   }
   else {
     outputName = fileName;
-    nd.format = "column";
+    nd.format = "su";
   }
 
   // TODO: reduce code duplication

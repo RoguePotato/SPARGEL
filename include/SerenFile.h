@@ -48,9 +48,9 @@ private:
   DOUBLE mDoubleData[50] = {0};
 
   int mPrecision = 8;
-  int mPosDim = 1;
-  int mVelDim = 1;
-  int mMagDim = 1;
+  int mPosDim = 3;
+  int mVelDim = 3;
+  int mMagDim = 3;
 
   int mSinkDataLength = 0;
 
