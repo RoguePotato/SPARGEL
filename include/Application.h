@@ -72,11 +72,14 @@ private:
   int mCloudCenter = 0;
   int mDiscAnalyse = 0;
   int mSinkAnalyse = 0;
+  int mMidplaneCut = 0;
   int mCenter = 0;
   int mRadialAnalyse = 0;
 
   void Analyse(int task, int start, int end);
-  void OutputFile(SnapshotFile *file, std::string fileName = "");
+  void MidplaneTrim(SnapshotFile *file);
+  void OutputFile(SnapshotFile *file);
   void FindThermo(SnapshotFile *file);
   void FindOpticalDepth(SnapshotFile *file);
+  void FindToomre(SnapshotFile *file);
 };

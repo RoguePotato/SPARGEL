@@ -35,6 +35,7 @@ public:
   FLOAT GetU() { return mU; }
   FLOAT GetP() { return mP; }
   FLOAT GetCS() { return mCS; }
+  FLOAT GetOmega() { return mOmega; }
   FLOAT GetQ() { return mQ; }
   FLOAT GetOpacity() { return mOpacity; }
   FLOAT GetRealOpacity() { return mRealOpacity; }
@@ -57,6 +58,7 @@ public:
   void SetU(FLOAT U) { mU = U; }
   void SetP(FLOAT P) { mP = P; }
   void SetCS(FLOAT cs) { mCS = cs; }
+  void SetOmega(FLOAT o) { mOmega = o; }
   void SetQ(FLOAT Q) { mQ = Q; }
   void SetOpacity(FLOAT o) { mOpacity = o; }
   void SetRealOpacity(FLOAT o) { mRealOpacity = o; }
@@ -81,6 +83,7 @@ private:
   FLOAT mU = 0.0;
   FLOAT mP = 0.0;
   FLOAT mCS = 0.0;
+  FLOAT mOmega = 0.0;
   FLOAT mQ = 0.0;
   FLOAT mGamma = 0.0;
   FLOAT mMu = 0.0;

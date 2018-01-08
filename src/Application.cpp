@@ -67,6 +67,7 @@ bool Application::Initialise() {
   mCloudCenter = mParams->GetInt("CLOUD_CENTER");
   mDiscAnalyse = mParams->GetInt("DISC_ANALYSIS");
   mSinkAnalyse = mParams->GetInt("SINK_ANALYSIS");
+  mMidplaneCut = mParams->GetInt("MIDPLANE_CUT");
   mCenter = mParams->GetInt("DISC_CENTER");
   mRadialAnalyse = mParams->GetInt("RADIAL_ANALYSIS");
 
@@ -79,14 +80,14 @@ bool Application::Initialise() {
     NameData nd;
     nd.dir = "./";
     nd.id = "SPA";
-    nd.format = "su";
+    nd.format = mOutFormat;
     nd.snap = "00000";
 
-    SerenFile *cf = new SerenFile(nd, false);
-    cf->SetParticles(mGenerator->GetParticles());
-    cf->SetSinks(mGenerator->GetSinks());
-    OutputFile(cf, "./disc_column.dat");
-    mFiles.push_back(cf);
+    SerenFile *gen = new SerenFile(nd, false);
+    gen->SetParticles(mGenerator->GetParticles());
+    gen->SetSinks(mGenerator->GetSinks());
+    OutputFile(gen);
+    mFiles.push_back(gen);
   }
 
   if (mCloudAnalyse) {
@@ -183,10 +184,11 @@ void Application::Analyse(int task, int start, int end) {
       if (!mFiles.at(i)->Read()) break;
     }
 
+    if (mMidplaneCut) MidplaneTrim((SnapshotFile *) mFiles.at(i));
+
     // Extra quantity calculation
     FindThermo((SnapshotFile *) mFiles.at(i));
-    if (mInFormat == "su" || mInFormat == "sf") {
-    }
+
     // Cloud analysis
     if (mCloudAnalyse) {
       mCloudAnalyser->FindCentralQuantities((SnapshotFile *) mFiles.at(i));
@@ -203,6 +205,7 @@ void Application::Analyse(int task, int start, int end) {
 
     // Find vertically integrated quantities
     FindOpticalDepth((SnapshotFile *) mFiles.at(i));
+    FindToomre((SnapshotFile *) mFiles.at(i));
 
     // Sink analysis
     if (mSinkAnalyse) {
@@ -233,20 +236,28 @@ void Application::Analyse(int task, int start, int end) {
   }
 }
 
-void Application::OutputFile(SnapshotFile *file, std::string fileName) {
+void Application::MidplaneTrim(SnapshotFile *file) {
+  std::vector<Particle *> part = file->GetParticles();
+  std::vector<Particle *> trimmed;
+  for (int i = 0; i < part.size(); ++i) {
+    Particle *p = part[i];
+    FLOAT R = p->GetX().Norm();
+    FLOAT z = abs(p->GetX().z);
+    if (z <= 0.05 * R) {
+      trimmed.push_back(p);
+    }
+  }
+  file->SetParticles(trimmed);
+}
+
+void Application::OutputFile(SnapshotFile *file) {
   NameData nd = file->GetNameData();
   std::string outputName;
 
   if (nd.dir == "") nd.dir = ".";
 
-  if (fileName == "") {
-    outputName = nd.dir + "/" + nd.id + "." +
-    nd.format + "." + nd.snap + nd.append;
-  }
-  else {
-    outputName = fileName;
-    nd.format = "su";
-  }
+  outputName = nd.dir + "/" + nd.id + "." +
+  nd.format + "." + nd.snap + nd.append;
 
   // TODO: reduce code duplication
   if (nd.format == "df") {
@@ -376,15 +387,31 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
   // Replaces 3D velocity data with the ratios of estimated to real values for
   // optical depth, column density and cooling rate. This is useful for plotting
   // 2D maps for the above in SPLASH.
+  // Do we output difference logarithmically or not?
+  FLOAT min_tau = 1E30, max_tau = -1E30;
+  FLOAT min_sig = 1E30, max_sig = -1E30;
+  FLOAT min_cool = 1E30, max_cool = -1E30;
   if (mParams->GetInt("OUTPUT_COOLING")) {
     file->SetNameDataAppend(".modified");
     for (int i = 0; i < part.size(); ++i) {
       Particle *p = part[i];
-      FLOAT tau_ratio = p->GetTau() / p->GetRealTau();
-      FLOAT sigma_ratio = p->GetSigma() / p->GetRealSigma();
-      FLOAT cooling_ratio = p->GetDUDT() / p->GetRealDUDT();
+      FLOAT tau_ratio = log10(p->GetTau() / p->GetRealTau());
+      FLOAT sigma_ratio = log10(p->GetSigma() / p->GetRealSigma());
+      FLOAT cooling_ratio = log10(p->GetDUDT() / p->GetRealDUDT());
+
+      if (tau_ratio > max_tau) max_tau = tau_ratio;
+      if (tau_ratio < min_tau) min_tau = tau_ratio;
+      if (sigma_ratio > max_sig) max_sig = sigma_ratio;
+      if (sigma_ratio < min_sig) min_sig = sigma_ratio;
+      if (cooling_ratio > max_cool) max_cool = cooling_ratio;
+      if (cooling_ratio < min_cool) min_cool = cooling_ratio;
+
       part[i]->SetV(Vec3(tau_ratio, sigma_ratio, cooling_ratio));
     }
+
+    std::cout << "Min/Max Tau Ratio : " << min_tau << "\t" << max_tau << '\n';
+    std::cout << "Min/Max Sigma Ratio : " << min_sig << "\t" << max_sig << '\n';
+    std::cout << "Min/Max Cool Ratio : " << min_cool << "\t" << max_cool << '\n';
   }
 
   // std::sort(part.begin(), part.end(),
@@ -414,4 +441,29 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
   file->SetParticles(part);
 
   delete octree;
+}
+
+void Application::FindToomre(SnapshotFile *file) {
+  // Find Toomre parameter, first sort by radius
+  // THERE IS AN ISSUE WHEN INCLUDING SINKS IN THE RADIAL SORT. IMAGINE A SINK
+  // HAS FORMED SOMEWHERE IN THE DISC, THIS DOES NOT GET INCLUDED IN THE SORT.
+  // IT MAY BE BETTER TO STORE SINKS AS PARTICLES AND DISTINGUISH BY TYPE.
+  std::vector<Particle *> part = file->GetParticles();
+  std::vector<Sink *> sink = file->GetSinks();
+  std::sort(part.begin(), part.end(),
+            [](Particle *a, Particle *b) { return b->GetR() < a->GetR(); });
+  FLOAT inner_mass = 0.0;
+  if (sink.size() == 1) inner_mass += sink[0]->GetM();
+  for (int i = 0; i < part.size(); ++i) {
+    Particle *p = part[i];
+    FLOAT r3 = pow(p->GetR() * AU_TO_M, 3.0);
+    FLOAT omega = sqrtf((G * inner_mass * MSUN_TO_KG) / (r3));
+    FLOAT cs = p->GetCS();
+    FLOAT sigma = p->GetRealSigma() * GPERCM2_TO_KGPERM2;
+    FLOAT Q = (cs * omega) / (PI * G * sigma);
+
+    part[i]->SetQ(Q);
+    inner_mass += p->GetM();
+  }
+  file->SetParticles(part);
 }
