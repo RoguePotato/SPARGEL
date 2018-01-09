@@ -17,16 +17,17 @@
 
 #include "Definitions.h"
 #include "File.h"
+#include "Parameters.h"
 #include "Particle.h"
 #include "Vec.h"
 
 class DiscAnalyser {
 public:
-  DiscAnalyser();
+  DiscAnalyser(Parameters *params);
   ~DiscAnalyser();
 
   void Center(SnapshotFile *file, int sinkIndex, Vec3 posCenter);
 
 private:
-
+  Parameters *mParams = NULL;
 };

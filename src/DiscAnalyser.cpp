@@ -15,7 +15,7 @@
 
 #include "DiscAnalyser.h"
 
-DiscAnalyser::DiscAnalyser() {
+DiscAnalyser::DiscAnalyser(Parameters *params) : mParams(params) {
 
 }
 
@@ -39,8 +39,9 @@ void DiscAnalyser::Center(SnapshotFile *file, int sinkIndex, Vec3 posCenter) {
   }
   else {
     dX = posCenter;
-    appendage += "custom";
+    appendage += mParams->GetString("CENTER_LABEL");
   }
+  if (dX.z == 0.0) dX.z = sink[sinkIndex]->GetX().z;
 
   for (int i = 0; i < part.size(); ++i) {
     Vec3 newX = part[i]->GetX() - dX;

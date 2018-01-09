@@ -68,11 +68,11 @@ bool Application::Initialise() {
   mDiscAnalyse = mParams->GetInt("DISC_ANALYSIS");
   mSinkAnalyse = mParams->GetInt("SINK_ANALYSIS");
   mRadialAnalyse = mParams->GetInt("RADIAL_ANALYSIS");
-  mMidplaneCut = mParams->GetInt("MIDPLANE_CUT");
   mCenter = mParams->GetInt("DISC_CENTER");
   mPosCenter = Vec3(mParams->GetFloat("CENTER_X"),
                     mParams->GetFloat("CENTER_Y"),
                     mParams->GetFloat("CENTER_Z"));
+  mMidplaneCut = mParams->GetFloat("MIDPLANE_CUT");
 
   mOpacity = new OpacityTable(mEosFilePath, true);
   if (!mOpacity->Read()) return false;
@@ -98,7 +98,7 @@ bool Application::Initialise() {
   }
 
   if (mDiscAnalyse) {
-    mDiscAnalyser = new DiscAnalyser();
+    mDiscAnalyser = new DiscAnalyser(mParams);
   }
 
   if (mSinkAnalyse) {
@@ -190,7 +190,6 @@ void Application::Analyse(int task, int start, int end) {
     // Extra quantity calculation
     FindThermo((SnapshotFile *) mFiles.at(i));
 
-
     // Cloud analysis
     if (mCloudAnalyse) {
       mCloudAnalyser->FindCentralQuantities((SnapshotFile *) mFiles.at(i));
@@ -243,7 +242,7 @@ void Application::MidplaneTrim(SnapshotFile *file) {
     Particle *p = part[i];
     FLOAT R = p->GetX().Norm();
     FLOAT z = abs(p->GetX().z);
-    if (z <= 0.05 * R) {
+    if (z <= mMidplaneCut) {
       trimmed.push_back(p);
     }
   }

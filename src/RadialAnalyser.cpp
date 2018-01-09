@@ -66,15 +66,7 @@ void RadialAnalyser::Run(SnapshotFile *file) {
     mRadialBins[i]->CalculateValues();
   }
 
-  // Output radial
-  // 1: Radius
-  // 2: Density
-  // 3: Temperature
-  // 4: Velocity
-  // 5: Mass
-  // 6: Pressure
-  // 7: Optical depth
-  // 8: Hydrodynamical acceleration
+  // Output azimuthally-averaged values
   NameData nd = file->GetNameData();
   if (nd.dir == "") nd.dir = ".";
   std::string outputName = nd.dir + "/SPARGEL." + nd.id + "." +

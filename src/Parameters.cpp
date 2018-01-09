@@ -125,10 +125,11 @@ void Parameters::SetDefaultParameters() {
   mIntParams["RADIAL_ANALYSIS"] = 0;
   mIntParams["VERTICAL_ANALYSIS"] = 0;
   mIntParams["DISC_CENTER"] = 0;
+  mStringParams["CENTER_LABEL"] = "custom";
   mFloatParams["CENTER_X"] = 0.0;
   mFloatParams["CENTER_Y"] = 0.0;
   mFloatParams["CENTER_Z"] = 0.0;
-  mIntParams["MIDPLANE_CUT"] = 0;
+  mFloatParams["MIDPLANE_CUT"] = 0.0;
   mFloatParams["RADIUS_IN"] = 0.0;
   mFloatParams["RADIUS_OUT"] = 100.0;
   mIntParams["RADIAL_BINS"] = 100;
