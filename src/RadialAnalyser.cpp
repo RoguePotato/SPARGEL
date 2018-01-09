@@ -15,9 +15,13 @@
 
 #include "RadialAnalyser.h"
 
-RadialAnalyser::RadialAnalyser(int in, int out, int bins, int log, int vert) :
-  mIn(in), mOut(out), mBins(bins), mLog(log), mVert(vert) {
-    mWidth = (FLOAT) (mOut - mIn) / mBins;
+RadialAnalyser::RadialAnalyser(Parameters *params) : mParams(params) {
+  mIn = mParams->GetFloat("RADIUS_IN");
+  mOut = mParams->GetFloat("RADIUS_OUT");
+  mBins = mParams->GetInt("RADIAL_BINS");
+  mLog = mParams->GetInt("RADIAL_LOG");
+  mVert = mParams->GetInt("VERTICAL_ANALYSIS");
+  mWidth = (mOut - mIn) / mBins;
 }
 
 RadialAnalyser::~RadialAnalyser() {
@@ -33,15 +37,13 @@ void RadialAnalyser::Run(SnapshotFile *file) {
     for (FLOAT i = mIn; i < mOut; i += mWidth) {
       FLOAT inner = pow(10.0, i);
       FLOAT outer = pow(10.0, i +  mWidth);
-      mRadialBins.push_back(new RadialBin(0.0, inner, outer, mWidth));
+      mRadialBins.push_back(new RadialBin(mParams, 0.0, inner, outer, mWidth));
     }
   }
   else {
     for (FLOAT i = mIn; i < mOut; i += mWidth) {
-      FLOAT inner = mIn + (i * mWidth);
-      FLOAT outer = mIn + ((i + 1) * mWidth);
-      mRadialBins.push_back(new RadialBin(file->GetSinks()[0]->GetM(),
-                                          inner, outer, mWidth));
+      mRadialBins.push_back(new RadialBin(mParams, file->GetSinks()[0]->GetM(),
+                                          i, i + mWidth, mWidth));
     }
   }
 

@@ -25,8 +25,7 @@ public:
   DiscAnalyser();
   ~DiscAnalyser();
 
-  void Center(SnapshotFile *file, int center);
-  void Radial(SnapshotFile *file);
+  void Center(SnapshotFile *file, int sinkIndex, Vec3 posCenter);
 
 private:
 

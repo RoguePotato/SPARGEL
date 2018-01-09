@@ -67,9 +67,12 @@ bool Application::Initialise() {
   mCloudCenter = mParams->GetInt("CLOUD_CENTER");
   mDiscAnalyse = mParams->GetInt("DISC_ANALYSIS");
   mSinkAnalyse = mParams->GetInt("SINK_ANALYSIS");
+  mRadialAnalyse = mParams->GetInt("RADIAL_ANALYSIS");
   mMidplaneCut = mParams->GetInt("MIDPLANE_CUT");
   mCenter = mParams->GetInt("DISC_CENTER");
-  mRadialAnalyse = mParams->GetInt("RADIAL_ANALYSIS");
+  mPosCenter = Vec3(mParams->GetFloat("CENTER_X"),
+                    mParams->GetFloat("CENTER_Y"),
+                    mParams->GetFloat("CENTER_Z"));
 
   mOpacity = new OpacityTable(mEosFilePath, true);
   if (!mOpacity->Read()) return false;
@@ -184,10 +187,9 @@ void Application::Analyse(int task, int start, int end) {
       if (!mFiles.at(i)->Read()) break;
     }
 
-    if (mMidplaneCut) MidplaneTrim((SnapshotFile *) mFiles.at(i));
-
     // Extra quantity calculation
     FindThermo((SnapshotFile *) mFiles.at(i));
+
 
     // Cloud analysis
     if (mCloudAnalyse) {
@@ -199,13 +201,16 @@ void Application::Analyse(int task, int start, int end) {
     // Disc analysis
     if (mDiscAnalyse) {
       if (mCenter) {
-        mDiscAnalyser->Center((SnapshotFile *) mFiles.at(i), mCenter - 1);
+        mDiscAnalyser->Center((SnapshotFile *) mFiles.at(i),
+                              mCenter - 1,
+                              mPosCenter);
       }
+      // Find vertically integrated quantities
+      FindOpticalDepth((SnapshotFile *) mFiles.at(i));
+      FindToomre((SnapshotFile *) mFiles.at(i));
+      if (mMidplaneCut) MidplaneTrim((SnapshotFile *) mFiles.at(i));
     }
 
-    // Find vertically integrated quantities
-    FindOpticalDepth((SnapshotFile *) mFiles.at(i));
-    FindToomre((SnapshotFile *) mFiles.at(i));
 
     // Sink analysis
     if (mSinkAnalyse) {
@@ -214,12 +219,7 @@ void Application::Analyse(int task, int start, int end) {
     }
     // Radial analysis
     if (mRadialAnalyse) {
-      RadialAnalyser *ra = new RadialAnalyser(
-        mParams->GetInt("RADIUS_IN"),
-        mParams->GetInt("RADIUS_OUT"),
-        mParams->GetInt("RADIAL_BINS"),
-        mParams->GetInt("RADIAL_LOG"),
-        mParams->GetInt("VERTICAL_ANALYSIS"));
+      RadialAnalyser *ra = new RadialAnalyser(mParams);
       ra->Run((SnapshotFile *) mFiles.at(i));
       delete ra;
     }
@@ -248,9 +248,11 @@ void Application::MidplaneTrim(SnapshotFile *file) {
     }
   }
   file->SetParticles(trimmed);
+  file->SetNameDataAppend(".midplane");
 }
 
 void Application::OutputFile(SnapshotFile *file) {
+  file->SetNameDataAppend(".modified");
   NameData nd = file->GetNameData();
   std::string outputName;
 
@@ -392,7 +394,6 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
   FLOAT min_sig = 1E30, max_sig = -1E30;
   FLOAT min_cool = 1E30, max_cool = -1E30;
   if (mParams->GetInt("OUTPUT_COOLING")) {
-    file->SetNameDataAppend(".modified");
     for (int i = 0; i < part.size(); ++i) {
       Particle *p = part[i];
       FLOAT tau_ratio = log10(p->GetTau() / p->GetRealTau());

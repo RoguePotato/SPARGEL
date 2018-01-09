@@ -15,7 +15,13 @@
 
 #include "RadialBin.h"
 
-RadialBin::RadialBin(FLOAT starMass, FLOAT in, FLOAT out, FLOAT width) :
+RadialBin::RadialBin
+(Parameters *params,
+ FLOAT starMass,
+ FLOAT in,
+ FLOAT out,
+ FLOAT width) :
+  mParams(params),
   mStarMass(starMass * MSUN_TO_KG), mIn(in), mOut(out), mWidth(width) {
 }
 
@@ -29,12 +35,13 @@ RadialBin::~RadialBin() {
 void RadialBin::CalculateValues(void) {
   if (mParticles.size() <= 0) return;
 
-  // Create vertical bins
-  FLOAT MAX_HEIGHT = 10.0;
-  int VERT_BINS = 1000;
-  FLOAT BIN_HEIGHT = MAX_HEIGHT / VERT_BINS;
-  for (FLOAT i = 0; i < MAX_HEIGHT; i += BIN_HEIGHT) {
-    mVerticalBins.push_back(new VerticalBin(i, i + BIN_HEIGHT, BIN_HEIGHT));
+  // // Create vertical bins
+  FLOAT height_lo = mParams->GetFloat("HEIGHT_LO");
+  FLOAT height_hi = mParams->GetFloat("HEIGHT_HI");
+  int vert_bins = mParams->GetInt("VERTICAL_BINS");
+  FLOAT bin_height = (height_hi - height_lo) / vert_bins;
+  for (FLOAT i = height_lo; i < height_hi; i += bin_height) {
+    mVerticalBins.push_back(new VerticalBin(i, i + bin_height, bin_height));
   }
 
   for (int i = 0; i < mParticles.size(); ++i) {

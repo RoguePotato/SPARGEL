@@ -122,15 +122,20 @@ void Parameters::SetDefaultParameters() {
 
   mIntParams["SINK_ANALYSIS"] = 0;
   mIntParams["DISC_ANALYSIS"] = 0;
-  mIntParams["DISC_CENTER"] = 0;
-  mIntParams["PARTICLE_CENTER"] = 0;
   mIntParams["RADIAL_ANALYSIS"] = 0;
   mIntParams["VERTICAL_ANALYSIS"] = 0;
+  mIntParams["DISC_CENTER"] = 0;
+  mFloatParams["CENTER_X"] = 0.0;
+  mFloatParams["CENTER_Y"] = 0.0;
+  mFloatParams["CENTER_Z"] = 0.0;
   mIntParams["MIDPLANE_CUT"] = 0;
-  mIntParams["RADIUS_IN"] = 0;
-  mIntParams["RADIUS_OUT"] = 100;
+  mFloatParams["RADIUS_IN"] = 0.0;
+  mFloatParams["RADIUS_OUT"] = 100.0;
   mIntParams["RADIAL_BINS"] = 100;
   mIntParams["RADIAL_LOG"] = 0;
+  mFloatParams["HEIGHT_LO"] = 0.0;
+  mFloatParams["HEIGHT_HI"] = 10.0;
+  mIntParams["VERTICAL_BINS"] = 100;
 
   mIntParams["GENERATE"] = 0;
   mStringParams["IC_TYPE"] = "disc";

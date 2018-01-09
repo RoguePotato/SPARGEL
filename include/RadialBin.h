@@ -24,12 +24,15 @@
 #include "Constants.h"
 #include "Definitions.h"
 #include "File.h"
+#include "Parameters.h"
 #include "Particle.h"
 #include "VerticalBin.h"
 
 class RadialBin {
 public:
-  RadialBin(FLOAT starMass, FLOAT in, FLOAT out, FLOAT width);
+  RadialBin(Parameters *params,
+            FLOAT starMass,
+            FLOAT in, FLOAT out, FLOAT width);
   ~RadialBin();
 
   void AddParticle(Particle *p) { mParticles.push_back(p); }
@@ -43,6 +46,8 @@ public:
   std::vector<VerticalBin *> GetVerticalBins() { return mVerticalBins; }
 
 private:
+  Parameters *mParams = NULL;
+
   FLOAT mIn = 0;
   FLOAT mOut = 0;
   FLOAT mWidth = 0.0;

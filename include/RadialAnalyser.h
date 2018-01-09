@@ -19,19 +19,22 @@
 
 #include "Definitions.h"
 #include "File.h"
+#include "Parameters.h"
 #include "RadialBin.h"
 #include "VerticalBin.h"
 
 class RadialAnalyser {
 public:
-  RadialAnalyser(int in, int out, int bins, int log, int vert);
+  RadialAnalyser(Parameters *params);
   ~RadialAnalyser();
 
   void Run(SnapshotFile *file);
 
 private:
-  int mIn = 0;
-  int mOut = 0;
+  Parameters *mParams = NULL;
+
+  FLOAT mIn = 0.0;
+  FLOAT mOut = 0.0;
   int mBins = 0;
   int mLog = 0;
   int mVert = 0;

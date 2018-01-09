@@ -23,11 +23,24 @@ DiscAnalyser::~DiscAnalyser() {
 
 }
 
-void DiscAnalyser::Center(SnapshotFile *file, int center) {
+void DiscAnalyser::Center(SnapshotFile *file, int sinkIndex, Vec3 posCenter) {
   std::vector<Particle *> part = file->GetParticles();
   std::vector<Sink *> sink = file->GetSinks();
-  Vec3 dX = sink[center]->GetX();
-  if (center < 0 || center >= sink.size()) return; // TODO: error message
+  Vec3 dX = { 0.0, 0.0, 0.0 };
+  std::string appendage = ".centered.";
+
+  // Return if there is no position to center around
+  if (posCenter.Norm() == 0.0 && (sinkIndex < 0 || sinkIndex >= sink.size())) {
+    return;
+  }
+  if (posCenter.Norm() == 0.0) {
+    dX = sink[sinkIndex]->GetX();
+    appendage += std::to_string(sinkIndex);
+  }
+  else {
+    dX = posCenter;
+    appendage += "custom";
+  }
 
   for (int i = 0; i < part.size(); ++i) {
     Vec3 newX = part[i]->GetX() - dX;
@@ -41,9 +54,5 @@ void DiscAnalyser::Center(SnapshotFile *file, int center) {
 
   file->SetParticles(part);
   file->SetSinks(sink);
-  file->SetNameDataAppend(".centered." + std::to_string(center));
-}
-
-void DiscAnalyser::Radial(SnapshotFile *file) {
-  
+  file->SetNameDataAppend(appendage);
 }

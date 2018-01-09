@@ -386,7 +386,7 @@ void SerenFile::ReadParticleUnform(void) {
 
   for (int i = 0; i < mNumGas + mNumDust; ++i) {
     mBR->ReadValue(intTemp);
-    mParticles.at(i)->SetID(0);
+    mParticles.at(i)->SetID(intTemp);
   }
 
   for (int i = 0; i < mNumGas + mNumDust; ++i) {
