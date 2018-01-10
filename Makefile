@@ -7,20 +7,21 @@ TARGET := bin/spargel
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -g -std=c++11 -pthread
-LIB := -lpthread
-INC := -I include
+DEPS := $(OBJECTS:.o=.d)
+
+INC := -I ./include
+CPPFLAGS := $(INC) -std=c++11 -MMD -MP -pthread -Wall
+LIBS := -lpthread
 
 $(TARGET): $(OBJECTS)
-	@echo " Linking..."
-	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB)
+	$(CC) $^ -o $(TARGET) $(LIBS)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIR)
-	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+	$(CC) $(CPPFLAGS) $(INC) -c -o $@ $<
 
 clean:
-	@echo " Cleaning...";
-	@echo " $(RM) -r $(BUILDDIR) $(TARGET)"; $(RM) -r $(BUILDDIR) $(TARGET)
+	$(RM) $(TARGET) $(OBJECTS) $(DEPS)
 
 .PHONY: clean
+-include $(DEPS)
