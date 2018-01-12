@@ -227,6 +227,8 @@ void SerenFile::CreateHeader(void) {
   mDoubleData[1] = 0.0; // time lastsnap
   mDoubleData[2] = mParticles[0]->GetM(); // avg. hydro mass
   mDoubleData[10] = 0.0; // tlite lastsnap
+
+  mSinkDataLength = 12 + 2 * mPosDim;
 }
 
 bool SerenFile::ReadHeaderForm(void) {
