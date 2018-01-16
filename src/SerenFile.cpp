@@ -86,6 +86,19 @@ bool SerenFile::Write(std::string fileName, bool formatted) {
   }
 
   CreateHeader();
+
+  // Get sink data
+  for (int i = 0; i < mNumSink; ++i) {
+    mSinks[i]->SetData(1, mSinks[i]->GetX().x);
+    mSinks[i]->SetData(2, mSinks[i]->GetX().y);
+    mSinks[i]->SetData(3, mSinks[i]->GetX().z);
+    mSinks[i]->SetData(4, mSinks[i]->GetV().x);
+    mSinks[i]->SetData(5, mSinks[i]->GetV().y);
+    mSinks[i]->SetData(6, mSinks[i]->GetV().z);
+    mSinks[i]->SetData(7, mSinks[i]->GetM());
+    mSinks[i]->SetData(8, mSinks[i]->GetH());
+  }
+
   if (formatted) {
     Formatter formatStream(mOutStream, 18, 2, 10);
     WriteHeaderForm(formatStream);

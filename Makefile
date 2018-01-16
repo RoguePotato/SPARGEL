@@ -10,7 +10,7 @@ OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 DEPS := $(OBJECTS:.o=.d)
 
 INC := -I ./include
-CPPFLAGS := $(INC) -std=c++11 -MMD -MP -pthread -Wall -Wextra -O2
+CPPFLAGS := $(INC) -std=c++11 -MMD -MP -pthread -O2
 LIBS := -lpthread
 
 $(TARGET): $(OBJECTS)

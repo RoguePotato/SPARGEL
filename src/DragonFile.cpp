@@ -91,7 +91,7 @@ void DragonFile::AllocateMemory(void) {
 
   mTime = mFloatData[0] * 1E6;
 
-  for (int i = 0; i < mNumTot; ++i) {
+  for (int i = 0; i < mNumGas; ++i) {
     Particle *p = new Particle();
     mParticles.push_back(p);
   }
@@ -121,53 +121,87 @@ void DragonFile::ReadParticleForm(void) {
   float Temp[3] = {0.0f};
 
   // Positions
-  for (int i = 0; i < mNumTot; ++i) {
+  for (int i = 0; i < mNumGas; ++i) {
     mInStream >> Temp[0] >> Temp[1] >> Temp[2];
     mParticles.at(i)->SetX(Vec3(Temp[0] * PC_TO_AU,
                                Temp[1] * PC_TO_AU,
                                Temp[2] * PC_TO_AU));
   }
+  for (int i = 0; i < mNumSink; ++i) {
+    mInStream >> Temp[0] >> Temp[1] >> Temp[2];
+    mSinks.at(i)->SetX(Vec3(Temp[0] * PC_TO_AU,
+                            Temp[1] * PC_TO_AU,
+                            Temp[2] * PC_TO_AU));
+  }
 
   // Velocities
-  for (int i = 0; i < mNumTot; ++i) {
+  for (int i = 0; i < mNumGas; ++i) {
     mInStream >> Temp[0] >> Temp[1] >> Temp[2];
     mParticles.at(i)->SetV(Vec3(Temp[0], Temp[1], Temp[2]));
   }
+  for (int i = 0; i < mNumSink; ++i) {
+    mInStream >> Temp[0] >> Temp[1] >> Temp[2];
+    mSinks.at(i)->SetV(Vec3(Temp[0], Temp[1], Temp[2]));
+  }
 
   // Temperature
-  for (int i = 0; i < mNumTot; ++i) {
+  for (int i = 0; i < mNumGas; ++i) {
     mInStream >> Temp[0];
     mParticles.at(i)->SetT(Temp[0]);
   }
+  for (int i = 0; i < mNumSink; ++i) {
+    mInStream >> Temp[0];
+    mSinks.at(i)->SetT(Temp[0]);
+  }
 
   // Smoothing length
-  for (int i = 0; i < mNumTot; ++i) {
+  for (int i = 0; i < mNumGas; ++i) {
     mInStream >> Temp[0];
     mParticles.at(i)->SetH(Temp[0] * PC_TO_AU);
   }
+  for (int i = 0; i < mNumSink; ++i) {
+    mInStream >> Temp[0];
+    mSinks.at(i)->SetH(Temp[0] * PC_TO_AU);
+  }
 
   // Density
-  for (int i = 0; i < mNumTot; ++i) {
+  for (int i = 0; i < mNumGas; ++i) {
     mInStream >> Temp[0];
     mParticles.at(i)->SetD(Temp[0]);
   }
+  for (int i = 0; i < mNumSink; ++i) {
+    mInStream >> Temp[0];
+    mSinks.at(i)->SetD(Temp[0]);
+  }
 
   // Mass
-  for (int i = 0; i < mNumTot; ++i) {
+  for (int i = 0; i < mNumGas; ++i) {
     mInStream >> Temp[0];
     mParticles.at(i)->SetM(Temp[0]);
   }
+  for (int i = 0; i < mNumSink; ++i) {
+    mInStream >> Temp[0];
+    mSinks.at(i)->SetM(Temp[0]);
+  }
 
   // Type
-  for (int i = 0; i < mNumTot; ++i) {
+  for (int i = 0; i < mNumGas; ++i) {
     mInStream >> Temp[0];
     mParticles.at(i)->SetType(Temp[0]);
+  }
+  for (int i = 0; i < mNumSink; ++i) {
+    mInStream >> Temp[0];
+    mSinks.at(i)->SetType(Temp[0]);
   }
 
   // ID
   for (int i = 0; i < mNumGas; ++i) {
     mInStream >> Temp[0];
     mParticles.at(i)->SetID(Temp[0]);
+  }
+  for (int i = 0; i < mNumSink; ++i) {
+    mInStream >> Temp[0];
+    mSinks.at(i)->SetID(Temp[0]);
   }
 }
 
