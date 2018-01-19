@@ -302,7 +302,16 @@ void Application::FindThermo(SnapshotFile *file) {
     FLOAT density = p->GetD();
     FLOAT energy = p->GetU();
     FLOAT sigma = p->GetSigma();
-    FLOAT temp = mOpacity->GetTemp(density, energy);
+    FLOAT temp = p->GetT();
+    if (mInFormat == "su" ||
+        mInFormat == "sf" ||
+        mInFormat == "column") {
+      temp = mOpacity->GetTemp(density, energy);
+    }
+    else if (mInFormat == "df" ||
+             mInFormat == "du") {
+      energy = mOpacity->GetEnergy(density, temp);
+    }
     FLOAT gamma = mOpacity->GetGamma(density, temp);
     FLOAT kappa = mOpacity->GetKappa(density, temp);
     FLOAT kappar = mOpacity->GetKappar(density, temp);
@@ -314,6 +323,7 @@ void Application::FindThermo(SnapshotFile *file) {
 
     part[i]->SetR(part[i]->GetX().Norm());
     part[i]->SetT(temp);
+    part[i]->SetU(energy);
     part[i]->SetP(press);
     part[i]->SetCS(cs);
     part[i]->SetOpacity(kappa);
