@@ -87,16 +87,16 @@ bool SerenFile::Write(std::string fileName, bool formatted) {
 
   CreateHeader();
 
-  // Get sink data
+  // Get sink data, pertinent information starts at index 1
   for (int i = 0; i < mNumSink; ++i) {
-    mSinks[i]->SetData(0, mSinks[i]->GetX().x);
-    mSinks[i]->SetData(1, mSinks[i]->GetX().y);
-    mSinks[i]->SetData(2, mSinks[i]->GetX().z);
-    mSinks[i]->SetData(3, mSinks[i]->GetV().x);
-    mSinks[i]->SetData(4, mSinks[i]->GetV().y);
-    mSinks[i]->SetData(5, mSinks[i]->GetV().z);
-    mSinks[i]->SetData(6, mSinks[i]->GetM());
-    mSinks[i]->SetData(7, mSinks[i]->GetH());
+    mSinks[i]->SetData(0 + 1, mSinks[i]->GetX().x);
+    mSinks[i]->SetData(1 + 1, mSinks[i]->GetX().y);
+    mSinks[i]->SetData(2 + 1, mSinks[i]->GetX().z);
+    mSinks[i]->SetData(3 + 1, mSinks[i]->GetV().x);
+    mSinks[i]->SetData(4 + 1, mSinks[i]->GetV().y);
+    mSinks[i]->SetData(5 + 1, mSinks[i]->GetV().z);
+    mSinks[i]->SetData(6 + 1, mSinks[i]->GetM());
+    mSinks[i]->SetData(7 + 1, mSinks[i]->GetH());
   }
 
   if (formatted) {
