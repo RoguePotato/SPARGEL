@@ -33,6 +33,7 @@ public:
   FLOAT GetEnergy(FLOAT density, FLOAT temperature);
   FLOAT GetMuBar(FLOAT density, FLOAT temperature);
   FLOAT GetGamma(FLOAT density, FLOAT temperature);
+  FLOAT GetGamma1(FLOAT density, FLOAT temperature);
   FLOAT GetTemp(FLOAT density, FLOAT energy);
 
 private:
@@ -47,6 +48,7 @@ private:
   FLOAT **mKappar;
   FLOAT **mKappap;
   FLOAT **mGamma;
+  FLOAT **mGamma1;
 
   int GetIDens(const FLOAT density);
   int GetITemp(const FLOAT temperature);

@@ -27,6 +27,7 @@ OpacityTable::~OpacityTable() {
     delete[] mKappar[i];
     delete[] mKappap[i];
     delete[] mGamma[i];
+    delete[] mGamma1[i];
   }
 
   delete[] mEnergy;
@@ -35,6 +36,7 @@ OpacityTable::~OpacityTable() {
   delete[] mKappar;
   delete[] mKappa;
   delete[] mGamma;
+  delete[] mGamma1;
 }
 
 bool OpacityTable::Read() {
@@ -46,14 +48,17 @@ bool OpacityTable::Read() {
     return false;
   }
 
-  if (!mInStream.good())
+  if (!mInStream.good()) {
     return false;
+  }
 
   std::string line;
   int i, j, l;
-  FLOAT dens, temp, energy, mu, kappa, kappar, kappap, gamma;
+  FLOAT dens, temp, energy, mu, kappa, kappar, kappap, gamma, gamma1;
 
-  getline(mInStream, line);
+  do {
+    getline(mInStream, line);
+  } while (line[0] == '#');
   std::istringstream istr(line);
   istr >> mNumDens >> mNumTemp >> mFcol;
 
@@ -61,18 +66,20 @@ bool OpacityTable::Read() {
   mTemp = new FLOAT[mNumTemp];
   mEnergy = new FLOAT *[mNumDens];
   mMu = new FLOAT *[mNumDens];
-  mGamma = new FLOAT *[mNumDens];
   mKappa = new FLOAT *[mNumDens];
   mKappar = new FLOAT *[mNumDens];
   mKappap = new FLOAT *[mNumDens];
+  mGamma = new FLOAT *[mNumDens];
+  mGamma1 = new FLOAT *[mNumDens];
 
   for (i = 0; i < mNumDens; ++i) {
     mEnergy[i] = new FLOAT[mNumTemp];
     mMu[i] = new FLOAT[mNumTemp];
-    mGamma[i] = new FLOAT[mNumTemp];
     mKappa[i] = new FLOAT[mNumTemp];
     mKappar[i] = new FLOAT[mNumTemp];
     mKappap[i] = new FLOAT[mNumTemp];
+    mGamma[i] = new FLOAT[mNumTemp];
+    mGamma1[i] = new FLOAT[mNumTemp];
   }
 
   // read table
@@ -85,7 +92,7 @@ bool OpacityTable::Read() {
     std::istringstream istr(line);
 
     if (istr >> dens >> temp >> energy >> mu >> kappa >> kappar >> kappap >>
-        gamma) {
+        gamma >> gamma1) {
 
       mEnergy[i][j] = energy;
       mMu[i][j] = mu;
@@ -93,6 +100,7 @@ bool OpacityTable::Read() {
       mKappar[i][j] = kappar;
       mKappap[i][j] = kappap;
       mGamma[i][j] = gamma;
+      mGamma1[i][j] = gamma1;
 
       if (l < mNumTemp) {
         mTemp[l] = log10(temp);
@@ -127,6 +135,10 @@ FLOAT OpacityTable::GetMuBar(FLOAT density, FLOAT temperature) {
 
 FLOAT OpacityTable::GetGamma(FLOAT density, FLOAT temperature) {
   return mGamma[GetIDens(log10(density))][GetITemp(log10(temperature))];
+}
+
+FLOAT OpacityTable::GetGamma1(FLOAT density, FLOAT temperature) {
+  return mGamma1[GetIDens(log10(density))][GetITemp(log10(temperature))];
 }
 
 FLOAT OpacityTable::GetEnergy(FLOAT density, FLOAT temperature) {
