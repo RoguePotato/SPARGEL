@@ -19,8 +19,8 @@
 #include "Arguments.h"
 #include "CloudAnalyser.h"
 #include "ColumnFile.h"
-#include "DiscAnalyser.h"
 #include "Definitions.h"
+#include "DiscAnalyser.h"
 #include "DragonFile.h"
 #include "File.h"
 #include "FileNameExtractor.h"
@@ -74,11 +74,12 @@ private:
   int mSinkAnalyse = 0;
   int mRadialAnalyse = 0;
   int mCenter = 0;
-  Vec3 mPosCenter = { 0.0, 0.0, 0.0 };
+  Vec3 mPosCenter = {0.0, 0.0, 0.0};
   FLOAT mMidplaneCut = 0.0;
 
   void Analyse(int task, int start, int end);
   void MidplaneTrim(SnapshotFile *file);
+  void HillRadiusTrim(SnapshotFile *file);
   void OutputFile(SnapshotFile *file);
   void FindThermo(SnapshotFile *file);
   void FindOpticalDepth(SnapshotFile *file);

@@ -28,16 +28,19 @@ Application::~Application() {
 
 void Application::StartSplash(void) {
   std::cout << "\n";
-  for (int i = 0; i < 16; ++i) std::cout << "=====";
+  for (int i = 0; i < 16; ++i)
+    std::cout << "=====";
   std::cout << "\n\n";
   std::cout << "   SParGeL\n\n";
   std::cout << "   Smoothed Particle Generator and Loader\n\n";
-  for (int i = 0; i < 16; ++i) std::cout << "=====";
+  for (int i = 0; i < 16; ++i)
+    std::cout << "=====";
   std::cout << "\n\n";
 }
 
 void Application::EndSplash(void) {
-  for (int i = 0; i < 16; ++i) std::cout << "=====";
+  for (int i = 0; i < 16; ++i)
+    std::cout << "=====";
   std::cout << "\n";
 }
 
@@ -56,7 +59,8 @@ bool Application::Initialise() {
     std::cout << "Number of threads not detected, exiting...\n";
     return false;
   }
-  if (mNumThreads < 0 || mNumThreads > mMaxThreads) mNumThreads = mMaxThreads;
+  if (mNumThreads < 0 || mNumThreads > mMaxThreads)
+    mNumThreads = mMaxThreads;
 
   mConvert = mParams->GetInt("CONVERT");
   mInFormat = mParams->GetString("IN_FORMAT");
@@ -69,13 +73,14 @@ bool Application::Initialise() {
   mSinkAnalyse = mParams->GetInt("SINK_ANALYSIS");
   mRadialAnalyse = mParams->GetInt("RADIAL_ANALYSIS");
   mCenter = mParams->GetInt("DISC_CENTER");
-  mPosCenter = Vec3(mParams->GetFloat("CENTER_X"),
-                    mParams->GetFloat("CENTER_Y"),
-                    mParams->GetFloat("CENTER_Z"));
+  mPosCenter =
+      Vec3(mParams->GetFloat("CENTER_X"), mParams->GetFloat("CENTER_Y"),
+           mParams->GetFloat("CENTER_Z"));
   mMidplaneCut = mParams->GetFloat("MIDPLANE_CUT");
 
   mOpacity = new OpacityTable(mEosFilePath, true);
-  if (!mOpacity->Read()) return false;
+  if (!mOpacity->Read())
+    return false;
 
   if (mParams->GetInt("GENERATE")) {
     mGenerator = new Generator(mParams, mOpacity);
@@ -113,23 +118,17 @@ bool Application::Initialise() {
 
     if (mInFormat == "su") {
       mFiles.push_back(new SerenFile(nd, false));
-    }
-    else if (mInFormat == "sf"){
+    } else if (mInFormat == "sf") {
       mFiles.push_back(new SerenFile(nd, true));
-    }
-    else if (mInFormat == "du"){
+    } else if (mInFormat == "du") {
       mFiles.push_back(new DragonFile(nd, false));
-    }
-    else if (mInFormat == "df"){
+    } else if (mInFormat == "df") {
       mFiles.push_back(new DragonFile(nd, true));
-    }
-    else if (mInFormat == "column"){
+    } else if (mInFormat == "column") {
       mFiles.push_back(new ColumnFile(nd));
-    }
-    else if (mInFormat == "sink") {
+    } else if (mInFormat == "sink") {
       mFiles.push_back(new SinkFile(nd));
-    }
-    else {
+    } else {
       std::cout << "Unrecognised input file format, exiting...\n";
       return false;
     }
@@ -144,7 +143,8 @@ bool Application::Initialise() {
 
 void Application::Run() {
   // Set up file batches
-  if (mFiles.size() < mNumThreads) mNumThreads = mFiles.size();
+  if (mFiles.size() < mNumThreads)
+    mNumThreads = mFiles.size();
   mFilesPerThread = mFiles.size() / (mNumThreads);
   mRemainder = mFiles.size() % (mNumThreads);
   std::thread threads[mNumThreads];
@@ -171,7 +171,8 @@ void Application::Run() {
     threads[i].join();
   }
 
-  if (mCloudAnalyse) mCloudAnalyser->Write();
+  if (mCloudAnalyse)
+    mCloudAnalyser->Write();
   if (mSinkAnalyse) {
     mSinkAnalyser->WriteMassRadius();
     mSinkAnalyser->WriteNbody();
@@ -184,42 +185,43 @@ void Application::Analyse(int task, int start, int end) {
   for (int i = start; i < end; ++i) {
     // File read
     if (mGenerator == NULL) {
-      if (!mFiles.at(i)->Read()) break;
+      if (!mFiles.at(i)->Read())
+        break;
     }
 
     // Extra quantity calculation
-    FindThermo((SnapshotFile *) mFiles.at(i));
+    FindThermo((SnapshotFile *)mFiles.at(i));
 
     // Cloud analysis
     if (mCloudAnalyse) {
-      mCloudAnalyser->FindCentralQuantities((SnapshotFile *) mFiles.at(i));
+      mCloudAnalyser->FindCentralQuantities((SnapshotFile *)mFiles.at(i));
       if (mCloudCenter) {
-        mCloudAnalyser->CenterAroundDensest((SnapshotFile *) mFiles.at(i));
+        mCloudAnalyser->CenterAroundDensest((SnapshotFile *)mFiles.at(i));
       }
     }
     // Disc analysis
     if (mDiscAnalyse) {
       if (mCenter) {
-        mDiscAnalyser->Center((SnapshotFile *) mFiles.at(i),
-                              mCenter - 1,
+        mDiscAnalyser->Center((SnapshotFile *)mFiles.at(i), mCenter - 1,
                               mPosCenter);
       }
       // Find vertically integrated quantities
-      FindOpticalDepth((SnapshotFile *) mFiles.at(i));
-      FindToomre((SnapshotFile *) mFiles.at(i));
-      if (mMidplaneCut) MidplaneTrim((SnapshotFile *) mFiles.at(i));
+      // HillRadiusTrim((SnapshotFile *)mFiles.at(i));
+      FindOpticalDepth((SnapshotFile *)mFiles.at(i));
+      FindToomre((SnapshotFile *)mFiles.at(i));
+      if (mMidplaneCut)
+        MidplaneTrim((SnapshotFile *)mFiles.at(i));
     }
-
 
     // Sink analysis
     if (mSinkAnalyse) {
-      mSinkAnalyser->AddMassRadius((SinkFile *) mFiles.at(i));
-      mSinkAnalyser->AddNbody((SinkFile *) mFiles.at(i));
+      mSinkAnalyser->AddMassRadius((SinkFile *)mFiles.at(i));
+      mSinkAnalyser->AddNbody((SinkFile *)mFiles.at(i));
     }
     // Radial analysis
     if (mRadialAnalyse) {
       RadialAnalyser *ra = new RadialAnalyser(mParams);
-      ra->Run((SnapshotFile *) mFiles.at(i));
+      ra->Run((SnapshotFile *)mFiles.at(i));
       delete ra;
     }
     // File conversion
@@ -228,7 +230,7 @@ void Application::Analyse(int task, int start, int end) {
     }
     // Snapshot output
     if (mOutput) {
-      OutputFile((SnapshotFile *) mFiles.at(i));
+      OutputFile((SnapshotFile *)mFiles.at(i));
     }
     ++mFilesAnalysed;
     delete mFiles[i];
@@ -250,15 +252,54 @@ void Application::MidplaneTrim(SnapshotFile *file) {
   file->SetNameDataAppend(".midplane");
 }
 
+void Application::HillRadiusTrim(SnapshotFile *file) {
+  std::vector<Sink *> sinks = file->GetSinks();
+  if (sinks.size() < 2)
+    return;
+
+  std::vector<Particle *> part = file->GetParticles();
+  std::vector<Particle *> trimmed;
+
+  FLOAT planet_radius = sinks[1]->GetX().Norm();
+  FLOAT hill_radius =
+      planet_radius * pow(sinks[1]->GetM() / sinks[0]->GetM(), 0.333);
+
+  std::cout << "Hill radius: " << hill_radius << " AU\n";
+
+  // Center around the planet
+  for (int i = 0; i < part.size(); ++i) {
+    Vec3 new_pos = part[i]->GetX() - sinks[1]->GetX();
+    part[i]->SetX(new_pos);
+  }
+
+  // Trim those particles within 2 Hill radii
+  for (int i = 0; i < part.size(); ++i) {
+    if (part[i]->GetX().Norm() > 2.0 * hill_radius) {
+      trimmed.push_back(part[i]);
+    }
+  }
+  std::cout << "Trimmed: " << part.size() - trimmed.size() << " particles\n";
+
+  // Re-center around previous position
+  for (int i = 0; i < trimmed.size(); ++i) {
+    Vec3 new_pos = trimmed[i]->GetX() + sinks[1]->GetX();
+    trimmed[i]->SetX(new_pos);
+  }
+
+  file->SetParticles(trimmed);
+  file->SetNameDataAppend(".hillradius");
+}
+
 void Application::OutputFile(SnapshotFile *file) {
   file->SetNameDataAppend(".modified");
   NameData nd = file->GetNameData();
   std::string outputName;
 
-  if (nd.dir == "") nd.dir = ".";
+  if (nd.dir == "")
+    nd.dir = ".";
 
-  outputName = nd.dir + "/" + nd.id + "." +
-  nd.format + "." + nd.snap + nd.append;
+  outputName =
+      nd.dir + "/" + nd.id + "." + nd.format + "." + nd.snap + nd.append;
 
   // TODO: reduce code duplication
   if (nd.format == "df") {
@@ -303,13 +344,9 @@ void Application::FindThermo(SnapshotFile *file) {
     FLOAT energy = p->GetU();
     FLOAT sigma = p->GetSigma();
     FLOAT temp = p->GetT();
-    if (mInFormat == "su" ||
-        mInFormat == "sf" ||
-        mInFormat == "column") {
+    if (mInFormat == "su" || mInFormat == "sf" || mInFormat == "column") {
       temp = mOpacity->GetTemp(density, energy);
-    }
-    else if (mInFormat == "df" ||
-             mInFormat == "du") {
+    } else if (mInFormat == "df" || mInFormat == "du") {
       energy = mOpacity->GetEnergy(density, temp);
     }
     FLOAT gamma = mOpacity->GetGamma(density, temp);
@@ -338,9 +375,7 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
 
   OpticalDepthOctree *octree = new OpticalDepthOctree(
-    Vec3(0.0, 0.0, 0.0),
-    Vec3(2048.0, 2048.0, 2048.0),
-    NULL, NULL);
+      Vec3(0.0, 0.0, 0.0), Vec3(2048.0, 2048.0, 2048.0), NULL, NULL);
 
   std::vector<OpticalDepthOctree *> list;
 
@@ -352,8 +387,7 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
   for (int i = 0; i < part.size(); ++i) {
     if (part[i]->GetX().z >= 0.0) {
       positive.push_back(part[i]);
-    }
-    else {
+    } else {
       negative.push_back(part[i]);
     }
   }
@@ -363,7 +397,8 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
   octree->Construct(positive);
   octree->LinkTree(list);
   octree->Walk(positive, mOpacity);
-  for (int i = 0; i < positive.size(); ++i) part[i] = positive[i];
+  for (int i = 0; i < positive.size(); ++i)
+    part[i] = positive[i];
 
   for (int i = 0; i < negative.size(); ++i) {
     Particle *p = negative[i];
@@ -409,45 +444,22 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
       FLOAT sigma_ratio = log10(p->GetSigma() / p->GetRealSigma());
       FLOAT cooling_ratio = log10(p->GetDUDT() / p->GetRealDUDT());
 
-      if (tau_ratio > max_tau) max_tau = tau_ratio;
-      if (tau_ratio < min_tau) min_tau = tau_ratio;
-      if (sigma_ratio > max_sig) max_sig = sigma_ratio;
-      if (sigma_ratio < min_sig) min_sig = sigma_ratio;
-      if (cooling_ratio > max_cool) max_cool = cooling_ratio;
-      if (cooling_ratio < min_cool) min_cool = cooling_ratio;
+      if (tau_ratio > max_tau)
+        max_tau = tau_ratio;
+      if (tau_ratio < min_tau)
+        min_tau = tau_ratio;
+      if (sigma_ratio > max_sig)
+        max_sig = sigma_ratio;
+      if (sigma_ratio < min_sig)
+        min_sig = sigma_ratio;
+      if (cooling_ratio > max_cool)
+        max_cool = cooling_ratio;
+      if (cooling_ratio < min_cool)
+        min_cool = cooling_ratio;
 
       part[i]->SetV(Vec3(tau_ratio, sigma_ratio, cooling_ratio));
     }
-
-    std::cout << "Min/Max Tau Ratio : " << min_tau << "\t" << max_tau << '\n';
-    std::cout << "Min/Max Sigma Ratio : " << min_sig << "\t" << max_sig << '\n';
-    std::cout << "Min/Max Cool Ratio : " << min_cool << "\t" << max_cool << '\n';
   }
-
-  // std::sort(part.begin(), part.end(),
-  // [](Particle *a, Particle *b) { return b->GetID() > a->GetID(); });
-  // std::ofstream out;
-  // out.open("OctreeData.dat");
-  // for (int i = 0; i < part.size(); ++i) {
-  //   Particle *p = part[i];
-  //   if (p->GetRealTau() == 0.0) continue;
-  //   out << p->GetX().Norm() << "\t"     // 0
-  //       << p->GetX().x << "\t"          // 1
-  //       << p->GetX().y << "\t"          // 2
-  //       << p->GetX().z << "\t"          // 3
-  //       << p->GetTau() << "\t"          // 4
-  //       << p->GetRealTau() << "\t"      // 5
-  //       << p->GetD() << "\t"            // 6
-  //       << p->GetT() << "\t"            // 7
-  //       << p->GetQ() << "\t"            // 8
-  //       << p->GetP() << "\t"            // 9
-  //       << p->GetDUDT() << "\t"      // 10
-  //       << p->GetRealDUDT() << "\t"  // 11
-  //       << p->GetSigma() << "\t"        // 12
-  //       << p->GetRealSigma() << "\n";   // 13
-  // }
-  // out.close();
-  //
   file->SetParticles(part);
 
   delete octree;
@@ -463,7 +475,8 @@ void Application::FindToomre(SnapshotFile *file) {
   std::sort(part.begin(), part.end(),
             [](Particle *a, Particle *b) { return b->GetR() < a->GetR(); });
   FLOAT inner_mass = 0.0;
-  if (sink.size() == 1) inner_mass += sink[0]->GetM();
+  if (sink.size() == 1)
+    inner_mass += sink[0]->GetM();
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part[i];
     FLOAT r3 = pow(p->GetR() * AU_TO_M, 3.0);
@@ -472,6 +485,7 @@ void Application::FindToomre(SnapshotFile *file) {
     FLOAT sigma = p->GetRealSigma() * GPERCM2_TO_KGPERM2;
     FLOAT Q = (cs * omega) / (PI * G * sigma);
 
+    part[i]->SetOmega(omega);
     part[i]->SetQ(Q);
     inner_mass += p->GetM();
   }
