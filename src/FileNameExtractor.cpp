@@ -1,4 +1,4 @@
-//===-- FileNameExtractor.cpp ---------------------------------------------------===//
+//===-- FileNameExtractor.cpp ---------------------------------------------===//
 //
 //                                  SPARGEL
 //                   Smoothed Particle Generator and Loader

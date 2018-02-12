@@ -49,8 +49,7 @@ bool SerenFile::Read() {
     AllocateMemory();
     ReadParticleForm();
     ReadSinkForm();
-  }
-  else {
+  } else {
     mBR = new BinaryReader(mInStream);
     if (!ReadHeaderUnform()) {
       std::cout << "   Error reading SEREN header format!\n\n";
@@ -184,62 +183,86 @@ void SerenFile::CreateHeader(void) {
 
   mNumData = 0;
   mDataID[mNumData] = "porig";
-  mTypeData[mNumData][0] = 1;           mTypeData[mNumData][1] = 1;
-  mTypeData[mNumData][2] = mNumGas;     mTypeData[mNumData][3] = 2;
-  mTypeData[mNumData][4] = 0;           mNumData++;
+  mTypeData[mNumData][0] = 1;
+  mTypeData[mNumData][1] = 1;
+  mTypeData[mNumData][2] = mNumGas;
+  mTypeData[mNumData][3] = 2;
+  mTypeData[mNumData][4] = 0;
+  mNumData++;
 
   mDataID[mNumData] = "r";
-  mTypeData[mNumData][0] = mPosDim;     mTypeData[mNumData][1] = 1;
-  mTypeData[mNumData][2] = mNumGas;     mTypeData[mNumData][3] = 4;
-  mTypeData[mNumData][4] = 1;           mNumData++;
+  mTypeData[mNumData][0] = mPosDim;
+  mTypeData[mNumData][1] = 1;
+  mTypeData[mNumData][2] = mNumGas;
+  mTypeData[mNumData][3] = 4;
+  mTypeData[mNumData][4] = 1;
+  mNumData++;
 
   mDataID[mNumData] = "m";
-  mTypeData[mNumData][0] = 1;           mTypeData[mNumData][1] = 1;
-  mTypeData[mNumData][2] = mNumGas;     mTypeData[mNumData][3] = 4;
-  mTypeData[mNumData][4] = 2;           mNumData++;
+  mTypeData[mNumData][0] = 1;
+  mTypeData[mNumData][1] = 1;
+  mTypeData[mNumData][2] = mNumGas;
+  mTypeData[mNumData][3] = 4;
+  mTypeData[mNumData][4] = 2;
+  mNumData++;
 
   mDataID[mNumData] = "h";
-  mTypeData[mNumData][0] = 1;           mTypeData[mNumData][1] = 1;
-  mTypeData[mNumData][2] = mNumGas;     mTypeData[mNumData][3] = 4;
-  mTypeData[mNumData][4] = 1;           mNumData++;
+  mTypeData[mNumData][0] = 1;
+  mTypeData[mNumData][1] = 1;
+  mTypeData[mNumData][2] = mNumGas;
+  mTypeData[mNumData][3] = 4;
+  mTypeData[mNumData][4] = 1;
+  mNumData++;
 
   mDataID[mNumData] = "v";
-  mTypeData[mNumData][0] = mVelDim;     mTypeData[mNumData][1] = 1;
-  mTypeData[mNumData][2] = mNumGas;     mTypeData[mNumData][3] = 4;
-  mTypeData[mNumData][4] = 4;           mNumData++;
+  mTypeData[mNumData][0] = mVelDim;
+  mTypeData[mNumData][1] = 1;
+  mTypeData[mNumData][2] = mNumGas;
+  mTypeData[mNumData][3] = 4;
+  mTypeData[mNumData][4] = 4;
+  mNumData++;
 
   mDataID[mNumData] = "rho";
-  mTypeData[mNumData][0] = 1;           mTypeData[mNumData][1] = 1;
-  mTypeData[mNumData][2] = mNumGas;     mTypeData[mNumData][3] = 4;
-  mTypeData[mNumData][4] = 6;           mNumData++;
+  mTypeData[mNumData][0] = 1;
+  mTypeData[mNumData][1] = 1;
+  mTypeData[mNumData][2] = mNumGas;
+  mTypeData[mNumData][3] = 4;
+  mTypeData[mNumData][4] = 6;
+  mNumData++;
 
   mDataID[mNumData] = "u";
-  mTypeData[mNumData][0] = 1;           mTypeData[mNumData][1] = 1;
-  mTypeData[mNumData][2] = mNumGas;     mTypeData[mNumData][3] = 4;
-  mTypeData[mNumData][4] = 20;          mNumData++;
+  mTypeData[mNumData][0] = 1;
+  mTypeData[mNumData][1] = 1;
+  mTypeData[mNumData][2] = mNumGas;
+  mTypeData[mNumData][3] = 4;
+  mTypeData[mNumData][4] = 20;
+  mNumData++;
 
   mDataID[mNumData] = "sink_v1";
-  mTypeData[mNumData][0] = 1;           mTypeData[mNumData][1] = 1;
-  mTypeData[mNumData][2] = mNumSink;    mTypeData[mNumData][3] = 7;
-  mTypeData[mNumData][4] = 0;           mNumData++;
+  mTypeData[mNumData][0] = 1;
+  mTypeData[mNumData][1] = 1;
+  mTypeData[mNumData][2] = mNumSink;
+  mTypeData[mNumData][3] = 7;
+  mTypeData[mNumData][4] = 0;
+  mNumData++;
 
   mIntData[0] = mNumGas;
   mIntData[1] = mNumSink;
-  mIntData[3] = 0; // icm_type
-  mIntData[4] = mNumGas; // gas_type
-  mIntData[5] = 0; // cdm_type (cold dark matter?)
+  mIntData[3] = 0;        // icm_type
+  mIntData[4] = mNumGas;  // gas_type
+  mIntData[5] = 0;        // cdm_type (cold dark matter?)
   mIntData[6] = mNumDust; // dust_type
   mIntData[19] = mNumUnit;
   mIntData[20] = mNumData;
-  mLongData[0] = 0; // Noutsnap
-  mLongData[1] = 0; // Nsteps
-  mLongData[10] = 0; // Noutlitesnap
+  mLongData[0] = 0;    // Noutsnap
+  mLongData[1] = 0;    // Nsteps
+  mLongData[10] = 0;   // Noutlitesnap
   mFloatData[0] = 1.2; // h_fac
   mFloatData[1] = 0.0;
-  mDoubleData[0] = 0.0; // time
-  mDoubleData[1] = 0.0; // time lastsnap
+  mDoubleData[0] = 0.0;                   // time
+  mDoubleData[1] = 0.0;                   // time lastsnap
   mDoubleData[2] = mParticles[0]->GetM(); // avg. hydro mass
-  mDoubleData[10] = 0.0; // tlite lastsnap
+  mDoubleData[10] = 0.0;                  // tlite lastsnap
 
   mSinkDataLength = 12 + 2 * mPosDim;
 }
@@ -248,7 +271,8 @@ bool SerenFile::ReadHeaderForm(void) {
   std::string temp = "";
 
   mInStream >> mFormatID;
-  if (mFormatID.compare("SERENASCIIDUMPV2")) return false;
+  if (mFormatID.compare("SERENASCIIDUMPV2"))
+    return false;
 
   for (int i = 0; i < 4; ++i)
     mInStream >> mHeader[i];
@@ -358,7 +382,8 @@ bool SerenFile::ReadHeaderUnform(void) {
   mInStream.read(&fileTag[0], STRING_LENGTH);
   std::string concatString(fileTag.begin(), fileTag.end());
   mFormatID = TrimWhiteSpace(concatString);
-  if (mFormatID.compare("SERENBINARYDUMPV3")) return false;
+  if (mFormatID.compare("SERENBINARYDUMPV3"))
+    return false;
 
   for (int i = 0; i < 4; ++i)
     mBR->ReadValue(mHeader[i]);
@@ -549,8 +574,8 @@ void SerenFile::WriteSinkForm(Formatter formatStream) {
 
 void SerenFile::WriteHeaderUnform(void) {
   std::ostringstream stream;
-  stream << std::left << std::setw(STRING_LENGTH)
-         << std::setfill(' ') << BINARY_FORMAT;
+  stream << std::left << std::setw(STRING_LENGTH) << std::setfill(' ')
+         << BINARY_FORMAT;
   mBW->WriteValue(stream.str());
 
   for (int i = 0; i < 4; ++i)
@@ -566,14 +591,14 @@ void SerenFile::WriteHeaderUnform(void) {
 
   for (int i = 0; i < mNumUnit; ++i) {
     std::ostringstream stream;
-    stream << std::left << std::setw(STRING_LENGTH)
-           << std::setfill(' ') << mUnitData[i];
+    stream << std::left << std::setw(STRING_LENGTH) << std::setfill(' ')
+           << mUnitData[i];
     mOutStream << stream.str();
   }
   for (int i = 0; i < mNumData; ++i) {
     std::ostringstream stream;
-    stream << std::left << std::setw(STRING_LENGTH)
-           << std::setfill(' ') << mDataID[i];
+    stream << std::left << std::setw(STRING_LENGTH) << std::setfill(' ')
+           << mDataID[i];
     mOutStream << stream.str();
   }
 

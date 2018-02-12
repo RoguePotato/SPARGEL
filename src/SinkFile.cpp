@@ -15,9 +15,7 @@
 
 #include "SinkFile.h"
 
-SinkFile::SinkFile(NameData nd) : mNameData(nd) {
-
-}
+SinkFile::SinkFile(NameData nd) : mNameData(nd) {}
 
 SinkFile::~SinkFile() {
   for (int i = 0; i < mRecords.size(); ++i) {
@@ -38,7 +36,8 @@ bool SinkFile::Read() {
   std::string line;
   while (getline(mInStream, line)) {
     std::istringstream istr(line);
-    for (int i = 0; i < 27; ++i) istr >> temp[i];
+    for (int i = 0; i < 27; ++i)
+      istr >> temp[i];
     SinkRecord *r = new SinkRecord();
     r->time = temp[0] * TIME_UNIT;
     r->nsteps = temp[1];

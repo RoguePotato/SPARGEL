@@ -123,15 +123,13 @@ void DragonFile::ReadParticleForm(void) {
   // Positions
   for (int i = 0; i < mNumGas; ++i) {
     mInStream >> Temp[0] >> Temp[1] >> Temp[2];
-    mParticles.at(i)->SetX(Vec3(Temp[0] * PC_TO_AU,
-                               Temp[1] * PC_TO_AU,
-                               Temp[2] * PC_TO_AU));
+    mParticles.at(i)->SetX(
+        Vec3(Temp[0] * PC_TO_AU, Temp[1] * PC_TO_AU, Temp[2] * PC_TO_AU));
   }
   for (int i = 0; i < mNumSink; ++i) {
     mInStream >> Temp[0] >> Temp[1] >> Temp[2];
-    mSinks.at(i)->SetX(Vec3(Temp[0] * PC_TO_AU,
-                            Temp[1] * PC_TO_AU,
-                            Temp[2] * PC_TO_AU));
+    mSinks.at(i)->SetX(
+        Vec3(Temp[0] * PC_TO_AU, Temp[1] * PC_TO_AU, Temp[2] * PC_TO_AU));
   }
 
   // Velocities
@@ -210,9 +208,7 @@ void DragonFile::ReadSinkForm(void) {
   // inherit from. Polymorph the sink particles into sinks.
 }
 
-bool DragonFile::ReadHeaderUnform(void) {
-  return true;
-}
+bool DragonFile::ReadHeaderUnform(void) { return true; }
 
 void DragonFile::ReadParticleUnform() {}
 
@@ -225,8 +221,10 @@ void DragonFile::WriteHeaderForm(Formatter formatStream) {
 
   mFloatData[0] = mTime / 1E6;
 
-  for (int i = 0; i < 20; ++i) formatStream << mIntData[i] << "\n";
-  for (int i = 0; i < 50; ++i) formatStream << mFloatData[i] << "\n";
+  for (int i = 0; i < 20; ++i)
+    formatStream << mIntData[i] << "\n";
+  for (int i = 0; i < 50; ++i)
+    formatStream << mFloatData[i] << "\n";
 }
 
 void DragonFile::WriteParticleForm(Formatter formatStream) {
@@ -252,23 +250,33 @@ void DragonFile::WriteParticleForm(Formatter formatStream) {
     formatStream << "\n";
   }
 
-  for (int i = 0; i < mNumGas; ++i) formatStream << mParticles[i]->GetT() << "\n";
-  for (int i = 0; i < mNumSink; ++i) formatStream << mSinks[i]->GetT() << "\n";
-  for (int i = 0; i < mNumGas; ++i) formatStream << mParticles[i]->GetH() / PC_TO_AU << "\n";
-  for (int i = 0; i < mNumSink; ++i) formatStream << mSinks[i]->GetH() / PC_TO_AU << "\n";
-  for (int i = 0; i < mNumGas; ++i) formatStream << mParticles[i]->GetD() << "\n";
-  for (int i = 0; i < mNumSink; ++i) formatStream << mSinks[i]->GetD() << "\n";
-  for (int i = 0; i < mNumGas; ++i) formatStream << mParticles[i]->GetM() << "\n";
-  for (int i = 0; i < mNumSink; ++i) formatStream << mSinks[i]->GetM() << "\n";
-  for (int i = 0; i < mNumGas; ++i) formatStream << mParticles[i]->GetType() << "\n";
-  for (int i = 0; i < mNumSink; ++i) formatStream << mSinks[i]->GetType() << "\n";
-  for (int i = 0; i < mNumGas; ++i) formatStream << mParticles[i]->GetID() << "\n";
-  for (int i = 0; i < mNumSink; ++i) formatStream << mSinks[i]->GetID() << "\n";
+  for (int i = 0; i < mNumGas; ++i)
+    formatStream << mParticles[i]->GetT() << "\n";
+  for (int i = 0; i < mNumSink; ++i)
+    formatStream << mSinks[i]->GetT() << "\n";
+  for (int i = 0; i < mNumGas; ++i)
+    formatStream << mParticles[i]->GetH() / PC_TO_AU << "\n";
+  for (int i = 0; i < mNumSink; ++i)
+    formatStream << mSinks[i]->GetH() / PC_TO_AU << "\n";
+  for (int i = 0; i < mNumGas; ++i)
+    formatStream << mParticles[i]->GetD() << "\n";
+  for (int i = 0; i < mNumSink; ++i)
+    formatStream << mSinks[i]->GetD() << "\n";
+  for (int i = 0; i < mNumGas; ++i)
+    formatStream << mParticles[i]->GetM() << "\n";
+  for (int i = 0; i < mNumSink; ++i)
+    formatStream << mSinks[i]->GetM() << "\n";
+  for (int i = 0; i < mNumGas; ++i)
+    formatStream << mParticles[i]->GetType() << "\n";
+  for (int i = 0; i < mNumSink; ++i)
+    formatStream << mSinks[i]->GetType() << "\n";
+  for (int i = 0; i < mNumGas; ++i)
+    formatStream << mParticles[i]->GetID() << "\n";
+  for (int i = 0; i < mNumSink; ++i)
+    formatStream << mSinks[i]->GetID() << "\n";
 }
 
-void DragonFile::WriteSinkForm(Formatter formatStream) {
-
-}
+void DragonFile::WriteSinkForm(Formatter formatStream) {}
 
 void DragonFile::WriteHeaderUnform(void) {}
 

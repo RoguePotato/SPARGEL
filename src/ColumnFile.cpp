@@ -15,9 +15,7 @@
 
 #include "ColumnFile.h"
 
-ColumnFile::ColumnFile(NameData nd) {
-  mNameData = nd;
-}
+ColumnFile::ColumnFile(NameData nd) { mNameData = nd; }
 
 ColumnFile::~ColumnFile() {
   for (int i = 0; i < mParticles.size(); ++i) {
@@ -35,7 +33,7 @@ bool ColumnFile::Read() {
   mInStream.open(mNameData.name);
   if (!mInStream.is_open()) {
     std::cout << "   Could not open COLUMN file " << mNameData.name
-              << " for reading!\n\n";
+              << "   for reading!\n\n";
     return false;
   }
 
@@ -87,8 +85,8 @@ bool ColumnFile::ReadHeaderForm(void) {
 void ColumnFile::ReadParticleForm(void) {
   FLOAT temp[10] = {};
   for (int i = 0; i < mNumGas; ++i) {
-    mInStream >> temp[0] >> temp[1] >> temp[2] >> temp[3] >> temp[4]
-              >> temp[5] >> temp[6] >> temp[7] >> temp[8] >> temp[9];
+    mInStream >> temp[0] >> temp[1] >> temp[2] >> temp[3] >> temp[4] >>
+        temp[5] >> temp[6] >> temp[7] >> temp[8] >> temp[9];
 
     mParticles[i]->SetX(Vec3(temp[0], temp[1], temp[2]));
     mParticles[i]->SetV(Vec3(temp[3], temp[4], temp[5]));
@@ -102,8 +100,8 @@ void ColumnFile::ReadParticleForm(void) {
 void ColumnFile::ReadSinkForm(void) {
   FLOAT temp[10] = {};
   for (int i = 0; i < mNumSink; ++i) {
-    mInStream >> temp[0] >> temp[1] >> temp[2] >> temp[3] >> temp[4]
-              >> temp[5] >> temp[6] >> temp[7] >> temp[8] >> temp[9];
+    mInStream >> temp[0] >> temp[1] >> temp[2] >> temp[3] >> temp[4] >>
+        temp[5] >> temp[6] >> temp[7] >> temp[8] >> temp[9];
 
     mSinks[i]->SetX(Vec3(temp[0], temp[1], temp[2]));
     mSinks[i]->SetV(Vec3(temp[3], temp[4], temp[5]));

@@ -19,10 +19,10 @@
 #include <algorithm>
 #include <cmath>
 #include <ctime>
+#include <fstream>
 #include <iomanip>
 #include <ios>
 #include <iostream>
-#include <fstream>
 #include <map>
 #include <sstream>
 #include <stdint.h>
@@ -36,9 +36,9 @@
 #define DOUBLE_PRECISION 8
 
 #if PRECISION == SINGLE_PRECISION
-  typedef float FLOAT;
-  typedef double DOUBLE;
+typedef float FLOAT;
+typedef double DOUBLE;
 #elif PRECISION == DOUBLE_PRECISION
-  typedef double FLOAT;
-  typedef double DOUBLE;
+typedef double FLOAT;
+typedef double DOUBLE;
 #endif

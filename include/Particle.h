@@ -104,7 +104,6 @@ public:
   ~Gas();
 
 private:
-
 };
 
 class Sink : public Particle {
@@ -115,6 +114,7 @@ public:
   FLOAT *GetAllData() { return mSerenData; }
   FLOAT GetData(int index) { return mSerenData[index]; }
   void SetData(int index, FLOAT data) { mSerenData[index] = data; }
+
 private:
   FLOAT mSerenData[255] = {0.0};
 };

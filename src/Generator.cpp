@@ -15,15 +15,10 @@
 
 #include "Generator.h"
 
-Generator::Generator
-(Parameters *params,
- OpacityTable *opacity) : mParams(params), mOpacity(opacity) {
+Generator::Generator(Parameters *params, OpacityTable *opacity)
+    : mParams(params), mOpacity(opacity) {}
 
-}
-
-Generator::~Generator(void) {
-
-}
+Generator::~Generator(void) {}
 
 void Generator::Create(void) {
   SetupParams();
@@ -32,11 +27,9 @@ void Generator::Create(void) {
     CreateDisc();
     CreateStars();
     CalculateVelocity();
-  } else
-  if (mParams->GetString("IC_TYPE") == "cloud") {
+  } else if (mParams->GetString("IC_TYPE") == "cloud") {
     CreateCloud();
   }
-
 }
 
 void Generator::SetupParams(void) {
@@ -57,9 +50,9 @@ void Generator::SetupParams(void) {
   mOmegaIn = (mRin * mRin) / (mR0 * mR0);
   mOmegaOut = (mRout * mRout) / (mR0 * mR0);
   mSigma0 = ((mMDisc) / (2 * PI * mR0 * mR0)) *
-            powf(powf((mR0 * mR0 + mRout * mRout) /
-            (mR0 * mR0), 0.5) -
-            powf((mR0 * mR0 + mRin * mRin) / (mR0 * mR0), 0.5), -1.0f);
+            powf(powf((mR0 * mR0 + mRout * mRout) / (mR0 * mR0), 0.5) -
+                     powf((mR0 * mR0 + mRin * mRin) / (mR0 * mR0), 0.5),
+                 -1.0f);
 
   if (mSeed > 0) {
     srand(mSeed);
@@ -71,7 +64,7 @@ void Generator::SetupParams(void) {
 void Generator::GenerateRandoms() {
   // TODO: Add Mersenne twister
   for (int i = 0; i < 3; ++i) {
-    mRands[i] = rand() / (FLOAT) RAND_MAX;
+    mRands[i] = rand() / (FLOAT)RAND_MAX;
   }
 }
 
@@ -99,16 +92,18 @@ void Generator::CreateDisc(void) {
     FLOAT x = R * cos(phi);
     FLOAT y = R * sin(phi);
 
-    FLOAT sigma = mSigma0 *
-                   pow((mR0 * mR0) / (mR0 * mR0 + R * R), mP / 2.0);
+    FLOAT sigma = mSigma0 * pow((mR0 * mR0) / (mR0 * mR0 + R * R), mP / 2.0);
 
-    FLOAT T = pow(pow(mTinf, 4.0) + pow(mT0, 4.0) *
-               pow(pow(R, 2.0) + pow(mR0, 2.0), -2.0 * mQ), 0.25);
+    FLOAT T =
+        pow(pow(mTinf, 4.0) +
+                pow(mT0, 4.0) * pow(pow(R, 2.0) + pow(mR0, 2.0), -2.0 * mQ),
+            0.25);
     FLOAT cS2 = ((K * T) / (MU * M_P)) / (AU_TO_M * AU_TO_M);
 
     FLOAT z_0 = -((PI * sigma * R * R * R) / (2.0 * mMStar)) +
-                 pow(pow((PI * sigma * R * R * R) / (2.0 * mMStar), 2.0) +
-                 ((cS2 * R * R * R) / (G_AU * mMStar)), 0.5);
+                pow(pow((PI * sigma * R * R * R) / (2.0 * mMStar), 2.0) +
+                        ((cS2 * R * R * R) / (G_AU * mMStar)),
+                    0.5);
 
     FLOAT z = (2.0 / PI) * z_0 * asin(2.0 * mRands[2] - 1.0);
 
@@ -116,12 +111,13 @@ void Generator::CreateDisc(void) {
                   pow((mR0 * mR0) / (mR0 * mR0 + R * R), mP / 2.0) *
                   MSOLPERAU3_TO_GPERCM3;
 
-    FLOAT rho = (rho_0 * cos((PI * z) / (2 * z_0))) ;
+    FLOAT rho = (rho_0 * cos((PI * z) / (2 * z_0)));
 
     FLOAT m = mMDisc / mNumHydro;
 
-    FLOAT h = pow((3 * mNumNeigh * m) /
-              (32.0 * PI * (rho / MSOLPERAU3_TO_GPERCM3)), (1.0 / 3.0));
+    FLOAT h =
+        pow((3 * mNumNeigh * m) / (32.0 * PI * (rho / MSOLPERAU3_TO_GPERCM3)),
+            (1.0 / 3.0));
 
     FLOAT U = mOpacity->GetEnergy(rho, T);
 
@@ -138,12 +134,10 @@ void Generator::CreateDisc(void) {
   }
 }
 
-void Generator::CreateCloud(void) {
-
-}
+void Generator::CreateCloud(void) {}
 
 void Generator::CreateStars(void) {
-  Sink* s = new Sink();
+  Sink *s = new Sink();
   s->SetID(mParticles.size() + 1);
   s->SetH(1.0);
   s->SetM(mMStar);

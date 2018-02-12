@@ -1,4 +1,4 @@
-//===-- SinkFile.h ------------------------------------------------------------===//
+//===-- SinkFile.h --------------------------------------------------------===//
 //
 //                                  SPARGEL
 //                   Smoothed Particle Generator and Loader
@@ -21,8 +21,8 @@
 
 class SinkRecord {
 public:
-  SinkRecord() {};
-  ~SinkRecord() {};
+  SinkRecord(){};
+  ~SinkRecord(){};
 
   FLOAT time = 0.0;
   int nsteps = 0;
@@ -47,12 +47,12 @@ public:
 
 class SinkFile : public File {
 public:
-  SinkFile() {};
+  SinkFile(){};
   SinkFile(NameData nd);
   ~SinkFile();
 
   bool Read();
-  bool Write(std::string fileName, bool formatted) {};
+  bool Write(std::string fileName, bool formatted){};
 
   NameData GetNameData() { return mNameData; }
   std::string GetFileName() { return mNameData.name; }

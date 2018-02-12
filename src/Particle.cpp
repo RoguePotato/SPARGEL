@@ -15,26 +15,14 @@
 
 #include "Particle.h"
 
-Particle::Particle() {
+Particle::Particle() {}
 
-}
+Particle::~Particle() {}
 
-Particle::~Particle() {
+Gas::Gas() {}
 
-}
+Gas::~Gas() {}
 
-Gas::Gas() {
+Sink::Sink() {}
 
-}
-
-Gas::~Gas() {
-
-}
-
-Sink::Sink() {
-
-}
-
-Sink::~Sink() {
-  
-}
+Sink::~Sink() {}

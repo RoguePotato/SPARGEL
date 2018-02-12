@@ -1,4 +1,4 @@
-//===-- RadialAnalyser.cpp --------------------------------------------------===//
+//===-- RadialAnalyser.cpp ------------------------------------------------===//
 //
 //                                  SPARGEL
 //                   Smoothed Particle Generator and Loader
@@ -36,11 +36,10 @@ void RadialAnalyser::Run(SnapshotFile *file) {
   if (mLog) {
     for (FLOAT i = mIn; i < mOut; i += mWidth) {
       FLOAT inner = pow(10.0, i);
-      FLOAT outer = pow(10.0, i +  mWidth);
+      FLOAT outer = pow(10.0, i + mWidth);
       mRadialBins.push_back(new RadialBin(mParams, 0.0, inner, outer, mWidth));
     }
-  }
-  else {
+  } else {
     for (FLOAT i = mIn; i < mOut; i += mWidth) {
       mRadialBins.push_back(new RadialBin(mParams, file->GetSinks()[0]->GetM(),
                                           i, i + mWidth, mWidth));
@@ -52,7 +51,8 @@ void RadialAnalyser::Run(SnapshotFile *file) {
   std::vector<Sink *> sink = file->GetSinks();
   for (int i = 0; i < part.size(); ++i) {
     FLOAT r = part[i]->GetX().Norm();
-    if (mLog) r = log10(r);
+    if (mLog)
+      r = log10(r);
 
     int binID = GetBinID(r - mIn);
 
@@ -68,15 +68,17 @@ void RadialAnalyser::Run(SnapshotFile *file) {
 
   // Output azimuthally-averaged values
   NameData nd = file->GetNameData();
-  if (nd.dir == "") nd.dir = ".";
-  std::string outputName = nd.dir + "/SPARGEL." + nd.id + "." +
-  nd.format + "." + nd.snap + nd.append + ".radial";
+  if (nd.dir == "")
+    nd.dir = ".";
+  std::string outputName = nd.dir + "/SPARGEL." + nd.id + "." + nd.format +
+                           "." + nd.snap + nd.append + ".radial";
 
   std::ofstream out;
   out.open(outputName);
   for (int i = 0; i < mRadialBins.size(); ++i) {
     RadialBin *b = mRadialBins[i];
-    if (b->GetNumParticles() <= 0) continue;
+    if (b->GetNumParticles() <= 0)
+      continue;
     out << b->GetMid() << "\t";
     for (int j = 0; j < 16; ++j) {
       out << b->GetAverage(j) << "\t";
@@ -89,15 +91,18 @@ void RadialAnalyser::Run(SnapshotFile *file) {
   if (mVert) {
     for (int r = 0; r < mRadialBins.size(); ++r) {
       RadialBin *b = mRadialBins[r];
-      if (b->GetNumParticles() <= 0) continue;
+      if (b->GetNumParticles() <= 0)
+        continue;
 
-      if (nd.dir == "") nd.dir = ".";
-      outputName = nd.dir + "/SPARGEL." + nd.id + "." +
-      nd.format + "." + nd.snap + nd.append + ".vertical." + std::to_string(r);
+      if (nd.dir == "")
+        nd.dir = ".";
+      outputName = nd.dir + "/SPARGEL." + nd.id + "." + nd.format + "." +
+                   nd.snap + nd.append + ".vertical." + std::to_string(r);
       out.open(outputName);
       for (int i = 0; i < b->GetVerticalBins().size(); ++i) {
         VerticalBin *v = b->GetVerticalBins()[i];
-        if (v->GetNumParticles() <= 0) continue;
+        if (v->GetNumParticles() <= 0)
+          continue;
 
         out << v->GetMid() << "\t";
         for (int j = 0; j < 16; ++j) {

@@ -1,4 +1,4 @@
-//===-- CloudAnalyser.h -----------------------------------------------------===//
+//===-- CloudAnalyser.h ---------------------------------------------------===//
 //
 //                                  SPARGEL
 //                   Smoothed Particle Generator and Loader

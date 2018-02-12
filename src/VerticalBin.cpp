@@ -15,16 +15,14 @@
 
 #include "VerticalBin.h"
 
-VerticalBin::VerticalBin(FLOAT in, FLOAT out, FLOAT width) :
-  mIn(in), mOut(out), mWidth(width) {
-}
+VerticalBin::VerticalBin(FLOAT in, FLOAT out, FLOAT width)
+    : mIn(in), mOut(out), mWidth(width) {}
 
-VerticalBin::~VerticalBin() {
-
-}
+VerticalBin::~VerticalBin() {}
 
 void VerticalBin::CalculateValues(void) {
-  if (mParticles.size() <= 0) return;
+  if (mParticles.size() <= 0)
+    return;
 
   for (int i = 0; i < mParticles.size(); ++i) {
     Particle *p = mParticles[i];

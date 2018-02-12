@@ -30,9 +30,8 @@
 
 class RadialBin {
 public:
-  RadialBin(Parameters *params,
-            FLOAT starMass,
-            FLOAT in, FLOAT out, FLOAT width);
+  RadialBin(Parameters *params, FLOAT starMass, FLOAT in, FLOAT out,
+            FLOAT width);
   ~RadialBin();
 
   void AddParticle(Particle *p) { mParticles.push_back(p); }

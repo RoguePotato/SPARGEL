@@ -15,13 +15,9 @@
 
 #include "CloudAnalyser.h"
 
-CloudAnalyser::CloudAnalyser(std::string fileName) : mFileName(fileName) {
+CloudAnalyser::CloudAnalyser(std::string fileName) : mFileName(fileName) {}
 
-}
-
-CloudAnalyser::~CloudAnalyser() {
-  mMaxima.clear();
-}
+CloudAnalyser::~CloudAnalyser() { mMaxima.clear(); }
 
 void CloudAnalyser::FindCentralQuantities(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
@@ -29,7 +25,7 @@ void CloudAnalyser::FindCentralQuantities(SnapshotFile *file) {
   std::sort(part.begin(), part.end(),
             [](Particle *a, Particle *b) { return b->GetD() < a->GetD(); });
 
-  int avgNum = 128;//part.size() / 128;
+  int avgNum = 128; // part.size() / 128;
   CentralValue m;
   for (int i = 0; i < avgNum; ++i) {
     m.density += part[i]->GetD();
@@ -61,14 +57,13 @@ void CloudAnalyser::CenterAroundDensest(SnapshotFile *file) {
 bool CloudAnalyser::Write() {
   mOutStream.open(mFileName, std::ios::out);
   if (!mOutStream.is_open()) {
-    std::cout << "   Could not open file " << mFileName
-              << " for writing!\n";
+    std::cout << "   Could not open file " << mFileName << " for writing!\n";
     return false;
   }
 
-  std::sort(mMaxima.begin(), mMaxima.end(),
-            [](CentralValue a,
-               CentralValue b) { return b.density > a.density; });
+  std::sort(mMaxima.begin(), mMaxima.end(), [](CentralValue a, CentralValue b) {
+    return b.density > a.density;
+  });
 
   for (int i = 0; i < mMaxima.size(); ++i) {
     CentralValue cur = mMaxima[i];

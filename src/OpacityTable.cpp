@@ -46,7 +46,8 @@ bool OpacityTable::Read() {
     return false;
   }
 
-  if (!mInStream.good()) return false;
+  if (!mInStream.good())
+    return false;
 
   std::string line;
   int i, j, l;
@@ -56,20 +57,20 @@ bool OpacityTable::Read() {
   std::istringstream istr(line);
   istr >> mNumDens >> mNumTemp >> mFcol;
 
-  mDens   = new FLOAT[mNumDens];
-  mTemp   = new FLOAT[mNumTemp];
-  mEnergy = new FLOAT*[mNumDens];
-  mMu     = new FLOAT*[mNumDens];
-  mGamma  = new FLOAT*[mNumDens];
-  mKappa  = new FLOAT*[mNumDens];
-  mKappar = new FLOAT*[mNumDens];
-  mKappap = new FLOAT*[mNumDens];
+  mDens = new FLOAT[mNumDens];
+  mTemp = new FLOAT[mNumTemp];
+  mEnergy = new FLOAT *[mNumDens];
+  mMu = new FLOAT *[mNumDens];
+  mGamma = new FLOAT *[mNumDens];
+  mKappa = new FLOAT *[mNumDens];
+  mKappar = new FLOAT *[mNumDens];
+  mKappap = new FLOAT *[mNumDens];
 
   for (i = 0; i < mNumDens; ++i) {
     mEnergy[i] = new FLOAT[mNumTemp];
-    mMu[i]     = new FLOAT[mNumTemp];
-    mGamma[i]  = new FLOAT[mNumTemp];
-    mKappa[i]  = new FLOAT[mNumTemp];
+    mMu[i] = new FLOAT[mNumTemp];
+    mGamma[i] = new FLOAT[mNumTemp];
+    mKappa[i] = new FLOAT[mNumTemp];
     mKappar[i] = new FLOAT[mNumTemp];
     mKappap[i] = new FLOAT[mNumTemp];
   }
@@ -83,14 +84,15 @@ bool OpacityTable::Read() {
   while (getline(mInStream, line)) {
     std::istringstream istr(line);
 
-    if (istr >> dens >> temp >> energy >> mu >> kappa >> kappar >> kappap >> gamma) {
+    if (istr >> dens >> temp >> energy >> mu >> kappa >> kappar >> kappap >>
+        gamma) {
 
       mEnergy[i][j] = energy;
-      mMu[i][j]     = mu;
-      mKappa[i][j]  = kappa;
+      mMu[i][j] = mu;
+      mKappa[i][j] = kappa;
       mKappar[i][j] = kappar;
       mKappap[i][j] = kappap;
-      mGamma[i][j]  = gamma;
+      mGamma[i][j] = gamma;
 
       if (l < mNumTemp) {
         mTemp[l] = log10(temp);
@@ -138,7 +140,8 @@ FLOAT OpacityTable::GetTemp(FLOAT density, FLOAT energy) {
   FLOAT logdens = log10(density);
   int idens = GetIDens(logdens);
 
-  if (energy == 0.0) return result;
+  if (energy == 0.0)
+    return result;
 
   // gets nearest temperature in table from density and specific
   // internal energy
@@ -151,7 +154,8 @@ FLOAT OpacityTable::GetTemp(FLOAT density, FLOAT energy) {
     }
   }
 
-  if (tempIndex > mNumTemp - 1) tempIndex = mNumTemp - 1;
+  if (tempIndex > mNumTemp - 1)
+    tempIndex = mNumTemp - 1;
 
   result = pow(10.0, mTemp[tempIndex]);
 
@@ -160,13 +164,13 @@ FLOAT OpacityTable::GetTemp(FLOAT density, FLOAT energy) {
 
 template <typename BidirectionalIterator, typename T>
 BidirectionalIterator GetClosest(BidirectionalIterator first,
-                                 BidirectionalIterator last,
-                                 const T &value)
-{
+                                 BidirectionalIterator last, const T &value) {
   BidirectionalIterator before = std::lower_bound(first, last, value);
 
-  if (before == first) return first;
-  if (before == last)  return --last;
+  if (before == first)
+    return first;
+  if (before == last)
+    return --last;
 
   BidirectionalIterator after = before;
   --before;
@@ -174,12 +178,9 @@ BidirectionalIterator GetClosest(BidirectionalIterator first,
   return (*after - value) < (value - *before) ? after : before;
 }
 
-
 template <typename BidirectionalIterator, typename T>
 std::size_t GetClosestIndex(BidirectionalIterator first,
-                            BidirectionalIterator last,
-                            const T &value)
-{
+                            BidirectionalIterator last, const T &value) {
   return std::distance(first, GetClosest(first, last, value));
 }
 
@@ -187,16 +188,16 @@ int OpacityTable::GetIDens(const FLOAT density) {
   int idens = GetClosestIndex(mDens, mDens + mNumDens, density);
 
   if (density < mDens[idens]) {
-    idens = std::max((int) idens - 1, 0);
+    idens = std::max((int)idens - 1, 0);
   }
   return idens;
 }
 
 int OpacityTable::GetITemp(const FLOAT temperature) {
-  int itemp = GetClosestIndex(mTemp, mTemp + mNumTemp , temperature);
+  int itemp = GetClosestIndex(mTemp, mTemp + mNumTemp, temperature);
 
   if (temperature <= mTemp[itemp]) {
-    itemp = std::max((int) itemp - 1, 0);
+    itemp = std::max((int)itemp - 1, 0);
   }
   return itemp;
 }

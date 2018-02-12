@@ -31,9 +31,9 @@ struct NameData {
 
 class File {
 public:
-  File() {};
-  File(NameData nd, bool formatted) {};
-  virtual ~File() {};
+  File(){};
+  File(NameData nd, bool formatted){};
+  virtual ~File(){};
 
   virtual bool Read() = 0;
   virtual bool Write(std::string fileName, bool formatted) = 0;
@@ -62,9 +62,9 @@ protected:
 
 class SnapshotFile : public File {
 public:
-  SnapshotFile() {};
-  SnapshotFile(NameData nd, bool formatted) {};
-  virtual ~SnapshotFile() {};
+  SnapshotFile(){};
+  SnapshotFile(NameData nd, bool formatted){};
+  virtual ~SnapshotFile(){};
 
   virtual std::vector<Particle *> GetParticles() { return mParticles; }
   virtual std::vector<Sink *> GetSinks() { return mSinks; }
@@ -78,38 +78,36 @@ public:
   virtual void SetParticles(std::vector<Particle *> particles) {
     mParticles = particles;
   }
-  virtual void SetSinks(std::vector<Sink *> sinks) {
-    mSinks = sinks;
-  }
+  virtual void SetSinks(std::vector<Sink *> sinks) { mSinks = sinks; }
 
-  virtual void CreateHeader(void) {};
+  virtual void CreateHeader(void){};
 
   virtual void SetNumGas(int i) { mNumGas = i; }
   virtual void SetNumSinks(int i) { mNumSink = i; }
   virtual void SetNumTot(int i) { mNumTot = i; }
-  virtual void SetTime (double t) { mTime = t; }
+  virtual void SetTime(double t) { mTime = t; }
 
 protected:
-  virtual bool Read() {};
-  virtual bool Write(std::string fileName, bool formatted) {};
+  virtual bool Read(){};
+  virtual bool Write(std::string fileName, bool formatted){};
 
-  virtual void AllocateMemory(void) {};
+  virtual void AllocateMemory(void){};
 
-  virtual bool ReadHeaderForm(void) {};
-  virtual void ReadParticleForm(void) {};
-  virtual void ReadSinkForm(void) {};
+  virtual bool ReadHeaderForm(void){};
+  virtual void ReadParticleForm(void){};
+  virtual void ReadSinkForm(void){};
 
-  virtual bool ReadHeaderUnform(void) {};
-  virtual void ReadParticleUnform(void) {};
-  virtual void ReadSinkUnform(void) {};
+  virtual bool ReadHeaderUnform(void){};
+  virtual void ReadParticleUnform(void){};
+  virtual void ReadSinkUnform(void){};
 
-  virtual void WriteHeaderForm(Formatter formatStream) {};
-  virtual void WriteParticleForm(Formatter formatStream) {};
-  virtual void WriteSinkForm(Formatter formatStream) {};
+  virtual void WriteHeaderForm(Formatter formatStream){};
+  virtual void WriteParticleForm(Formatter formatStream){};
+  virtual void WriteSinkForm(Formatter formatStream){};
 
-  virtual void WriteHeaderUnform(void) {};
-  virtual void WriteParticleUnform(void) {};
-  virtual void WriteSinkUnform(void) {};
+  virtual void WriteHeaderUnform(void){};
+  virtual void WriteParticleUnform(void){};
+  virtual void WriteSinkUnform(void){};
 
   BinaryReader *mBR;
   BinaryWriter *mBW;

@@ -21,6 +21,4 @@ Arguments::Arguments(int argc, char *argv[]) : mNumArgs(argc) {
   }
 }
 
-Arguments::~Arguments() {
-
-}
+Arguments::~Arguments() {}
