@@ -76,6 +76,7 @@ bool Application::Initialise() {
   mPosCenter =
       Vec3(mParams->GetFloat("CENTER_X"), mParams->GetFloat("CENTER_Y"),
            mParams->GetFloat("CENTER_Z"));
+  mHillRadiusCut = mParams->GetInt("HILLRADIUS_CUT");
   mMidplaneCut = mParams->GetFloat("MIDPLANE_CUT");
 
   mOpacity = new OpacityTable(mEosFilePath, true);
@@ -206,11 +207,14 @@ void Application::Analyse(int task, int start, int end) {
                               mPosCenter);
       }
       // Find vertically integrated quantities
-      // HillRadiusTrim((SnapshotFile *)mFiles.at(i));
+      if (mHillRadiusCut) {
+        HillRadiusCut((SnapshotFile *)mFiles.at(i));
+      }
       FindOpticalDepth((SnapshotFile *)mFiles.at(i));
       FindToomre((SnapshotFile *)mFiles.at(i));
-      if (mMidplaneCut)
-        MidplaneTrim((SnapshotFile *)mFiles.at(i));
+      if (mMidplaneCut) {
+        MidplaneCut((SnapshotFile *)mFiles.at(i));
+      }
     }
 
     // Sink analysis
@@ -237,7 +241,7 @@ void Application::Analyse(int task, int start, int end) {
   }
 }
 
-void Application::MidplaneTrim(SnapshotFile *file) {
+void Application::MidplaneCut(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
   std::vector<Particle *> trimmed;
   for (int i = 0; i < part.size(); ++i) {
@@ -252,7 +256,7 @@ void Application::MidplaneTrim(SnapshotFile *file) {
   file->SetNameDataAppend(".midplane");
 }
 
-void Application::HillRadiusTrim(SnapshotFile *file) {
+void Application::HillRadiusCut(SnapshotFile *file) {
   std::vector<Sink *> sinks = file->GetSinks();
   if (sinks.size() < 2)
     return;
@@ -274,7 +278,7 @@ void Application::HillRadiusTrim(SnapshotFile *file) {
 
   // Trim those particles within 2 Hill radii
   for (int i = 0; i < part.size(); ++i) {
-    if (part[i]->GetX().Norm() > 2.0 * hill_radius) {
+    if (part[i]->GetX().Norm() > mHillRadiusCut * hill_radius) {
       trimmed.push_back(part[i]);
     }
   }

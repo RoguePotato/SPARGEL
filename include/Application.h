@@ -75,11 +75,12 @@ private:
   int mRadialAnalyse = 0;
   int mCenter = 0;
   Vec3 mPosCenter = {0.0, 0.0, 0.0};
+  int mHillRadiusCut = 0;
   FLOAT mMidplaneCut = 0.0;
 
   void Analyse(int task, int start, int end);
-  void MidplaneTrim(SnapshotFile *file);
-  void HillRadiusTrim(SnapshotFile *file);
+  void MidplaneCut(SnapshotFile *file);
+  void HillRadiusCut(SnapshotFile *file);
   void OutputFile(SnapshotFile *file);
   void FindThermo(SnapshotFile *file);
   void FindOpticalDepth(SnapshotFile *file);
