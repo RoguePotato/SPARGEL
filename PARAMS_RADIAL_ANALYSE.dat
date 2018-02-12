@@ -17,6 +17,7 @@
  Output in new format    : CONVERT = 0
  Output file format      : OUT_FORMAT = su
  Output new snapshots    : OUTPUT_FILES = 0
+ Output cooling          : OUTPUT_COOLING = 0
 
  Opacity table path      : EOS_TABLE = eos.bell.cc.dat
 
@@ -26,8 +27,12 @@
 
  Disc analysis           : DISC_ANALYSIS = 1
  Center around sink      : DISC_CENTER = 1
+ Midplane z cut-off      : MIDPLANE_CUT = 0.5
  Radial analysis         : RADIAL_ANALYSIS = 1
- Vertical analysis       : VERTICAL_ANALYSIS = 1
  Inner radius            : RADIUS_IN = 0
  Outer radius            : RADIUS_OUT = 100
- Number of bins          : RADIAL_BINS = 100
+ Number of bins          : RADIAL_BINS = 1000
+ Vertical analysis       : VERTICAL_ANALYSIS = 0
+ Vertical lower          : HEIGHT_LO = 0.0
+ Vertical upper          : HEIGHT_HI = 10.0
+ Number of vertical bins : VERTICAL_BINS = 100
