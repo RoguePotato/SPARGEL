@@ -49,9 +49,9 @@ void Generator::SetupParams(void) {
 
   mOmegaIn = (mRin * mRin) / (mR0 * mR0);
   mOmegaOut = (mRout * mRout) / (mR0 * mR0);
-  mSigma0 = ((mMDisc) / (2 * PI * mR0 * mR0)) *
-            powf(powf((mR0 * mR0 + mRout * mRout) / (mR0 * mR0), 0.5) -
-                     powf((mR0 * mR0 + mRin * mRin) / (mR0 * mR0), 0.5),
+  mSigma0 = ((mMDisc * (2.0 - mP)) / (2 * PI * mR0 * mR0)) *
+            powf(powf((mR0 * mR0 + mRout * mRout) / (mR0 * mR0), 1.0 - (mP / 2.0)) -
+                     powf((mR0 * mR0 + mRin * mRin) / (mR0 * mR0), 1.0 - (mP / 2.0)),
                  -1.0f);
 
   if (mSeed > 0) {

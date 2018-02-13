@@ -109,7 +109,7 @@ void Parameters::SetDefaultParameters() {
 
   mStringParams["INPUT_FILE"] = "COMMAND_LINE";
   mStringParams["IN_FORMAT"] = "sf";
-  mStringParams["OUTPUT_ID"] = "PDA";
+  mStringParams["OUTPUT_ID"] = "SPA";
   mIntParams["CONVERT"] = 0;
   mStringParams["OUT_FORMAT"] = "sf";
   mIntParams["OUTPUT_FILES"] = 0;

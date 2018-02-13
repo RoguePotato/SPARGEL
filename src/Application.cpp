@@ -88,7 +88,7 @@ bool Application::Initialise() {
     mGenerator->Create();
     NameData nd;
     nd.dir = "./";
-    nd.id = "SPA";
+    nd.id = mParams->GetString("OUTPUT_ID");
     nd.format = mOutFormat;
     nd.snap = "00000";
 
@@ -295,7 +295,8 @@ void Application::HillRadiusCut(SnapshotFile *file) {
 }
 
 void Application::OutputFile(SnapshotFile *file) {
-  file->SetNameDataAppend(".modified");
+  if (!mGenerator)
+    file->SetNameDataAppend(".modified");
   NameData nd = file->GetNameData();
   std::string outputName;
 
@@ -476,14 +477,17 @@ void Application::FindToomre(SnapshotFile *file) {
   // IT MAY BE BETTER TO STORE SINKS AS PARTICLES AND DISTINGUISH BY TYPE.
   std::vector<Particle *> part = file->GetParticles();
   std::vector<Sink *> sink = file->GetSinks();
-  std::sort(part.begin(), part.end(),
-            [](Particle *a, Particle *b) { return b->GetR() < a->GetR(); });
+  std::sort(part.begin(), part.end(), [](Particle *a, Particle *b) {
+    return b->GetX().Norm() < a->GetX().Norm();
+  });
   FLOAT inner_mass = 0.0;
-  if (sink.size() == 1)
+  if (sink.size() == 1) {
     inner_mass += sink[0]->GetM();
+  }
+
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part[i];
-    FLOAT r3 = pow(p->GetR() * AU_TO_M, 3.0);
+    FLOAT r3 = pow(p->GetX().Norm() * AU_TO_M, 3.0);
     FLOAT omega = sqrtf((G * inner_mass * MSUN_TO_KG) / (r3));
     FLOAT cs = p->GetCS();
     FLOAT sigma = p->GetRealSigma() * GPERCM2_TO_KGPERM2;
