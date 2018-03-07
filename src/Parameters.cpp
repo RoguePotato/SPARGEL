@@ -145,7 +145,6 @@ void Parameters::SetDefaultParameters() {
   mIntParams["N_HYDRO"] = 4096;
   mIntParams["DIMENSIONS"] = 3;
 
-  // Protostellar disc parameters
   mFloatParams["M_STAR"] = 0.5;
   mFloatParams["M_DISC"] = 0.01;
 
@@ -157,4 +156,10 @@ void Parameters::SetDefaultParameters() {
   mIntParams["N_NEIGH"] = 50;
   mFloatParams["P"] = 1.0;
   mFloatParams["Q"] = 0.75;
+
+  mIntParams["PLANET"] = 0;
+  mFloatParams["PLANET_MASS"] = 0.0;
+  mFloatParams["PLANET_RADIUS"] = 0.0;
+  mFloatParams["PLANET_ECC"] = 0.0;
+  mFloatParams["PLANET_INC"] = 0.0;
 }

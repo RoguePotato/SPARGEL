@@ -15,6 +15,7 @@
 
 #pragma once
 
+#include "Constants.h"
 #include "Definitions.h"
 #include "File.h"
 

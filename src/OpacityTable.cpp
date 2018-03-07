@@ -142,12 +142,13 @@ FLOAT OpacityTable::GetGamma1(FLOAT density, FLOAT temperature) {
 }
 
 FLOAT OpacityTable::GetEnergy(FLOAT density, FLOAT temperature) {
-  return mEnergy[GetIDens(log10(density))][GetITemp(log10(temperature))] / 1E4;
+  return mEnergy[GetIDens(log10(density))][GetITemp(log10(temperature))] *
+         ERGPERG_TO_JPERKG;
 }
 
 FLOAT OpacityTable::GetTemp(FLOAT density, FLOAT energy) {
   FLOAT result = 0.0;
-  energy *= 1E4; // cgs conversion, K/g to ergs/g
+  energy /= ERGPERG_TO_JPERKG;
 
   FLOAT logdens = log10(density);
   int idens = GetIDens(logdens);

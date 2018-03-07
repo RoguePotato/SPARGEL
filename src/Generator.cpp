@@ -27,6 +27,9 @@ void Generator::Create(void) {
     CreateDisc();
     CreateStars();
     CalculateVelocity();
+    if (mPlanet) {
+      CreatePlanet();
+    }
   } else if (mParams->GetString("IC_TYPE") == "cloud") {
     CreateCloud();
   }
@@ -46,13 +49,19 @@ void Generator::SetupParams(void) {
   mNumNeigh = mParams->GetInt("N_NEIGH");
   mP = mParams->GetFloat("P");
   mQ = mParams->GetFloat("Q");
+  mPlanet = mParams->GetInt("PLANET");
+  mPlanetMass = mParams->GetFloat("PLANET_MASS");
+  mPlanetRadius = mParams->GetFloat("PLANET_RADIUS");
+  mPlanetEcc = mParams->GetFloat("PLANET_ECC");
+  mPlanetInc = mParams->GetFloat("PLANET_INC");
 
   mOmegaIn = (mRin * mRin) / (mR0 * mR0);
   mOmegaOut = (mRout * mRout) / (mR0 * mR0);
-  mSigma0 = ((mMDisc * (2.0 - mP)) / (2 * PI * mR0 * mR0)) *
-            powf(powf((mR0 * mR0 + mRout * mRout) / (mR0 * mR0), 1.0 - (mP / 2.0)) -
-                     powf((mR0 * mR0 + mRin * mRin) / (mR0 * mR0), 1.0 - (mP / 2.0)),
-                 -1.0f);
+  mSigma0 =
+      ((mMDisc * (2.0 - mP)) / (2 * PI * mR0 * mR0)) *
+      pow(pow((mR0 * mR0 + mRout * mRout) / (mR0 * mR0), 1.0 - (mP / 2.0)) -
+              pow((mR0 * mR0 + mRin * mRin) / (mR0 * mR0), 1.0 - (mP / 2.0)),
+          -1.0f);
 
   if (mSeed > 0) {
     srand(mSeed);
@@ -143,6 +152,49 @@ void Generator::CreateStars(void) {
   s->SetM(mMStar);
   s->SetType(-1);
   mSinks.push_back(s);
+}
+
+void Generator::CreatePlanet(void) {
+  Sink *s = new Sink();
+  s->SetID(mParticles.size() + mSinks.size() + 1);
+  Vec3 star_pos = mSinks[0]->GetX();
+  Vec3 star_vel = mSinks[0]->GetV();
+  Vec3 planet_pos = Vec3(mPlanetRadius * (1.0 - mPlanetEcc), 0.0, 0.0);
+  Vec3 planet_vel = Vec3(0.0, 0.0, 0.0);
+
+  FLOAT hill_radius =
+      mPlanetRadius * pow(mPlanetMass / (3.0 * mMStar), 1.0 / 3.0);
+  FLOAT h = 0.1;
+  FLOAT interior_mass = 0.0;
+  for (int i = 0; i < mParticles.size(); ++i) {
+    if (mParticles[i]->GetX().Norm() < mPlanetRadius) {
+      interior_mass += mParticles[i]->GetM();
+    }
+  }
+
+  planet_vel[1] = sqrt((G * (mMStar + interior_mass) * MSUN_TO_KG) /
+                       (mPlanetRadius * AU_TO_M)) /
+                  KMPERS_TO_MPERS;
+  s->SetH(h);
+  s->SetM(mPlanetMass);
+  s->SetType(-1);
+  s->SetX(planet_pos);
+  s->SetV(planet_vel);
+  mSinks.push_back(s);
+
+  // Move to CoM
+  // const Vec3 CoM =
+  //     (mMStar * star_pos + mPlanetMass * planet_pos) / (mMStar +
+  //     mPlanetMass);
+
+  // mSinks[0]->SetX(star_pos - CoM);
+  // mSinks[1]->SetX(planet_pos - CoM);
+
+  // const Vec3 CoMom =
+  //     (mMStar * star_vel + mPlanetMass * planet_vel) / (mMStar +
+  //     mPlanetMass);
+  // mSinks[0]->SetV(star_vel - CoMom);
+  // mSinks[1]->SetV(planet_vel - CoMom);
 }
 
 void Generator::CalculateVelocity(void) {

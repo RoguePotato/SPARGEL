@@ -85,4 +85,5 @@ private:
   void FindThermo(SnapshotFile *file);
   void FindOpticalDepth(SnapshotFile *file);
   void FindToomre(SnapshotFile *file);
+  void FindBeta(SnapshotFile *file);
 };

@@ -39,6 +39,7 @@ private:
   void CreateCloud(void);
 
   void CreateStars(void);
+  void CreatePlanet(void);
   void CalculateVelocity(void);
 
   Parameters *mParams = NULL;
@@ -52,20 +53,26 @@ private:
   int mNumHydro = 0;
   int mDim = 0;
 
-  double mMStar = 0.0;
-  double mMDisc = 0.0;
-  double mRin = 0.0;
-  double mRout = 0.0;
-  double mR0 = 0.0;
-  double mT0 = 0.0;
-  double mTinf = 0.0;
+  FLOAT mMStar = 0.0;
+  FLOAT mMDisc = 0.0;
+  FLOAT mRin = 0.0;
+  FLOAT mRout = 0.0;
+  FLOAT mR0 = 0.0;
+  FLOAT mT0 = 0.0;
+  FLOAT mTinf = 0.0;
   int mNumNeigh = 0;
 
-  double mP = 0.0;
-  double mQ = 0.0;
+  FLOAT mP = 0.0;
+  FLOAT mQ = 0.0;
 
-  double mRands[3];
-  double mOmegaIn = 0.0;
-  double mOmegaOut = 0.0;
-  double mSigma0 = 0.0;
+  FLOAT mRands[3];
+  FLOAT mOmegaIn = 0.0;
+  FLOAT mOmegaOut = 0.0;
+  FLOAT mSigma0 = 0.0;
+
+  int mPlanet = 0;
+  FLOAT mPlanetMass = 0.0;
+  FLOAT mPlanetRadius = 0.0;
+  FLOAT mPlanetEcc = 0.0;
+  FLOAT mPlanetInc = 0.0;
 };

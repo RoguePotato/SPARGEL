@@ -212,6 +212,7 @@ void Application::Analyse(int task, int start, int end) {
       }
       FindOpticalDepth((SnapshotFile *)mFiles.at(i));
       FindToomre((SnapshotFile *)mFiles.at(i));
+      FindBeta((SnapshotFile *)mFiles.at(i));
       if (mMidplaneCut) {
         MidplaneCut((SnapshotFile *)mFiles.at(i));
       }
@@ -276,7 +277,7 @@ void Application::HillRadiusCut(SnapshotFile *file) {
     part[i]->SetX(new_pos);
   }
 
-  // Trim those particles within 2 Hill radii
+  // Trim those particles within a Hill radius
   for (int i = 0; i < part.size(); ++i) {
     if (part[i]->GetX().Norm() > mHillRadiusCut * hill_radius) {
       trimmed.push_back(part[i]);
@@ -359,7 +360,7 @@ void Application::FindThermo(SnapshotFile *file) {
     FLOAT kappar = mOpacity->GetKappar(density, temp);
     FLOAT mu_bar = mOpacity->GetMuBar(density, temp);
     FLOAT press = (gamma - 1.0) * density * energy;
-    FLOAT cs = sqrtf((K * temp) / (M_P * mu_bar));
+    FLOAT cs = sqrt((K * temp) / (M_P * mu_bar));
     FLOAT tau = kappa * sigma;
     FLOAT dudt = 1.0 / ((sigma * sigma * kappa) + (1 / kappar));
 
@@ -427,7 +428,6 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
 
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part[i];
-    FLOAT temp = p->GetT();
     FLOAT sigma = p->GetRealSigma();
     FLOAT tau = p->GetRealTau();
     FLOAT dudt = 1.0 / (sigma * (tau + (1.0 / tau)));
@@ -435,67 +435,112 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
     part[i]->SetRealDUDT(dudt);
   }
 
-  // Replaces 3D velocity data with the ratios of estimated to real values for
-  // optical depth, column density and cooling rate. This is useful for plotting
-  // 2D maps for the above in SPLASH.
-  // Do we output difference logarithmically or not?
-  FLOAT min_tau = 1E30, max_tau = -1E30;
-  FLOAT min_sig = 1E30, max_sig = -1E30;
-  FLOAT min_cool = 1E30, max_cool = -1E30;
-  if (mParams->GetInt("OUTPUT_COOLING")) {
-    for (int i = 0; i < part.size(); ++i) {
-      Particle *p = part[i];
-      FLOAT tau_ratio = log10(p->GetTau() / p->GetRealTau());
-      FLOAT sigma_ratio = log10(p->GetSigma() / p->GetRealSigma());
-      FLOAT cooling_ratio = log10(p->GetDUDT() / p->GetRealDUDT());
-
-      if (tau_ratio > max_tau)
-        max_tau = tau_ratio;
-      if (tau_ratio < min_tau)
-        min_tau = tau_ratio;
-      if (sigma_ratio > max_sig)
-        max_sig = sigma_ratio;
-      if (sigma_ratio < min_sig)
-        min_sig = sigma_ratio;
-      if (cooling_ratio > max_cool)
-        max_cool = cooling_ratio;
-      if (cooling_ratio < min_cool)
-        min_cool = cooling_ratio;
-
-      part[i]->SetV(Vec3(tau_ratio, sigma_ratio, cooling_ratio));
-    }
-  }
-  file->SetParticles(part);
-
   delete octree;
 }
 
 void Application::FindToomre(SnapshotFile *file) {
-  // Find Toomre parameter, first sort by radius
-  // THERE IS AN ISSUE WHEN INCLUDING SINKS IN THE RADIAL SORT. IMAGINE A SINK
-  // HAS FORMED SOMEWHERE IN THE DISC, THIS DOES NOT GET INCLUDED IN THE SORT.
-  // IT MAY BE BETTER TO STORE SINKS AS PARTICLES AND DISTINGUISH BY TYPE.
   std::vector<Particle *> part = file->GetParticles();
   std::vector<Sink *> sink = file->GetSinks();
   std::sort(part.begin(), part.end(), [](Particle *a, Particle *b) {
-    return b->GetX().Norm() < a->GetX().Norm();
+    return b->GetX().Norm() > a->GetX().Norm();
   });
   FLOAT inner_mass = 0.0;
-  if (sink.size() == 1) {
+  int sink_index = 0;
+
+  // Add mass contribution from central star if it exists
+  if (sink.size() > 0) {
     inner_mass += sink[0]->GetM();
+    sink_index = 1;
   }
 
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part[i];
-    FLOAT r3 = pow(p->GetX().Norm() * AU_TO_M, 3.0);
-    FLOAT omega = sqrtf((G * inner_mass * MSUN_TO_KG) / (r3));
+    FLOAT r = p->GetX().Norm();
+    FLOAT r3 = pow(r * AU_TO_M, 3.0);
+    FLOAT omega = sqrt((G * inner_mass * MSUN_TO_KG) / (r3));
+
     FLOAT cs = p->GetCS();
     FLOAT sigma = p->GetRealSigma() * GPERCM2_TO_KGPERM2;
     FLOAT Q = (cs * omega) / (PI * G * sigma);
 
     part[i]->SetOmega(omega);
     part[i]->SetQ(Q);
+
+    // Add contribution from other sinks but only once when
+    // we have exceeded it's radius
+    for (int i = sink_index; i < sink.size(); ++i) {
+      if (r > sink[i]->GetX().Norm()) {
+        inner_mass += sink[i]->GetM();
+        sink_index++;
+      }
+    }
     inner_mass += p->GetM();
   }
   file->SetParticles(part);
+}
+
+void Application::FindBeta(SnapshotFile *file) {
+  std::vector<Particle *> part = file->GetParticles();
+  for (int i = 0; i < part.size(); ++i) {
+    FLOAT r = part[i]->GetX().Norm();
+    FLOAT omega = part[i]->GetOmega();
+    FLOAT u = part[i]->GetU() / ERGPERG_TO_JPERKG;
+    FLOAT temp = part[i]->GetT();
+    FLOAT temp_amb = mParams->GetFloat("T_INF");
+    FLOAT temp_bgr = pow(pow(temp_amb, 2.0) +
+                             pow(390.0, 2.0) * pow((r * r + 0.5 * 0.5), -1.0),
+                         0.5);
+
+    temp_bgr = temp_amb; // Changes from ambient to disc heating
+
+    FLOAT u_irr =
+        mOpacity->GetEnergy(part[i]->GetD(), temp_bgr) / ERGPERG_TO_JPERKG;
+    FLOAT dudt_norm = part[i]->GetRealDUDT();
+    FLOAT dudt = (4.0 * SB * (pow(temp, 4.0) - pow(temp_bgr, 4.0))) * dudt_norm;
+    FLOAT beta = (u - u_irr) * (omega / dudt);
+    part[i]->SetBeta(beta);
+  }
+  file->SetParticles(part);
+
+  FLOAT rOut = mParams->GetFloat("RADIUS_OUT");
+  const int DIVISIONS = 512;
+  FLOAT beta_totals[DIVISIONS][DIVISIONS] = {};
+  int beta_part[DIVISIONS][DIVISIONS] = {};
+  for (int i = 0; i < part.size(); ++i) {
+    FLOAT x = part[i]->GetX().x;
+    FLOAT y = part[i]->GetX().y;
+    if (part[i]->GetX().Norm() > rOut)
+      continue;
+
+    int x_index =
+        (FLOAT)((part[i]->GetX().x + rOut) / (2.0 * rOut)) * DIVISIONS;
+    int y_index =
+        (FLOAT)((part[i]->GetX().y + rOut) / (2.0 * rOut)) * DIVISIONS;
+
+    beta_totals[y_index][x_index] += part[i]->GetBeta();
+    beta_part[y_index][x_index]++;
+  }
+
+  for (int i = 0; i < DIVISIONS; ++i) {
+    for (int j = 0; j < DIVISIONS; ++j) {
+      if (beta_part[i][j] > 1) {
+        beta_totals[i][j] /= beta_part[i][j];
+      }
+    }
+  }
+
+  // Output beta heatmap
+  std::ofstream out;
+  out.open(file->GetFileName() + ".beta");
+  for (int i = 0; i < DIVISIONS; ++i) {
+    for (int j = 0; j < DIVISIONS; ++j) {
+      if (beta_part[i][j] < 1) {
+        out << 0.0 << "\t";
+      } else {
+        out << beta_totals[i][j] << "\t";
+      }
+    }
+    out << "\n";
+  }
+  out.close();
 }

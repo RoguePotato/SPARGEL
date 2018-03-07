@@ -83,6 +83,7 @@ bool SerenFile::Write(std::string fileName, bool formatted) {
               << " for writing!\n";
     return false;
   }
+  std::cout << "   Writing " << fileName << "\n";
 
   CreateHeader();
 
@@ -461,11 +462,11 @@ void SerenFile::ReadParticleUnform(void) {
     mParticles.at(i)->SetU(temp[0]);
   }
 
-  // std::cout << "    Reading pseudo-column density!\n";
-  // for (int i = 0; i < mNumGas + mNumDust; ++i) {
-  //   mBR->ReadValue(temp[0]);
-  //   mParticles.at(i)->SetSigma(temp[0]);
-  // }
+  std::cout << "    Reading pseudo-column density!\n";
+  for (int i = 0; i < mNumGas + mNumDust; ++i) {
+    mBR->ReadValue(temp[0]);
+    mParticles.at(i)->SetSigma(temp[0]);
+  }
 }
 
 void SerenFile::ReadSinkUnform(void) {

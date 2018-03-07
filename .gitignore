@@ -19,3 +19,6 @@ Bash scripts
 
 Python scripts
 *.py
+
+Documents folder
+docs/*

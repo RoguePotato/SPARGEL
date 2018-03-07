@@ -45,6 +45,7 @@ public:
   FLOAT GetRealTau() { return mRealTau; }
   FLOAT GetDUDT() { return mDUDT; }
   FLOAT GetRealDUDT() { return mRealDUDT; }
+  FLOAT GetBeta() { return mBeta; }
   int GetType() { return mType; }
 
   void SetID(int id) { mID = id; }
@@ -68,6 +69,7 @@ public:
   void SetRealTau(FLOAT tau) { mRealTau = tau; }
   void SetDUDT(FLOAT dudt) { mDUDT = dudt; }
   void SetRealDUDT(FLOAT dudt) { mRealDUDT = dudt; }
+  void SetBeta(FLOAT beta) { mBeta = beta; }
   void SetType(int type) { mType = type; }
 
 private:
@@ -95,6 +97,7 @@ private:
   FLOAT mRealTau = 0.0;
   FLOAT mDUDT = 0.0;
   FLOAT mRealDUDT = 0.0;
+  FLOAT mBeta = 0.0;
   int mType = 1;
 };
 

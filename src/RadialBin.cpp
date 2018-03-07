@@ -58,6 +58,8 @@ void RadialBin::CalculateValues(void) {
     mAverages[11] += p->GetCS();
     mAverages[12] += p->GetOmega();
     mAverages[13] += p->GetM();
+    mAverages[14] += p->GetBeta();
+    mAverages[15] += p->GetU();
 
     // Vertical bins
     for (int j = 0; j < mVerticalBins.size(); ++j) {
