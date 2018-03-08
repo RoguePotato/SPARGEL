@@ -60,6 +60,7 @@ void RadialBin::CalculateValues(void) {
     mAverages[13] += p->GetM();
     mAverages[14] += p->GetBeta();
     mAverages[15] += p->GetU();
+    mAverages[16] += p->GetRealTau() + (1.0 / p->GetRealTau());
 
     // Vertical bins
     for (int j = 0; j < mVerticalBins.size(); ++j) {
@@ -83,7 +84,7 @@ void RadialBin::CalculateValues(void) {
   // Toomre calculated via bin width and mass
   mAverages[3] = (mAverages[11] * mAverages[12]) / (PI * G * sigma);
 
-  for (int i = 0; i < 16; ++i) {
+  for (int i = 0; i < RADIAL_QUANTITIES; ++i) {
     mAverages[i] /= mParticles.size();
   }
 }

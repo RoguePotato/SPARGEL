@@ -80,7 +80,7 @@ void RadialAnalyser::Run(SnapshotFile *file) {
     if (b->GetNumParticles() <= 0)
       continue;
     out << b->GetMid() << "\t";
-    for (int j = 0; j < 16; ++j) {
+    for (int j = 0; j < RADIAL_QUANTITIES; ++j) {
       out << b->GetAverage(j) << "\t";
     }
     out << "\n";

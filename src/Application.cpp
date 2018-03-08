@@ -485,18 +485,13 @@ void Application::FindBeta(SnapshotFile *file) {
     FLOAT r = part[i]->GetX().Norm();
     FLOAT omega = part[i]->GetOmega();
     FLOAT u = part[i]->GetU() / ERGPERG_TO_JPERKG;
+    FLOAT dens = part[i]->GetD();
     FLOAT temp = part[i]->GetT();
     FLOAT temp_amb = mParams->GetFloat("T_INF");
-    FLOAT temp_bgr = pow(pow(temp_amb, 2.0) +
-                             pow(390.0, 2.0) * pow((r * r + 0.5 * 0.5), -1.0),
-                         0.5);
 
-    temp_bgr = temp_amb; // Changes from ambient to disc heating
-
-    FLOAT u_irr =
-        mOpacity->GetEnergy(part[i]->GetD(), temp_bgr) / ERGPERG_TO_JPERKG;
+    FLOAT u_irr = mOpacity->GetEnergy(dens, temp_amb) / ERGPERG_TO_JPERKG;
     FLOAT dudt_norm = part[i]->GetRealDUDT();
-    FLOAT dudt = (4.0 * SB * (pow(temp, 4.0) - pow(temp_bgr, 4.0))) * dudt_norm;
+    FLOAT dudt = dudt_norm * 4.0 * SB * (pow(temp, 4.0) - pow(temp_amb, 4.0));
     FLOAT beta = (u - u_irr) * (omega / dudt);
     part[i]->SetBeta(beta);
   }
