@@ -48,5 +48,5 @@ private:
   FLOAT mWidth = 0.0;
 
   std::vector<Particle *> mParticles;
-  FLOAT mAverages[16] = {};
+  FLOAT mAverages[RADIAL_QUANTITIES] = {};
 };

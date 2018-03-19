@@ -30,7 +30,7 @@ void VerticalBin::CalculateValues(void) {
     mAverages[0] += p->GetD();
     mAverages[1] += p->GetT();
     mAverages[2] += p->GetV().Norm();
-    mAverages[3] += p->GetM() * MSUN_TO_KG;
+    mAverages[3] += p->GetQ();
     mAverages[4] += p->GetP();
     mAverages[5] += p->GetTau();
     mAverages[6] += p->GetRealTau();
@@ -38,9 +38,15 @@ void VerticalBin::CalculateValues(void) {
     mAverages[8] += p->GetRealSigma();
     mAverages[9] += p->GetDUDT();
     mAverages[10] += p->GetRealDUDT();
+    mAverages[11] += p->GetCS();
+    mAverages[12] += p->GetOmega();
+    mAverages[13] += p->GetM();
+    mAverages[14] += p->GetBeta();
+    mAverages[15] += p->GetU();
+    mAverages[16] += p->GetRealTau() + (1.0 / p->GetRealTau());
   }
 
-  for (int i = 0; i < 16; ++i) {
+  for (int i = 0; i < RADIAL_QUANTITIES; ++i) {
     mAverages[i] /= mParticles.size();
   }
 }

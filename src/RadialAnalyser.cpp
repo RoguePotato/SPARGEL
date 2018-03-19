@@ -105,7 +105,7 @@ void RadialAnalyser::Run(SnapshotFile *file) {
           continue;
 
         out << v->GetMid() << "\t";
-        for (int j = 0; j < 16; ++j) {
+        for (int j = 0; j < RADIAL_QUANTITIES; ++j) {
           out << v->GetAverage(j) << "\t";
         }
         out << "\n";

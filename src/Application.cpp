@@ -487,55 +487,66 @@ void Application::FindBeta(SnapshotFile *file) {
     FLOAT u = part[i]->GetU() / ERGPERG_TO_JPERKG;
     FLOAT dens = part[i]->GetD();
     FLOAT temp = part[i]->GetT();
-    FLOAT temp_amb = mParams->GetFloat("T_INF");
+    FLOAT u_bgr = mOpacity->GetEnergy(dens, 10.0) / ERGPERG_TO_JPERKG;
 
-    FLOAT u_irr = mOpacity->GetEnergy(dens, temp_amb) / ERGPERG_TO_JPERKG;
     FLOAT dudt_norm = part[i]->GetRealDUDT();
-    FLOAT dudt = dudt_norm * 4.0 * SB * (pow(temp, 4.0) - pow(temp_amb, 4.0));
-    FLOAT beta = (u - u_irr) * (omega / dudt);
+    FLOAT dudt = dudt_norm * 4.0 * SB * pow(temp, 4.0);
+    FLOAT beta = u * (omega / dudt);
+
     part[i]->SetBeta(beta);
   }
   file->SetParticles(part);
 
-  FLOAT rOut = mParams->GetFloat("RADIUS_OUT");
-  const int DIVISIONS = 512;
-  FLOAT beta_totals[DIVISIONS][DIVISIONS] = {};
-  int beta_part[DIVISIONS][DIVISIONS] = {};
-  for (int i = 0; i < part.size(); ++i) {
-    FLOAT x = part[i]->GetX().x;
-    FLOAT y = part[i]->GetX().y;
-    if (part[i]->GetX().Norm() > rOut)
-      continue;
+  // FLOAT rOut = mParams->GetFloat("RADIUS_OUT");
+  // const int RESOLUTION[] = {64, 128, 256, 512};
 
-    int x_index =
-        (FLOAT)((part[i]->GetX().x + rOut) / (2.0 * rOut)) * DIVISIONS;
-    int y_index =
-        (FLOAT)((part[i]->GetX().y + rOut) / (2.0 * rOut)) * DIVISIONS;
+  // for (int pass = 0; pass < 4; ++pass) {
+  //   const int pixels = RESOLUTION[pass] * RESOLUTION[pass];
+  //   std::vector<FLOAT> beta_totals;
+  //   std::vector<FLOAT> beta_part;
+  //   for (int i = 0; i < pixels; ++i) {
+  //     for (int j = 0; j < RESOLUTION[pass]; ++j) {
+  //       beta_totals.push_back(0.0);
+  //       beta_part.push_back(0.0);
+  //     }
+  //   }
 
-    beta_totals[y_index][x_index] += part[i]->GetBeta();
-    beta_part[y_index][x_index]++;
-  }
+  //   for (int i = 0; i < part.size(); ++i) {
+  //     FLOAT x = part[i]->GetX().x;
+  //     FLOAT y = part[i]->GetX().y;
+  //     if (part[i]->GetX().Norm() > rOut)
+  //       continue;
 
-  for (int i = 0; i < DIVISIONS; ++i) {
-    for (int j = 0; j < DIVISIONS; ++j) {
-      if (beta_part[i][j] > 1) {
-        beta_totals[i][j] /= beta_part[i][j];
-      }
-    }
-  }
+  //     int x_index =
+  //         (FLOAT)((part[i]->GetX().x + rOut) / (2.0 * rOut)) * RESOLUTION[pass];
+  //     int y_index =
+  //         (FLOAT)((part[i]->GetX().y + rOut) / (2.0 * rOut)) * RESOLUTION[pass];
+  //     int index = (y_index * RESOLUTION[pass]) + x_index;
 
-  // Output beta heatmap
-  std::ofstream out;
-  out.open(file->GetFileName() + ".beta");
-  for (int i = 0; i < DIVISIONS; ++i) {
-    for (int j = 0; j < DIVISIONS; ++j) {
-      if (beta_part[i][j] < 1) {
-        out << 0.0 << "\t";
-      } else {
-        out << beta_totals[i][j] << "\t";
-      }
-    }
-    out << "\n";
-  }
-  out.close();
+  //     beta_totals[index] += part[i]->GetBeta();
+  //     beta_part[index]++;
+  //   }
+
+  //   // Top layer beta average
+  //   for (int i = 0; i < pixels; ++i) {
+  //     if (beta_part[i] > 1) {
+  //       beta_totals[i] /= beta_part[i];
+  //     }
+  //   }
+
+  //   std::ofstream out;
+  //   // Output top layer beta heatmap
+  //   out.open(file->GetFileName() + ".beta." + std::to_string(RESOLUTION[pass]));
+  //   for (int i = 0; i < pixels; ++i) {
+  //     if (beta_part[i] < 1) {
+  //       out << 0.0 << "\t";
+  //     } else {
+  //       out << beta_totals[i] << "\t";
+  //     }
+  //     if ((i + 1) % RESOLUTION[pass] == 0) {
+  //       out << "\n";
+  //     }
+  //   }
+  //   out.close();
+  // }
 }
