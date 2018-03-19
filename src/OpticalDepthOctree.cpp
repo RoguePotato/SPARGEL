@@ -54,8 +54,8 @@ void OpticalDepthOctree::Walk(std::vector<Particle *> &Particles,
 
     TraverseTree(Pos, Sigma, Tau, Opacity);
     
-    Particles[i]->SetRealSigma(Sigma);
-    Particles[i]->SetRealTau(Tau);
+    Particles[i]->SetSigma(Sigma);
+    Particles[i]->SetTau(Tau);
   }
 }
 
