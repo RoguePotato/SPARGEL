@@ -23,7 +23,8 @@ Generator::~Generator(void) {}
 void Generator::Create(void) {
   SetupParams();
 
-  if (mParams->GetString("IC_TYPE") == "disc") {
+  if (mParams->GetString("IC_TYPE") == "disc" ||
+      mParams->GetString("IC_TYPE") == "binary") {
     CreateDisc();
     CreateStars();
     CalculateVelocity();
@@ -40,6 +41,11 @@ void Generator::SetupParams(void) {
   mNumHydro = mParams->GetInt("N_HYDRO");
   mDim = mParams->GetInt("DIMENSIONS");
   mMStar = mParams->GetFloat("M_STAR");
+  mMBinary = mParams->GetFloat("BINARY_M");
+  mMTotal = mMStar + mMBinary;
+  mBinarySep = mParams->GetFloat("BINARY_A");
+  mBinaryEcc = mParams->GetFloat("BINARY_ECC");
+  mBinaryInc = mParams->GetFloat("BINARY_INC");
   mMDisc = mParams->GetFloat("M_DISC");
   mRin = mParams->GetFloat("R_IN");
   mRout = mParams->GetFloat("R_OUT");
@@ -146,12 +152,31 @@ void Generator::CreateDisc(void) {
 void Generator::CreateCloud(void) {}
 
 void Generator::CreateStars(void) {
-  Sink *s = new Sink();
-  s->SetID(mParticles.size() + 1);
-  s->SetH(1.0);
-  s->SetM(mMStar);
-  s->SetType(-1);
-  mSinks.push_back(s);
+  Sink *s1 = new Sink();
+  s1->SetID(mParticles.size() + 1);
+  s1->SetH(0.1);
+  s1->SetM(mMStar);
+  s1->SetType(-1);
+
+  if (mParams->GetString("IC_TYPE") == "binary") {
+    Sink *s2 = new Sink();
+    s2->SetID(mParticles.size() + 2);
+    s2->SetH(0.1);
+    s2->SetM(mMBinary);
+
+    FLOAT x1 = -mBinarySep * (1.0 - mBinaryEcc) * (mMBinary / mMTotal) +
+               ((mBinarySep / 2.0) * (1.0 - cos(mBinaryInc)));
+    FLOAT x2 = mBinarySep * (1.0 - mBinaryEcc) * (mMStar / mMTotal) -
+               ((mBinarySep / 2.0) * (1.0 - cos(mBinaryInc)));
+    FLOAT z1 = (mBinarySep / 2.0) * sin(mBinaryInc);
+    FLOAT z2 = -(mBinarySep / 2.0) * sin(mBinaryInc);
+
+    s1->SetX(Vec3(x1, 0.0, z1));
+    s2->SetX(Vec3(x2, 0.0, z2));
+
+    mSinks.push_back(s2);
+  }
+  mSinks.push_back(s1);
 }
 
 void Generator::CreatePlanet(void) {
@@ -236,5 +261,22 @@ void Generator::CalculateVelocity(void) {
     FLOAT vY = (v * x) / (R + 0.000001);
 
     mParticles.at(i)->SetV(Vec3(vX, vY, 0.0));
+  }
+
+  if (mParams->GetString("IC_TYPE") == "binary") {
+    FLOAT v_y1 =
+        -sqrt((G * mMTotal * MSUN_TO_KG) / (mBinarySep * AU_TO_M)) *
+        sqrt((1.0 + mBinaryEcc) / (1.0 - mBinaryEcc)) * (mMBinary / mMTotal);
+    FLOAT v_y2 =
+        sqrt((G * mMTotal * MSUN_TO_KG) / (mBinarySep * AU_TO_M)) *
+        sqrt((1 + mBinaryEcc) / (1.0 - mBinaryEcc)) * (mMStar / mMTotal);
+
+    v_y1 /= KMPERS_TO_MPERS;
+    v_y2 /= KMPERS_TO_MPERS;
+
+    mSinks[0]->SetV(Vec3(0.0, v_y1, 0.0));
+    mSinks[1]->SetV(Vec3(0.0, v_y2, 0.0));
+  } else {
+    mSinks[0]->SetV(Vec3(0.0, 0.0, 0.0));
   }
 }

@@ -147,6 +147,10 @@ void Parameters::SetDefaultParameters() {
 
   mFloatParams["M_STAR"] = 0.5;
   mFloatParams["M_DISC"] = 0.01;
+  mFloatParams["BINARY_M"] = 0.0;
+  mFloatParams["BINARY_A"] = 0.0;
+  mFloatParams["BINARY_ECC"] = 0.0;
+  mFloatParams["BINARY_INC"] = 0.0;
 
   mFloatParams["R_IN"] = 5.0;
   mFloatParams["R_OUT"] = 100.0;

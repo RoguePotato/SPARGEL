@@ -55,6 +55,11 @@ private:
 
   FLOAT mMStar = 0.0;
   FLOAT mMDisc = 0.0;
+  FLOAT mMBinary = 0.0;
+  FLOAT mMTotal = 0.0;
+  FLOAT mBinarySep = 0.0;
+  FLOAT mBinaryEcc = 0.0;
+  FLOAT mBinaryInc = 0.0;
   FLOAT mRin = 0.0;
   FLOAT mRout = 0.0;
   FLOAT mR0 = 0.0;
