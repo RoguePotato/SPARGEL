@@ -70,6 +70,8 @@ private:
   FLOAT mP = 0.0;
   FLOAT mQ = 0.0;
 
+  FLOAT mSinkRadius = 0.0;
+
   FLOAT mRands[3];
   FLOAT mOmegaIn = 0.0;
   FLOAT mOmegaOut = 0.0;

@@ -161,6 +161,8 @@ void Parameters::SetDefaultParameters() {
   mFloatParams["P"] = 1.0;
   mFloatParams["Q"] = 0.75;
 
+  mFloatParams["SINK_RADIUS"] = 1.0;
+
   mIntParams["PLANET"] = 0;
   mFloatParams["PLANET_MASS"] = 0.0;
   mFloatParams["PLANET_RADIUS"] = 0.0;

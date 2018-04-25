@@ -55,6 +55,7 @@ void Generator::SetupParams(void) {
   mNumNeigh = mParams->GetInt("N_NEIGH");
   mP = mParams->GetFloat("P");
   mQ = mParams->GetFloat("Q");
+  mSinkRadius = mParams->GetFloat("SINK_RADIUS");
   mPlanet = mParams->GetInt("PLANET");
   mPlanetMass = mParams->GetFloat("PLANET_MASS");
   mPlanetRadius = mParams->GetFloat("PLANET_RADIUS");
@@ -154,14 +155,14 @@ void Generator::CreateCloud(void) {}
 void Generator::CreateStars(void) {
   Sink *s1 = new Sink();
   s1->SetID(mParticles.size() + 1);
-  s1->SetH(0.1);
+  s1->SetH(mSinkRadius);
   s1->SetM(mMStar);
   s1->SetType(-1);
 
   if (mParams->GetString("IC_TYPE") == "binary") {
     Sink *s2 = new Sink();
     s2->SetID(mParticles.size() + 2);
-    s2->SetH(0.1);
+    s2->SetH(mSinkRadius);
     s2->SetM(mMBinary);
 
     FLOAT x1 = -mBinarySep * (1.0 - mBinaryEcc) * (mMBinary / mMTotal) +
