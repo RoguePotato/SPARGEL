@@ -48,6 +48,7 @@ private:
   unsigned int mMaxThreads = 0;
   int mFilesPerThread = 0;
   int mRemainder = 0;
+  int mOutputInfo = 0;
 
   Arguments *mArgs = NULL;
   Parameters *mParams = NULL;
@@ -86,4 +87,6 @@ private:
   void FindOpticalDepth(SnapshotFile *file);
   void FindToomre(SnapshotFile *file);
   void FindBeta(SnapshotFile *file);
+
+  void OutputInfo(SnapshotFile *file);
 };

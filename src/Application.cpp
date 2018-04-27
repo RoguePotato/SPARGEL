@@ -62,6 +62,8 @@ bool Application::Initialise() {
   if (mNumThreads < 0 || mNumThreads > mMaxThreads)
     mNumThreads = mMaxThreads;
 
+  mOutputInfo = mParams->GetInt("OUTPUT_INFO");
+
   mConvert = mParams->GetInt("CONVERT");
   mInFormat = mParams->GetString("IN_FORMAT");
   mOutFormat = mParams->GetString("OUT_FORMAT");
@@ -236,6 +238,10 @@ void Application::Analyse(int task, int start, int end) {
     // Snapshot output
     if (mOutput) {
       OutputFile((SnapshotFile *)mFiles.at(i));
+    }
+    // Screen output
+    if (mOutputInfo) {
+      OutputInfo((SnapshotFile *)mFiles.at(i));
     }
     ++mFilesAnalysed;
     delete mFiles[i];
@@ -495,4 +501,33 @@ void Application::FindBeta(SnapshotFile *file) {
     part[i]->SetBeta(beta);
   }
   file->SetParticles(part);
+}
+
+void Application::OutputInfo(SnapshotFile *file) {
+  std::vector<Particle *> part = file->GetParticles();
+  std::vector<Sink *> sink = file->GetSinks();
+
+  for (int i = 0; i < 16; ++i)
+    std::cout << "=====";
+  std::cout << "\n   " << file->GetFileName() << "\n";
+  for (int i = 0; i < 16; ++i)
+    std::cout << "=====";
+  std::cout << "\n";
+
+  FLOAT gas_mass = 0.0, total_mass = 0.0;
+  for (int i = 0; i < sink.size(); ++i) {
+    std::cout << "   Sink " << i + 1 << "\n";
+    std::cout << "   Mass   = " << sink[i]->GetM() << "\n";
+    std::cout << "   Radius = " << sink[i]->GetX().Norm() << "\n";
+    for (int i = 0; i < 16; ++i)
+      std::cout << "-----";
+    std::cout << "\n";
+
+    total_mass += sink[i]->GetM();
+  }
+  for (int i = 0; i < part.size(); ++i) {
+    gas_mass += part[i]->GetM();
+  }
+  std::cout << "   Gas mass   : " << gas_mass << "\n";
+  std::cout << "   Total mass : " << gas_mass + total_mass << "\n";
 }

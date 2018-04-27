@@ -106,6 +106,7 @@ std::string Parameters::TrimWhiteSpace(std::string str) {
 
 void Parameters::SetDefaultParameters() {
   mIntParams["THREADS"] = -1;
+  mIntParams["OUTPUT_INFO"] = 0;
 
   mStringParams["INPUT_FILE"] = "COMMAND_LINE";
   mStringParams["IN_FORMAT"] = "sf";
