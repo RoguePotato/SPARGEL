@@ -19,11 +19,17 @@ Application::Application(Arguments *args) : mArgs(args) {}
 
 Application::~Application() {
   mFiles.clear();
-  // if (mArgs != NULL) delete mArgs;
-  // if (mParams != NULL) delete mParams;
-  // if (mOpacity != NULL) delete mOpacity;
-  // if (mFNE != NULL) delete mFNE;
-  // delete mRA;
+  delete mParams;
+  delete mOpacity;
+  delete mFNE;
+  if (mGenerator != NULL)
+    delete mGenerator;
+  if (mDiscAnalyser != NULL)
+    delete mDiscAnalyser;
+  if (mCloudAnalyser != NULL)
+    delete mCloudAnalyser;
+  if (mSinkAnalyser != NULL)
+    delete mSinkAnalyser;
 }
 
 void Application::StartSplash(void) {
@@ -257,10 +263,13 @@ void Application::MidplaneCut(SnapshotFile *file) {
     FLOAT z = abs(p->GetX().z);
     if (z <= mMidplaneCut) {
       trimmed.push_back(p);
+    } else {
+      delete part[i];
     }
   }
   file->SetParticles(trimmed);
   file->SetNameDataAppend(".midplane");
+  trimmed.clear();
 }
 
 void Application::HillRadiusCut(SnapshotFile *file) {
@@ -287,6 +296,8 @@ void Application::HillRadiusCut(SnapshotFile *file) {
   for (int i = 0; i < part.size(); ++i) {
     if (part[i]->GetX().Norm() > mHillRadiusCut * hill_radius) {
       trimmed.push_back(part[i]);
+    } else {
+      delete part[i];
     }
   }
   std::cout << "Trimmed: " << part.size() - trimmed.size() << " particles\n";
@@ -299,6 +310,7 @@ void Application::HillRadiusCut(SnapshotFile *file) {
 
   file->SetParticles(trimmed);
   file->SetNameDataAppend(".hillradius");
+  trimmed.clear();
 }
 
 void Application::OutputFile(SnapshotFile *file) {
@@ -313,7 +325,7 @@ void Application::OutputFile(SnapshotFile *file) {
   outputName =
       nd.dir + "/" + nd.id + "." + nd.format + "." + nd.snap + nd.append;
 
-  // TODO: reduce code duplication
+  // TODO: reduce code duplication and clean up new created files.
   if (nd.format == "df") {
     DragonFile *df = new DragonFile(nd, true);
     df->SetParticles(file->GetParticles());
@@ -385,10 +397,8 @@ void Application::FindThermo(SnapshotFile *file) {
 void Application::FindOpticalDepth(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
 
-  OpticalDepthOctree *octree = new OpticalDepthOctree(
-      Vec3(0.0, 0.0, 0.0), Vec3(2048.0, 2048.0, 2048.0), NULL, NULL);
-
-  std::vector<OpticalDepthOctree *> list;
+  OpticalDepthOctree *octree =
+      new OpticalDepthOctree(Vec3(0.0, 0.0, 0.0), Vec3(2048.0, 2048.0, 2048.0));
 
   // Sort by z descending
   std::sort(part.begin(), part.end(),
@@ -405,8 +415,8 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
 
   // Construct, link and walk twice. First for particles with z > 0. Then take
   // particles with z < 0 and reflect about the z-axis using absolute z values.
-  octree->Construct(positive);
-  octree->LinkTree(list);
+  OpticalDepthPoint *positive_points = new OpticalDepthPoint[positive.size()];
+  octree->Construct(positive, positive_points);
   octree->Walk(positive, mOpacity);
   for (int i = 0; i < positive.size(); ++i)
     part[i] = positive[i];
@@ -418,8 +428,8 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
     FLOAT z = -(p->GetX().z);
     negative[i]->SetX(Vec3(x, y, z));
   }
-  octree->Construct(negative);
-  octree->LinkTree(list);
+  OpticalDepthPoint *negative_points = new OpticalDepthPoint[negative.size()];
+  octree->Construct(negative, negative_points);
   octree->Walk(negative, mOpacity);
   // The particles below the disc which have been flipped above now require
   // being flipped back.
@@ -430,6 +440,8 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
     negative[i]->SetX(Vec3(x, y, z));
     part[i + positive.size()] = negative[i];
   }
+  positive.clear();
+  negative.clear();
 
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part[i];
@@ -441,6 +453,8 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
   }
 
   delete octree;
+  delete[] positive_points;
+  delete[] negative_points;
 }
 
 void Application::FindToomre(SnapshotFile *file) {
@@ -519,6 +533,7 @@ void Application::OutputInfo(SnapshotFile *file) {
     std::cout << "   Sink " << i + 1 << "\n";
     std::cout << "   Mass   = " << sink[i]->GetM() << "\n";
     std::cout << "   Radius = " << sink[i]->GetX().Norm() << "\n";
+    std::cout << "   Accretion radius = " << sink[i]->GetH() << "\n";
     for (int i = 0; i < 16; ++i)
       std::cout << "-----";
     std::cout << "\n";

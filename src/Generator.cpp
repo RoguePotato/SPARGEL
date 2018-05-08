@@ -18,7 +18,10 @@
 Generator::Generator(Parameters *params, OpacityTable *opacity)
     : mParams(params), mOpacity(opacity) {}
 
-Generator::~Generator(void) {}
+Generator::~Generator(void) {
+  delete mOctree;
+  delete[] mOctreePoints;
+}
 
 void Generator::Create(void) {
   SetupParams();
@@ -207,20 +210,6 @@ void Generator::CreatePlanet(void) {
   s->SetX(planet_pos);
   s->SetV(planet_vel);
   mSinks.push_back(s);
-
-  // Move to CoM
-  // const Vec3 CoM =
-  //     (mMStar * star_pos + mPlanetMass * planet_pos) / (mMStar +
-  //     mPlanetMass);
-
-  // mSinks[0]->SetX(star_pos - CoM);
-  // mSinks[1]->SetX(planet_pos - CoM);
-
-  // const Vec3 CoMom =
-  //     (mMStar * star_vel + mPlanetMass * planet_vel) / (mMStar +
-  //     mPlanetMass);
-  // mSinks[0]->SetV(star_vel - CoMom);
-  // mSinks[1]->SetV(planet_vel - CoMom);
 }
 
 void Generator::CalculateVelocity(void) {
@@ -265,12 +254,12 @@ void Generator::CalculateVelocity(void) {
   }
 
   if (mParams->GetString("IC_TYPE") == "binary") {
-    FLOAT v_y1 =
-        -sqrt((G * mMTotal * MSUN_TO_KG) / (mBinarySep * AU_TO_M)) *
-        sqrt((1.0 + mBinaryEcc) / (1.0 - mBinaryEcc)) * (mMBinary / mMTotal);
-    FLOAT v_y2 =
-        sqrt((G * mMTotal * MSUN_TO_KG) / (mBinarySep * AU_TO_M)) *
-        sqrt((1 + mBinaryEcc) / (1.0 - mBinaryEcc)) * (mMStar / mMTotal);
+    FLOAT v_y1 = -sqrt((G * mMTotal * MSUN_TO_KG) / (mBinarySep * AU_TO_M)) *
+                 sqrt((1.0 + mBinaryEcc) / (1.0 - mBinaryEcc)) *
+                 (mMBinary / mMTotal);
+    FLOAT v_y2 = sqrt((G * mMTotal * MSUN_TO_KG) / (mBinarySep * AU_TO_M)) *
+                 sqrt((1 + mBinaryEcc) / (1.0 - mBinaryEcc)) *
+                 (mMStar / mMTotal);
 
     v_y1 /= KMPERS_TO_MPERS;
     v_y2 /= KMPERS_TO_MPERS;
