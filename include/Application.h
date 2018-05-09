@@ -25,6 +25,7 @@
 #include "File.h"
 #include "FileNameExtractor.h"
 #include "Generator.h"
+#include "MassAnalyser.h"
 #include "OpacityTable.h"
 #include "OpticalDepthOctree.h"
 #include "Parameters.h"
@@ -58,6 +59,7 @@ private:
   DiscAnalyser *mDiscAnalyser = NULL;
   SinkAnalyser *mSinkAnalyser = NULL;
   RadialAnalyser *mRadialAnalyser = NULL;
+  MassAnalyser *mMassAnalyser = NULL;
   Generator *mGenerator = NULL;
 
   std::vector<File *> mFiles;
@@ -74,6 +76,7 @@ private:
   int mDiscAnalyse = 0;
   int mSinkAnalyse = 0;
   int mRadialAnalyse = 0;
+  int mMassAnalyse = 0;
   int mCenter = 0;
   Vec3 mPosCenter = {0.0, 0.0, 0.0};
   int mHillRadiusCut = 0;

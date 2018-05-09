@@ -30,6 +30,8 @@ Application::~Application() {
     delete mCloudAnalyser;
   if (mSinkAnalyser != NULL)
     delete mSinkAnalyser;
+  if (mMassAnalyser != NULL)
+    delete mMassAnalyser;
 }
 
 void Application::StartSplash(void) {
@@ -75,6 +77,7 @@ bool Application::Initialise() {
   mOutFormat = mParams->GetString("OUT_FORMAT");
   mOutput = mParams->GetInt("OUTPUT_FILES");
   mEosFilePath = mParams->GetString("EOS_TABLE");
+  mMassAnalyse = mParams->GetInt("MASS_ANALYSIS");
   mCloudAnalyse = mParams->GetInt("CLOUD_ANALYSIS");
   mCloudCenter = mParams->GetInt("CLOUD_CENTER");
   mDiscAnalyse = mParams->GetInt("DISC_ANALYSIS");
@@ -105,6 +108,10 @@ bool Application::Initialise() {
     gen->SetSinks(mGenerator->GetSinks());
     OutputFile(gen);
     mFiles.push_back(gen);
+  }
+
+  if (mMassAnalyse) {
+    mMassAnalyser = new MassAnalyser(mParams->GetString("MASS_OUTPUT"));
   }
 
   if (mCloudAnalyse) {
@@ -180,6 +187,8 @@ void Application::Run() {
     threads[i].join();
   }
 
+  if (mMassAnalyse)
+    mMassAnalyser->Write();
   if (mCloudAnalyse)
     mCloudAnalyser->Write();
   if (mSinkAnalyse) {
@@ -194,60 +203,65 @@ void Application::Analyse(int task, int start, int end) {
   for (int i = start; i < end; ++i) {
     // File read
     if (mGenerator == NULL) {
-      if (!mFiles.at(i)->Read())
+      if (!mFiles[i]->Read())
         break;
     }
 
     // Extra quantity calculation
-    FindThermo((SnapshotFile *)mFiles.at(i));
+    FindThermo((SnapshotFile *)mFiles[i]);
 
     // Cloud analysis
     if (mCloudAnalyse) {
-      mCloudAnalyser->FindCentralQuantities((SnapshotFile *)mFiles.at(i));
+      mCloudAnalyser->FindCentralQuantities((SnapshotFile *)mFiles[i]);
       if (mCloudCenter) {
-        mCloudAnalyser->CenterAroundDensest((SnapshotFile *)mFiles.at(i));
+        mCloudAnalyser->CenterAroundDensest((SnapshotFile *)mFiles[i]);
       }
     }
     // Disc analysis
     if (mDiscAnalyse) {
       if (mCenter) {
-        mDiscAnalyser->Center((SnapshotFile *)mFiles.at(i), mCenter - 1,
+        mDiscAnalyser->Center((SnapshotFile *)mFiles[i], mCenter - 1,
                               mPosCenter);
       }
       // Find vertically integrated quantities
       if (mHillRadiusCut) {
-        HillRadiusCut((SnapshotFile *)mFiles.at(i));
+        HillRadiusCut((SnapshotFile *)mFiles[i]);
       }
-      FindOpticalDepth((SnapshotFile *)mFiles.at(i));
-      FindToomre((SnapshotFile *)mFiles.at(i));
-      FindBeta((SnapshotFile *)mFiles.at(i));
+      FindOpticalDepth((SnapshotFile *)mFiles[i]);
+      FindToomre((SnapshotFile *)mFiles[i]);
+      FindBeta((SnapshotFile *)mFiles[i]);
       if (mMidplaneCut) {
-        MidplaneCut((SnapshotFile *)mFiles.at(i));
+        MidplaneCut((SnapshotFile *)mFiles[i]);
       }
+    }
+
+    // Mass analysis
+    if (mMassAnalyse) {
+      mMassAnalyser->ExtractValues((SnapshotFile *)mFiles[i]);
     }
 
     // Sink analysis
     if (mSinkAnalyse) {
-      mSinkAnalyser->AddMassRadius((SinkFile *)mFiles.at(i));
-      mSinkAnalyser->AddNbody((SinkFile *)mFiles.at(i));
+      mSinkAnalyser->AddMassRadius((SinkFile *)mFiles[i]);
+      mSinkAnalyser->AddNbody((SinkFile *)mFiles[i]);
     }
     // Radial analysis
     if (mRadialAnalyse) {
       RadialAnalyser *ra = new RadialAnalyser(mParams);
-      ra->Run((SnapshotFile *)mFiles.at(i));
+      ra->Run((SnapshotFile *)mFiles[i]);
       delete ra;
     }
     // File conversion
     if (mConvert) {
-      mFiles.at(i)->SetNameDataFormat(mOutFormat);
+      mFiles[i]->SetNameDataFormat(mOutFormat);
     }
     // Snapshot output
     if (mOutput) {
-      OutputFile((SnapshotFile *)mFiles.at(i));
+      OutputFile((SnapshotFile *)mFiles[i]);
     }
     // Screen output
     if (mOutputInfo) {
-      OutputInfo((SnapshotFile *)mFiles.at(i));
+      OutputInfo((SnapshotFile *)mFiles[i]);
     }
     ++mFilesAnalysed;
     delete mFiles[i];

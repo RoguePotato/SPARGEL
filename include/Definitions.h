@@ -42,3 +42,7 @@ typedef double DOUBLE;
 typedef double FLOAT;
 typedef double DOUBLE;
 #endif
+
+#define GAS_TYPE 1
+#define SINK_TYPE -1
+#define DUST_TYPE 2

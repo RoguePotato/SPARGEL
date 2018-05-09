@@ -115,12 +115,14 @@ void Parameters::SetDefaultParameters() {
   mStringParams["OUT_FORMAT"] = "sf";
   mIntParams["OUTPUT_FILES"] = 0;
   mStringParams["CLOUD_OUTPUT"] = "cloud.dat";
+  mStringParams["MASS_OUTPUT"] = "masses.dat";
   mStringParams["EOS_TABLE"] = "eos.bell.cc.dat";
   mIntParams["OUTPUT_COOLING"] = 0;
 
   mIntParams["CLOUD_ANALYSIS"] = 0;
   mIntParams["CLOUD_CENTER"] = 0;
 
+  mIntParams["MASS_ANALYSIS"] = 0;
   mIntParams["SINK_ANALYSIS"] = 0;
   mIntParams["DISC_ANALYSIS"] = 0;
   mIntParams["RADIAL_ANALYSIS"] = 0;
