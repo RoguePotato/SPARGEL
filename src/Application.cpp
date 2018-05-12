@@ -76,6 +76,7 @@ bool Application::Initialise() {
   mInFormat = mParams->GetString("IN_FORMAT");
   mOutFormat = mParams->GetString("OUT_FORMAT");
   mOutput = mParams->GetInt("OUTPUT_FILES");
+  mExtraData = std::min(EXTRA_DATA_MAX, mParams->GetInt("EXTRA_DATA"));
   mEosFilePath = mParams->GetString("EOS_TABLE");
   mMassAnalyse = mParams->GetInt("MASS_ANALYSIS");
   mCloudAnalyse = mParams->GetInt("CLOUD_ANALYSIS");
@@ -103,7 +104,7 @@ bool Application::Initialise() {
     nd.format = mOutFormat;
     nd.snap = "00000";
 
-    SerenFile *gen = new SerenFile(nd, false);
+    SerenFile *gen = new SerenFile(nd, false, mExtraData);
     gen->SetParticles(mGenerator->GetParticles());
     gen->SetSinks(mGenerator->GetSinks());
     OutputFile(gen);
@@ -133,13 +134,13 @@ bool Application::Initialise() {
     NameData nd = mFNE->GetNameData();
 
     if (mInFormat == "su") {
-      mFiles.push_back(new SerenFile(nd, false));
+      mFiles.push_back(new SerenFile(nd, false, mExtraData));
     } else if (mInFormat == "sf") {
-      mFiles.push_back(new SerenFile(nd, true));
+      mFiles.push_back(new SerenFile(nd, true, mExtraData));
     } else if (mInFormat == "du") {
-      mFiles.push_back(new DragonFile(nd, false));
+      mFiles.push_back(new DragonFile(nd, false, mExtraData));
     } else if (mInFormat == "df") {
-      mFiles.push_back(new DragonFile(nd, true));
+      mFiles.push_back(new DragonFile(nd, true, mExtraData));
     } else if (mInFormat == "column") {
       mFiles.push_back(new ColumnFile(nd));
     } else if (mInFormat == "sink") {
@@ -341,7 +342,7 @@ void Application::OutputFile(SnapshotFile *file) {
 
   // TODO: reduce code duplication and clean up new created files.
   if (nd.format == "df") {
-    DragonFile *df = new DragonFile(nd, true);
+    DragonFile *df = new DragonFile(nd, true, mExtraData);
     df->SetParticles(file->GetParticles());
     df->SetSinks(file->GetSinks());
     df->SetNumGas(file->GetNumGas());
@@ -352,7 +353,7 @@ void Application::OutputFile(SnapshotFile *file) {
   }
 
   if (nd.format == "su") {
-    SerenFile *su = new SerenFile(nd, false);
+    SerenFile *su = new SerenFile(nd, false, mExtraData);
     su->SetParticles(file->GetParticles());
     su->SetSinks(file->GetSinks());
     su->SetNumGas(file->GetNumGas());

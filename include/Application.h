@@ -70,6 +70,7 @@ private:
   std::string mOutFormat = "";
   std::string mEosFilePath = "";
   int mOutput = 0;
+  int mExtraData = 0;
   int mConvert = 0;
   int mCloudAnalyse = 0;
   int mCloudCenter = 0;

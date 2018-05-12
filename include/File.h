@@ -32,7 +32,7 @@ struct NameData {
 class File {
 public:
   File(){};
-  File(NameData nd, bool formatted){};
+  File(NameData nd, bool formatted, int extra_data){};
   virtual ~File(){};
 
   virtual bool Read() = 0;
@@ -49,6 +49,8 @@ protected:
 
   std::ifstream mInStream;
   std::ofstream mOutStream;
+
+  int mExtraData = 0;
 
   inline std::string TrimWhiteSpace(std::string str) {
     std::string result;

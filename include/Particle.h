@@ -63,6 +63,7 @@ public:
   void SetDUDT(FLOAT dudt) { mDUDT = dudt; }
   void SetBeta(FLOAT beta) { mBeta = beta; }
   void SetType(int type) { mType = type; }
+  void SetExtra(int index, FLOAT value) { mExtra[index] = value; }
 
 private:
   int mID = 0;
@@ -87,6 +88,7 @@ private:
   FLOAT mDUDT = 0.0;
   FLOAT mBeta = 0.0;
   int mType = 1;
+  FLOAT mExtra[EXTRA_DATA_MAX] = {0.0};
 };
 
 class Gas : public Particle {
