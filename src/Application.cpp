@@ -77,6 +77,9 @@ bool Application::Initialise() {
   mOutFormat = mParams->GetString("OUT_FORMAT");
   mOutput = mParams->GetInt("OUTPUT_FILES");
   mExtraData = std::min(EXTRA_DATA_MAX, mParams->GetInt("EXTRA_DATA"));
+  mCoolingMethod = mParams->GetString("COOLING_METHOD");
+  mGamma = mParams->GetFloat("GAMMA");
+  mMuBar = mParams->GetFloat("MU_BAR");
   mEosFilePath = mParams->GetString("EOS_TABLE");
   mMassAnalyse = mParams->GetInt("MASS_ANALYSIS");
   mCloudAnalyse = mParams->GetInt("CLOUD_ANALYSIS");
@@ -283,6 +286,7 @@ void Application::MidplaneCut(SnapshotFile *file) {
     }
   }
   file->SetParticles(trimmed);
+  file->SetNumGas(trimmed.size());
   file->SetNameDataAppend(".midplane");
   trimmed.clear();
 }
@@ -324,6 +328,7 @@ void Application::HillRadiusCut(SnapshotFile *file) {
   }
 
   file->SetParticles(trimmed);
+  file->SetNumGas(trimmed.size());
   file->SetNameDataAppend(".hillradius");
   trimmed.clear();
 }
@@ -383,10 +388,18 @@ void Application::FindThermo(SnapshotFile *file) {
     FLOAT energy = p->GetU();
     FLOAT sigma = p->GetSigma();
     FLOAT temp = p->GetT();
-    if (mInFormat == "su" || mInFormat == "sf" || mInFormat == "column") {
-      temp = mOpacity->GetTemp(density, energy);
-    } else if (mInFormat == "df" || mInFormat == "du") {
-      energy = mOpacity->GetEnergy(density, temp);
+    if (mCoolingMethod == "stamatellos" || mCoolingMethod == "lombardi") {
+      if (mInFormat == "su" || mInFormat == "sf" || mInFormat == "column") {
+        temp = mOpacity->GetTemp(density, energy);
+      } else if (mInFormat == "df" || mInFormat == "du") {
+        energy = mOpacity->GetEnergy(density, temp);
+      }
+    } else if (mCoolingMethod == "beta_cooling") {
+      if (mInFormat == "su" || mInFormat == "sf" || mInFormat == "column") {
+        temp = (energy * mMuBar * M_P * (mGamma - 1.0)) / K;
+      } else if (mInFormat == "df" || mInFormat == "du") {
+        energy = (K * temp) / (mMuBar * M_P * (mGamma - 1.0));
+      }
     }
     FLOAT gamma = mOpacity->GetGamma(density, temp);
     FLOAT kappa = mOpacity->GetKappa(density, temp);

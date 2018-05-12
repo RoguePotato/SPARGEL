@@ -116,6 +116,9 @@ void Parameters::SetDefaultParameters() {
   mIntParams["OUTPUT_FILES"] = 0;
   mStringParams["CLOUD_OUTPUT"] = "cloud.dat";
   mStringParams["MASS_OUTPUT"] = "masses.dat";
+  mStringParams["COOLING_METHOD"] = "stamatellos";
+  mFloatParams["GAMMA"] = 1.66;
+  mFloatParams["MU_BAR"] = 2.35;
   mStringParams["EOS_TABLE"] = "eos.bell.cc.dat";
   mIntParams["OUTPUT_COOLING"] = 0;
   mIntParams["EXTRA_DATA"] = 0;

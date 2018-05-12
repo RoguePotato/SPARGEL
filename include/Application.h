@@ -68,7 +68,10 @@ private:
 
   std::string mInFormat = "";
   std::string mOutFormat = "";
+  std::string mCoolingMethod = "";
   std::string mEosFilePath = "";
+  FLOAT mGamma = 0.0;
+  FLOAT mMuBar = 0.0;
   int mOutput = 0;
   int mExtraData = 0;
   int mConvert = 0;
