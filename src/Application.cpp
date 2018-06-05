@@ -192,6 +192,7 @@ void Application::Run() {
   }
 
   if (mMassAnalyse)
+    mMassAnalyser->CalculateAccretionRate();
     mMassAnalyser->Write();
   if (mCloudAnalyse)
     mCloudAnalyser->Write();

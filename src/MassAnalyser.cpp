@@ -47,16 +47,26 @@ void MassAnalyser::ExtractValues(SnapshotFile *file) {
   mMasses.push_back(mc);
 }
 
-bool MassAnalyser::Write() {
+void MassAnalyser::CalculateAccretionRate() {
   std::sort(mMasses.begin(), mMasses.end(),
             [](MassComponent a, MassComponent b) { return b.time > a.time; });
+            
+  for (int i = 1; i < mMasses.size(); ++i) {
+    FLOAT dt = mMasses[i - 1].time - mMasses[i].time;
+    FLOAT dM = mMasses[i - 1].tot_mass - mMasses[i].tot_mass;
+    if (dt != 0.0)
+      mMasses[i].mdot = dM / dt;
+  }
+}
 
+bool MassAnalyser::Write() {
   mOutStream.open(mFileName);
   for (int i = 0; i < mMasses.size(); ++i) {
     MassComponent mc = mMasses[i];
     mOutStream << mc.time << "\t" << mc.tot_mass << "\t" << mc.gas_mass << "\t"
-               << mc.dust_mass << "\t" << mc.sink_mass << "\t" << mc.gas_num
-               << "\t" << mc.dust_num << "\t" << mc.sink_num << "\t";
+               << mc.mdot << "\t" << mc.dust_mass << "\t" << mc.sink_mass
+               << "\t" << mc.gas_num << "\t" << mc.dust_num << "\t"
+               << mc.sink_num << "\t";
     for (int j = 0; j < 16; ++j) {
       mOutStream << mc.unique_sink_mass[j] << "\t";
     }

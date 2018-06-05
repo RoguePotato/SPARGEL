@@ -27,6 +27,7 @@ struct MassComponent {
   FLOAT dust_mass = 0.0;
   FLOAT sink_mass = 0.0;
   FLOAT unique_sink_mass[16] = {0.0};
+  FLOAT mdot = 0.0;
   int gas_num = 0;
   int dust_num = 0;
   int sink_num = 0;
@@ -38,6 +39,7 @@ public:
   ~MassAnalyser();
 
   void ExtractValues(SnapshotFile *file);
+  void CalculateAccretionRate();
   bool Write();
 
 private:
