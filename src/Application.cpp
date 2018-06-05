@@ -191,11 +191,13 @@ void Application::Run() {
     threads[i].join();
   }
 
-  if (mMassAnalyse)
+  if (mMassAnalyse) {
     mMassAnalyser->CalculateAccretionRate();
     mMassAnalyser->Write();
-  if (mCloudAnalyse)
+  }
+  if (mCloudAnalyse) {
     mCloudAnalyser->Write();
+  }
   if (mSinkAnalyse) {
     mSinkAnalyser->WriteMassRadius();
     mSinkAnalyser->WriteNbody();
