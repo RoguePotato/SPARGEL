@@ -15,9 +15,10 @@
 
 #include "DragonFile.h"
 
-DragonFile::DragonFile(NameData nd, bool formatted) {
+DragonFile::DragonFile(NameData nd, bool formatted, int extra_data) {
   mNameData = nd;
   mFormatted = formatted;
+  mExtraData = extra_data;
 }
 
 DragonFile::~DragonFile() {
@@ -118,88 +119,100 @@ bool DragonFile::ReadHeaderForm(void) {
 }
 
 void DragonFile::ReadParticleForm(void) {
-  float Temp[3] = {0.0f};
-
+  FLOAT temp[3] = {0.0};
+  
   // Positions
   for (int i = 0; i < mNumGas; ++i) {
-    mInStream >> Temp[0] >> Temp[1] >> Temp[2];
-    mParticles.at(i)->SetX(
-        Vec3(Temp[0] * PC_TO_AU, Temp[1] * PC_TO_AU, Temp[2] * PC_TO_AU));
+    mInStream >> temp[0] >> temp[1] >> temp[2];
+    mParticles[i]->SetX(
+        Vec3(temp[0] * PC_TO_AU, temp[1] * PC_TO_AU, temp[2] * PC_TO_AU));
   }
   for (int i = 0; i < mNumSink; ++i) {
-    mInStream >> Temp[0] >> Temp[1] >> Temp[2];
-    mSinks.at(i)->SetX(
-        Vec3(Temp[0] * PC_TO_AU, Temp[1] * PC_TO_AU, Temp[2] * PC_TO_AU));
+    mInStream >> temp[0] >> temp[1] >> temp[2];
+    mSinks[i]->SetX(
+        Vec3(temp[0] * PC_TO_AU, temp[1] * PC_TO_AU, temp[2] * PC_TO_AU));
   }
 
   // Velocities
   for (int i = 0; i < mNumGas; ++i) {
-    mInStream >> Temp[0] >> Temp[1] >> Temp[2];
-    mParticles.at(i)->SetV(Vec3(Temp[0], Temp[1], Temp[2]));
+    mInStream >> temp[0] >> temp[1] >> temp[2];
+    mParticles[i]->SetV(Vec3(temp[0], temp[1], temp[2]));
   }
   for (int i = 0; i < mNumSink; ++i) {
-    mInStream >> Temp[0] >> Temp[1] >> Temp[2];
-    mSinks.at(i)->SetV(Vec3(Temp[0], Temp[1], Temp[2]));
+    mInStream >> temp[0] >> temp[1] >> temp[2];
+    mSinks[i]->SetV(Vec3(temp[0], temp[1], temp[2]));
   }
 
-  // Temperature
+  // temperature
   for (int i = 0; i < mNumGas; ++i) {
-    mInStream >> Temp[0];
-    mParticles.at(i)->SetT(Temp[0]);
+    mInStream >> temp[0];
+    mParticles[i]->SetT(temp[0]);
   }
   for (int i = 0; i < mNumSink; ++i) {
-    mInStream >> Temp[0];
-    mSinks.at(i)->SetT(Temp[0]);
+    mInStream >> temp[0];
+    mSinks[i]->SetT(temp[0]);
   }
 
   // Smoothing length
   for (int i = 0; i < mNumGas; ++i) {
-    mInStream >> Temp[0];
-    mParticles.at(i)->SetH(Temp[0] * PC_TO_AU);
+    mInStream >> temp[0];
+    mParticles[i]->SetH(temp[0] * PC_TO_AU);
   }
   for (int i = 0; i < mNumSink; ++i) {
-    mInStream >> Temp[0];
-    mSinks.at(i)->SetH(Temp[0] * PC_TO_AU);
+    mInStream >> temp[0];
+    mSinks[i]->SetH(temp[0] * PC_TO_AU);
   }
 
   // Density
   for (int i = 0; i < mNumGas; ++i) {
-    mInStream >> Temp[0];
-    mParticles.at(i)->SetD(Temp[0]);
+    mInStream >> temp[0];
+    mParticles[i]->SetD(temp[0]);
   }
   for (int i = 0; i < mNumSink; ++i) {
-    mInStream >> Temp[0];
-    mSinks.at(i)->SetD(Temp[0]);
+    mInStream >> temp[0];
+    mSinks[i]->SetD(temp[0]);
   }
 
   // Mass
   for (int i = 0; i < mNumGas; ++i) {
-    mInStream >> Temp[0];
-    mParticles.at(i)->SetM(Temp[0]);
+    mInStream >> temp[0];
+    mParticles[i]->SetM(temp[0]);
   }
   for (int i = 0; i < mNumSink; ++i) {
-    mInStream >> Temp[0];
-    mSinks.at(i)->SetM(Temp[0]);
+    mInStream >> temp[0];
+    mSinks[i]->SetM(temp[0]);
   }
 
   // Type
   for (int i = 0; i < mNumGas; ++i) {
-    mInStream >> Temp[0];
-    mParticles.at(i)->SetType(Temp[0]);
+    mInStream >> temp[0];
+    mParticles[i]->SetType(temp[0]);
   }
   for (int i = 0; i < mNumSink; ++i) {
-    mInStream >> Temp[0];
-    mSinks.at(i)->SetType(Temp[0]);
+    mInStream >> temp[0];
+    mSinks[i]->SetType(temp[0]);
   }
 
   // ID
   for (int i = 0; i < mNumGas; ++i) {
-    mInStream >> Temp[0];
-    mParticles.at(i)->SetID(Temp[0]);
+    mInStream >> temp[0];
+    mParticles[i]->SetID(temp[0]);
   }
   for (int i = 0; i < mNumSink; ++i) {
-    mInStream >> Temp[0];
-    mSinks.at(i)->SetID(Temp[0]);
+    mInStream >> temp[0];
+    mSinks[i]->SetID(temp[0]);
+  }
+
+  // Extra data
+  for (int n = 0; n < mExtraData; ++n) {
+    for (int i = 0; i < mNumGas; ++i) {
+      mInStream >> temp[0];
+      mParticles[i]->SetExtra(n, temp[0]);
+    }
+    for (int i = 0; i < mNumSink; ++i) {
+      mInStream >> temp[0];
+      mSinks[i]->SetExtra(n, temp[0]);
+    }
   }
 }
 

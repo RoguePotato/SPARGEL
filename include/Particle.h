@@ -37,14 +37,10 @@ public:
   FLOAT GetCS() { return mCS; }
   FLOAT GetOmega() { return mOmega; }
   FLOAT GetQ() { return mQ; }
-  FLOAT GetOpacity() { return mOpacity; }
-  FLOAT GetRealOpacity() { return mRealOpacity; }
+  FLOAT GetKappa() { return mKappa; }
   FLOAT GetSigma() { return mSigma; }
-  FLOAT GetRealSigma() { return mRealSigma; }
   FLOAT GetTau() { return mTau; }
-  FLOAT GetRealTau() { return mRealTau; }
   FLOAT GetDUDT() { return mDUDT; }
-  FLOAT GetRealDUDT() { return mRealDUDT; }
   FLOAT GetBeta() { return mBeta; }
   int GetType() { return mType; }
 
@@ -61,16 +57,13 @@ public:
   void SetCS(FLOAT cs) { mCS = cs; }
   void SetOmega(FLOAT o) { mOmega = o; }
   void SetQ(FLOAT Q) { mQ = Q; }
-  void SetOpacity(FLOAT o) { mOpacity = o; }
-  void SetRealOpacity(FLOAT o) { mRealOpacity = o; }
+  void SetKappa(FLOAT k) { mKappa = k; }
   void SetSigma(FLOAT s) { mSigma = s; }
-  void SetRealSigma(FLOAT s) { mRealSigma = s; }
   void SetTau(FLOAT tau) { mTau = tau; }
-  void SetRealTau(FLOAT tau) { mRealTau = tau; }
   void SetDUDT(FLOAT dudt) { mDUDT = dudt; }
-  void SetRealDUDT(FLOAT dudt) { mRealDUDT = dudt; }
   void SetBeta(FLOAT beta) { mBeta = beta; }
   void SetType(int type) { mType = type; }
+  void SetExtra(int index, FLOAT value) { mExtra[index] = value; }
 
 private:
   int mID = 0;
@@ -89,16 +82,13 @@ private:
   FLOAT mQ = 0.0;
   FLOAT mGamma = 0.0;
   FLOAT mMu = 0.0;
-  FLOAT mOpacity = 0.0;
-  FLOAT mRealOpacity = 0.0;
+  FLOAT mKappa = 0.0;
   FLOAT mSigma = 0.0;
-  FLOAT mRealSigma = 0.0;
   FLOAT mTau = 0.0;
-  FLOAT mRealTau = 0.0;
   FLOAT mDUDT = 0.0;
-  FLOAT mRealDUDT = 0.0;
   FLOAT mBeta = 0.0;
   int mType = 1;
+  FLOAT mExtra[EXTRA_DATA_MAX] = {0.0};
 };
 
 class Gas : public Particle {

@@ -34,9 +34,11 @@ OpacityTable::~OpacityTable() {
   delete[] mMu;
   delete[] mKappa;
   delete[] mKappar;
-  delete[] mKappa;
+  delete[] mKappap;
   delete[] mGamma;
   delete[] mGamma1;
+  delete[] mTemp;
+  delete[] mDens;
 }
 
 bool OpacityTable::Read() {

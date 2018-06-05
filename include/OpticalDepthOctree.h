@@ -34,16 +34,14 @@ struct OpticalDepthPoint {
 
 class OpticalDepthOctree {
 public:
-  OpticalDepthOctree(const Vec3 &O, const Vec3 &HD, OpticalDepthOctree *Next,
-                     OpticalDepthOctree *More);
+  OpticalDepthOctree(const Vec3 &O, const Vec3 &HD);
   OpticalDepthOctree(const OpticalDepthOctree &Copy);
   ~OpticalDepthOctree();
 
-  void Construct(std::vector<Particle *> Particles);
+  void Construct(std::vector<Particle *> Particles, OpticalDepthPoint *point);
   void Walk(std::vector<Particle *> &Particles, OpacityTable *opacity);
 
   void Insert(OpticalDepthPoint *Point);
-  void LinkTree(std::vector<OpticalDepthOctree *> &List);
   void TraverseTree(const Vec3 ParticlePos, FLOAT &Sigma, FLOAT &Tau,
                     OpacityTable *opacity);
   int GetOctantContainingPoint(const Vec3 &Point) const;
@@ -56,7 +54,4 @@ public:
   OpticalDepthOctree *Children[8];
   OpticalDepthPoint *Data = NULL;
   unsigned int TotalPoints = 0;
-
-  OpticalDepthOctree *_Next = NULL;
-  OpticalDepthOctree *_More = NULL;
 };

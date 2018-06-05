@@ -26,7 +26,7 @@
 
 class SerenFile : public SnapshotFile {
 public:
-  SerenFile(NameData nd, bool formatted);
+  SerenFile(NameData nd, bool formatted, int extra_data);
   ~SerenFile();
 
   bool Read();
