@@ -25,6 +25,7 @@
 #include "File.h"
 #include "FileNameExtractor.h"
 #include "Generator.h"
+#include "MassAnalyser.h"
 #include "OpacityTable.h"
 #include "OpticalDepthOctree.h"
 #include "Parameters.h"
@@ -48,6 +49,7 @@ private:
   unsigned int mMaxThreads = 0;
   int mFilesPerThread = 0;
   int mRemainder = 0;
+  int mOutputInfo = 0;
 
   Arguments *mArgs = NULL;
   Parameters *mParams = NULL;
@@ -57,6 +59,7 @@ private:
   DiscAnalyser *mDiscAnalyser = NULL;
   SinkAnalyser *mSinkAnalyser = NULL;
   RadialAnalyser *mRadialAnalyser = NULL;
+  MassAnalyser *mMassAnalyser = NULL;
   Generator *mGenerator = NULL;
 
   std::vector<File *> mFiles;
@@ -65,14 +68,19 @@ private:
 
   std::string mInFormat = "";
   std::string mOutFormat = "";
+  std::string mCoolingMethod = "";
   std::string mEosFilePath = "";
+  FLOAT mGamma = 0.0;
+  FLOAT mMuBar = 0.0;
   int mOutput = 0;
+  int mExtraData = 0;
   int mConvert = 0;
   int mCloudAnalyse = 0;
   int mCloudCenter = 0;
   int mDiscAnalyse = 0;
   int mSinkAnalyse = 0;
   int mRadialAnalyse = 0;
+  int mMassAnalyse = 0;
   int mCenter = 0;
   Vec3 mPosCenter = {0.0, 0.0, 0.0};
   int mHillRadiusCut = 0;
@@ -86,4 +94,6 @@ private:
   void FindOpticalDepth(SnapshotFile *file);
   void FindToomre(SnapshotFile *file);
   void FindBeta(SnapshotFile *file);
+
+  void OutputInfo(SnapshotFile *file);
 };

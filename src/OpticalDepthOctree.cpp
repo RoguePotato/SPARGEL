@@ -15,10 +15,8 @@
 
 #include "OpticalDepthOctree.h"
 
-OpticalDepthOctree::OpticalDepthOctree(const Vec3 &O, const Vec3 &HD,
-                                       OpticalDepthOctree *Next,
-                                       OpticalDepthOctree *More)
-    : Origin(O), HalfDimension(HD), _Next(Next), _More(More) {
+OpticalDepthOctree::OpticalDepthOctree(const Vec3 &O, const Vec3 &HD)
+    : Origin(O), HalfDimension(HD) {
   for (int i = 0; i < 8; ++i) {
     Children[i] = NULL;
   }
@@ -33,8 +31,8 @@ OpticalDepthOctree::~OpticalDepthOctree() {
   }
 }
 
-void OpticalDepthOctree::Construct(std::vector<Particle *> Particles) {
-  OpticalDepthPoint *point = new OpticalDepthPoint[Particles.size()];
+void OpticalDepthOctree::Construct(std::vector<Particle *> Particles,
+                                   OpticalDepthPoint *point) {
   for (int i = 0; i < Particles.size(); ++i) {
     Particle *P = Particles[i];
 
@@ -53,9 +51,9 @@ void OpticalDepthOctree::Walk(std::vector<Particle *> &Particles,
     FLOAT Sigma = 0.0, Tau = 0.0;
 
     TraverseTree(Pos, Sigma, Tau, Opacity);
-    
-    Particles[i]->SetRealSigma(Sigma);
-    Particles[i]->SetRealTau(Tau);
+
+    Particles[i]->SetSigma(Sigma);
+    Particles[i]->SetTau(Tau);
   }
 }
 
@@ -73,38 +71,15 @@ void OpticalDepthOctree::Insert(OpticalDepthPoint *Point) {
         NewOrigin.x += HalfDimension.x * (i & 4 ? 0.5 : -0.5);
         NewOrigin.y += HalfDimension.y * (i & 2 ? 0.5 : -0.5);
         NewOrigin.z += HalfDimension.z * (i & 1 ? 0.5 : -0.5);
-        Children[i] =
-            new OpticalDepthOctree(NewOrigin, HalfDimension * 0.5, this, NULL);
+        Children[i] = new OpticalDepthOctree(NewOrigin, HalfDimension * 0.5);
       }
-
-      // More points to the first child
-      _More = Children[0];
-
-      // Each child points to it's sibling
-      for (int i = 0; i < 7; ++i)
-        Children[i]->_Next = Children[i + 1];
-
-      // The final child points back to its parent's next pointer
-      Children[7]->_Next = _Next;
 
       Children[GetOctantContainingPoint(OldPoint->pos)]->Insert(OldPoint);
       Children[GetOctantContainingPoint(Point->pos)]->Insert(Point);
     }
   } else {
     int Octant = GetOctantContainingPoint(Point->pos);
-    _More = Children[Octant];
     Children[Octant]->Insert(Point);
-  }
-}
-
-void OpticalDepthOctree::LinkTree(std::vector<OpticalDepthOctree *> &List) {
-  if (IsLeafNode()) {
-    List.push_back(this);
-  } else {
-    List.push_back(this);
-    for (int i = 0; i < 8; ++i) {
-      Children[i]->LinkTree(List);
-    }
   }
 }
 

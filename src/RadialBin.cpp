@@ -50,17 +50,13 @@ void RadialBin::CalculateValues(void) {
     mAverages[3] += p->GetQ();
     mAverages[4] += p->GetP();
     mAverages[5] += p->GetTau();
-    mAverages[6] += p->GetRealTau();
-    mAverages[7] += p->GetSigma();
-    mAverages[8] += p->GetRealSigma();
-    mAverages[9] += p->GetDUDT();
-    mAverages[10] += p->GetRealDUDT();
-    mAverages[11] += p->GetCS();
-    mAverages[12] += p->GetOmega();
-    mAverages[13] += p->GetM();
-    mAverages[14] += p->GetBeta();
-    mAverages[15] += p->GetU();
-    mAverages[16] += p->GetRealTau() + (1.0 / p->GetRealTau());
+    mAverages[6] += p->GetSigma();
+    mAverages[7] += p->GetDUDT();
+    mAverages[8] += p->GetCS();
+    mAverages[9] += p->GetOmega();
+    mAverages[10] += p->GetM();
+    mAverages[11] += p->GetBeta();
+    mAverages[12] += p->GetU();
 
     // Vertical bins
     for (int j = 0; j < mVerticalBins.size(); ++j) {

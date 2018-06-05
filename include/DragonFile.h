@@ -24,7 +24,7 @@
 
 class DragonFile : public SnapshotFile {
 public:
-  DragonFile(NameData nd, bool formatted);
+  DragonFile(NameData nd, bool formatted, int extra_data);
   ~DragonFile();
 
   bool Read();

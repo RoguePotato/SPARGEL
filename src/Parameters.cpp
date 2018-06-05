@@ -106,6 +106,7 @@ std::string Parameters::TrimWhiteSpace(std::string str) {
 
 void Parameters::SetDefaultParameters() {
   mIntParams["THREADS"] = -1;
+  mIntParams["OUTPUT_INFO"] = 0;
 
   mStringParams["INPUT_FILE"] = "COMMAND_LINE";
   mStringParams["IN_FORMAT"] = "sf";
@@ -114,12 +115,18 @@ void Parameters::SetDefaultParameters() {
   mStringParams["OUT_FORMAT"] = "sf";
   mIntParams["OUTPUT_FILES"] = 0;
   mStringParams["CLOUD_OUTPUT"] = "cloud.dat";
+  mStringParams["MASS_OUTPUT"] = "masses.dat";
+  mStringParams["COOLING_METHOD"] = "stamatellos";
+  mFloatParams["GAMMA"] = 1.66;
+  mFloatParams["MU_BAR"] = 2.35;
   mStringParams["EOS_TABLE"] = "eos.bell.cc.dat";
   mIntParams["OUTPUT_COOLING"] = 0;
+  mIntParams["EXTRA_DATA"] = 0;
 
   mIntParams["CLOUD_ANALYSIS"] = 0;
   mIntParams["CLOUD_CENTER"] = 0;
 
+  mIntParams["MASS_ANALYSIS"] = 0;
   mIntParams["SINK_ANALYSIS"] = 0;
   mIntParams["DISC_ANALYSIS"] = 0;
   mIntParams["RADIAL_ANALYSIS"] = 0;
@@ -147,6 +154,10 @@ void Parameters::SetDefaultParameters() {
 
   mFloatParams["M_STAR"] = 0.5;
   mFloatParams["M_DISC"] = 0.01;
+  mFloatParams["BINARY_M"] = 0.0;
+  mFloatParams["BINARY_A"] = 0.0;
+  mFloatParams["BINARY_ECC"] = 0.0;
+  mFloatParams["BINARY_INC"] = 0.0;
 
   mFloatParams["R_IN"] = 5.0;
   mFloatParams["R_OUT"] = 100.0;
@@ -156,6 +167,8 @@ void Parameters::SetDefaultParameters() {
   mIntParams["N_NEIGH"] = 50;
   mFloatParams["P"] = 1.0;
   mFloatParams["Q"] = 0.75;
+
+  mFloatParams["SINK_RADIUS"] = 1.0;
 
   mIntParams["PLANET"] = 0;
   mFloatParams["PLANET_MASS"] = 0.0;

@@ -15,9 +15,10 @@
 
 #include "SerenFile.h"
 
-SerenFile::SerenFile(NameData nd, bool formatted) {
+SerenFile::SerenFile(NameData nd, bool formatted, int extra_data) {
   mNameData = nd;
   mFormatted = formatted;
+  mExtraData = extra_data;
 }
 
 SerenFile::~SerenFile() {
@@ -65,12 +66,12 @@ bool SerenFile::Read() {
 
   // Set sink data
   for (int i = 0; i < mSinks.size(); ++i) {
-    double *curData = mSinks.at(i)->GetAllData();
-    mSinks.at(i)->SetX(Vec3(curData[1], curData[2], curData[3]));
-    mSinks.at(i)->SetV(Vec3(curData[4], curData[5], curData[6]));
-    mSinks.at(i)->SetM(curData[7]);
-    mSinks.at(i)->SetH(curData[8]);
-    mSinks.at(i)->SetType(-1);
+    double *curData = mSinks[i]->GetAllData();
+    mSinks[i]->SetX(Vec3(curData[1], curData[2], curData[3]));
+    mSinks[i]->SetV(Vec3(curData[4], curData[5], curData[6]));
+    mSinks[i]->SetM(curData[7]);
+    mSinks[i]->SetH(curData[8]);
+    mSinks[i]->SetType(-1);
   }
 
   return true;
@@ -313,7 +314,7 @@ void SerenFile::ReadParticleForm(void) {
 
   for (int i = 0; i < mNumGas + mNumDust; ++i) {
     mInStream >> temp[0];
-    mParticles.at(i)->SetID(temp[0]);
+    mParticles[i]->SetID(temp[0]);
   }
 
   for (int i = 0; i < mNumGas + mNumDust; ++i) {
@@ -324,17 +325,17 @@ void SerenFile::ReadParticleForm(void) {
     if (mPosDim == 3)
       mInStream >> temp[0] >> temp[1] >> temp[2];
 
-    mParticles.at(i)->SetX(Vec3(temp[0], temp[1], temp[2]));
+    mParticles[i]->SetX(Vec3(temp[0], temp[1], temp[2]));
   }
 
   for (int i = 0; i < mNumGas + mNumDust; ++i) {
     mInStream >> temp[0];
-    mParticles.at(i)->SetM(temp[0]);
+    mParticles[i]->SetM(temp[0]);
   }
 
   for (int i = 0; i < mNumGas + mNumDust; ++i) {
     mInStream >> temp[0];
-    mParticles.at(i)->SetH(temp[0]);
+    mParticles[i]->SetH(temp[0]);
   }
 
   for (int i = 0; i < mNumGas + mNumDust; ++i) {
@@ -345,17 +346,24 @@ void SerenFile::ReadParticleForm(void) {
     if (mVelDim == 3)
       mInStream >> temp[0] >> temp[1] >> temp[2];
 
-    mParticles.at(i)->SetV(Vec3(temp[0], temp[1], temp[2]));
+    mParticles[i]->SetV(Vec3(temp[0], temp[1], temp[2]));
   }
 
   for (int i = 0; i < mNumGas + mNumDust; ++i) {
     mInStream >> temp[0];
-    mParticles.at(i)->SetD(temp[0]);
+    mParticles[i]->SetD(temp[0]);
   }
 
   for (int i = 0; i < mNumGas + mNumDust; ++i) {
     mInStream >> temp[0];
-    mParticles.at(i)->SetU(temp[0]);
+    mParticles[i]->SetU(temp[0]);
+  }
+
+  for (int n = 0; n < mExtraData; ++n) {
+    for (int i = 0; i < mNumGas + mNumDust; ++i) {
+      mInStream >> temp[0];
+      mParticles[i]->SetExtra(n, temp[0]);
+    }
   }
 }
 
@@ -369,11 +377,11 @@ void SerenFile::ReadSinkForm(void) {
   for (int i = 0; i < mNumSink; ++i) {
     mInStream >> dummyStr;
     mInStream >> temp[0] >> temp[1];
-    mSinks.at(i)->SetID(temp[0]);
+    mSinks[i]->SetID(temp[0]);
 
     for (int j = 0; j < mSinkDataLength; ++j) {
       mInStream >> temp[0];
-      mSinks.at(i)->SetData(j, temp[0]);
+      mSinks[i]->SetData(j, temp[0]);
     }
   }
 }
@@ -427,46 +435,47 @@ void SerenFile::ReadParticleUnform(void) {
 
   for (int i = 0; i < mNumGas + mNumDust; ++i) {
     mBR->ReadValue(intTemp);
-    mParticles.at(i)->SetID(intTemp);
+    mParticles[i]->SetID(intTemp);
   }
 
   for (int i = 0; i < mNumGas + mNumDust; ++i) {
     for (int i = 0; i < mPosDim; ++i)
       mBR->ReadValue(temp[i]);
-    mParticles.at(i)->SetX(Vec3(temp[0], temp[1], temp[2]));
+    mParticles[i]->SetX(Vec3(temp[0], temp[1], temp[2]));
   }
 
   for (int i = 0; i < mNumGas + mNumDust; ++i) {
     mBR->ReadValue(temp[0]);
-    mParticles.at(i)->SetM(temp[0]);
+    mParticles[i]->SetM(temp[0]);
   }
 
   for (int i = 0; i < mNumGas + mNumDust; ++i) {
     mBR->ReadValue(temp[0]);
-    mParticles.at(i)->SetH(temp[0]);
+    mParticles[i]->SetH(temp[0]);
   }
 
   for (int i = 0; i < mNumGas + mNumDust; ++i) {
     for (int i = 0; i < mVelDim; ++i)
       mBR->ReadValue(temp[i]);
-    mParticles.at(i)->SetV(Vec3(temp[0], temp[1], temp[2]));
+    mParticles[i]->SetV(Vec3(temp[0], temp[1], temp[2]));
   }
 
   for (int i = 0; i < mNumGas + mNumDust; ++i) {
     mBR->ReadValue(temp[0]);
-    mParticles.at(i)->SetD(temp[0]);
+    mParticles[i]->SetD(temp[0]);
   }
 
   for (int i = 0; i < mNumGas + mNumDust; ++i) {
     mBR->ReadValue(temp[0]);
-    mParticles.at(i)->SetU(temp[0]);
+    mParticles[i]->SetU(temp[0]);
   }
 
-  // std::cout << "    Reading pseudo-column density!\n";
-  // for (int i = 0; i < mNumGas + mNumDust; ++i) {
-  //   mBR->ReadValue(temp[0]);
-  //   mParticles.at(i)->SetSigma(temp[0]);
-  // }
+  for (int n = 0; n < mExtraData; ++n) {
+    for (int i = 0; i < mNumGas + mNumDust; ++i) {
+      mBR->ReadValue(temp[0]);
+      mParticles[i]->SetExtra(n, temp[0]);
+    }
+  }
 }
 
 void SerenFile::ReadSinkUnform(void) {
@@ -485,7 +494,7 @@ void SerenFile::ReadSinkUnform(void) {
 
     for (int j = 0; j < mSinkDataLength; ++j) {
       mBR->ReadValue(temp[0]);
-      mSinks.at(i)->SetData(j, temp[0]);
+      mSinks[i]->SetData(j, temp[0]);
     }
   }
 }
@@ -507,14 +516,14 @@ void SerenFile::WriteHeaderForm(Formatter formatStream) {
   for (int i = 0; i < mNumUnit; ++i) {
     std::ostringstream SStream;
     SStream << std::left << std::setw(STRING_LENGTH) << std::setfill(' ')
-            << mUnitData.at(i);
+            << mUnitData[i];
     formatStream << SStream.str() << "\n";
   }
 
   for (int i = 0; i < mNumData; ++i) {
     std::ostringstream SStream;
     SStream << std::left << std::setw(STRING_LENGTH) << std::setfill(' ')
-            << mDataID.at(i);
+            << mDataID[i];
     formatStream << SStream.str() << "\n";
   }
 

@@ -19,11 +19,19 @@ Application::Application(Arguments *args) : mArgs(args) {}
 
 Application::~Application() {
   mFiles.clear();
-  // if (mArgs != NULL) delete mArgs;
-  // if (mParams != NULL) delete mParams;
-  // if (mOpacity != NULL) delete mOpacity;
-  // if (mFNE != NULL) delete mFNE;
-  // delete mRA;
+  delete mParams;
+  delete mOpacity;
+  delete mFNE;
+  if (mGenerator != NULL)
+    delete mGenerator;
+  if (mDiscAnalyser != NULL)
+    delete mDiscAnalyser;
+  if (mCloudAnalyser != NULL)
+    delete mCloudAnalyser;
+  if (mSinkAnalyser != NULL)
+    delete mSinkAnalyser;
+  if (mMassAnalyser != NULL)
+    delete mMassAnalyser;
 }
 
 void Application::StartSplash(void) {
@@ -62,11 +70,18 @@ bool Application::Initialise() {
   if (mNumThreads < 0 || mNumThreads > mMaxThreads)
     mNumThreads = mMaxThreads;
 
+  mOutputInfo = mParams->GetInt("OUTPUT_INFO");
+
   mConvert = mParams->GetInt("CONVERT");
   mInFormat = mParams->GetString("IN_FORMAT");
   mOutFormat = mParams->GetString("OUT_FORMAT");
   mOutput = mParams->GetInt("OUTPUT_FILES");
+  mExtraData = std::min(EXTRA_DATA_MAX, mParams->GetInt("EXTRA_DATA"));
+  mCoolingMethod = mParams->GetString("COOLING_METHOD");
+  mGamma = mParams->GetFloat("GAMMA");
+  mMuBar = mParams->GetFloat("MU_BAR");
   mEosFilePath = mParams->GetString("EOS_TABLE");
+  mMassAnalyse = mParams->GetInt("MASS_ANALYSIS");
   mCloudAnalyse = mParams->GetInt("CLOUD_ANALYSIS");
   mCloudCenter = mParams->GetInt("CLOUD_CENTER");
   mDiscAnalyse = mParams->GetInt("DISC_ANALYSIS");
@@ -92,11 +107,15 @@ bool Application::Initialise() {
     nd.format = mOutFormat;
     nd.snap = "00000";
 
-    SerenFile *gen = new SerenFile(nd, false);
+    SerenFile *gen = new SerenFile(nd, false, mExtraData);
     gen->SetParticles(mGenerator->GetParticles());
     gen->SetSinks(mGenerator->GetSinks());
     OutputFile(gen);
     mFiles.push_back(gen);
+  }
+
+  if (mMassAnalyse) {
+    mMassAnalyser = new MassAnalyser(mParams->GetString("MASS_OUTPUT"));
   }
 
   if (mCloudAnalyse) {
@@ -118,13 +137,13 @@ bool Application::Initialise() {
     NameData nd = mFNE->GetNameData();
 
     if (mInFormat == "su") {
-      mFiles.push_back(new SerenFile(nd, false));
+      mFiles.push_back(new SerenFile(nd, false, mExtraData));
     } else if (mInFormat == "sf") {
-      mFiles.push_back(new SerenFile(nd, true));
+      mFiles.push_back(new SerenFile(nd, true, mExtraData));
     } else if (mInFormat == "du") {
-      mFiles.push_back(new DragonFile(nd, false));
+      mFiles.push_back(new DragonFile(nd, false, mExtraData));
     } else if (mInFormat == "df") {
-      mFiles.push_back(new DragonFile(nd, true));
+      mFiles.push_back(new DragonFile(nd, true, mExtraData));
     } else if (mInFormat == "column") {
       mFiles.push_back(new ColumnFile(nd));
     } else if (mInFormat == "sink") {
@@ -172,6 +191,9 @@ void Application::Run() {
     threads[i].join();
   }
 
+  if (mMassAnalyse)
+    mMassAnalyser->CalculateAccretionRate();
+    mMassAnalyser->Write();
   if (mCloudAnalyse)
     mCloudAnalyser->Write();
   if (mSinkAnalyse) {
@@ -186,56 +208,65 @@ void Application::Analyse(int task, int start, int end) {
   for (int i = start; i < end; ++i) {
     // File read
     if (mGenerator == NULL) {
-      if (!mFiles.at(i)->Read())
+      if (!mFiles[i]->Read())
         break;
     }
 
     // Extra quantity calculation
-    FindThermo((SnapshotFile *)mFiles.at(i));
+    FindThermo((SnapshotFile *)mFiles[i]);
 
     // Cloud analysis
     if (mCloudAnalyse) {
-      mCloudAnalyser->FindCentralQuantities((SnapshotFile *)mFiles.at(i));
+      mCloudAnalyser->FindCentralQuantities((SnapshotFile *)mFiles[i]);
       if (mCloudCenter) {
-        mCloudAnalyser->CenterAroundDensest((SnapshotFile *)mFiles.at(i));
+        mCloudAnalyser->CenterAroundDensest((SnapshotFile *)mFiles[i]);
       }
     }
     // Disc analysis
     if (mDiscAnalyse) {
       if (mCenter) {
-        mDiscAnalyser->Center((SnapshotFile *)mFiles.at(i), mCenter - 1,
+        mDiscAnalyser->Center((SnapshotFile *)mFiles[i], mCenter - 1,
                               mPosCenter);
       }
       // Find vertically integrated quantities
       if (mHillRadiusCut) {
-        HillRadiusCut((SnapshotFile *)mFiles.at(i));
+        HillRadiusCut((SnapshotFile *)mFiles[i]);
       }
-      FindOpticalDepth((SnapshotFile *)mFiles.at(i));
-      FindToomre((SnapshotFile *)mFiles.at(i));
-      FindBeta((SnapshotFile *)mFiles.at(i));
+      FindOpticalDepth((SnapshotFile *)mFiles[i]);
+      FindToomre((SnapshotFile *)mFiles[i]);
+      FindBeta((SnapshotFile *)mFiles[i]);
       if (mMidplaneCut) {
-        MidplaneCut((SnapshotFile *)mFiles.at(i));
+        MidplaneCut((SnapshotFile *)mFiles[i]);
       }
+    }
+
+    // Mass analysis
+    if (mMassAnalyse) {
+      mMassAnalyser->ExtractValues((SnapshotFile *)mFiles[i]);
     }
 
     // Sink analysis
     if (mSinkAnalyse) {
-      mSinkAnalyser->AddMassRadius((SinkFile *)mFiles.at(i));
-      mSinkAnalyser->AddNbody((SinkFile *)mFiles.at(i));
+      mSinkAnalyser->AddMassRadius((SinkFile *)mFiles[i]);
+      mSinkAnalyser->AddNbody((SinkFile *)mFiles[i]);
     }
     // Radial analysis
     if (mRadialAnalyse) {
       RadialAnalyser *ra = new RadialAnalyser(mParams);
-      ra->Run((SnapshotFile *)mFiles.at(i));
+      ra->Run((SnapshotFile *)mFiles[i]);
       delete ra;
     }
     // File conversion
     if (mConvert) {
-      mFiles.at(i)->SetNameDataFormat(mOutFormat);
+      mFiles[i]->SetNameDataFormat(mOutFormat);
     }
     // Snapshot output
     if (mOutput) {
-      OutputFile((SnapshotFile *)mFiles.at(i));
+      OutputFile((SnapshotFile *)mFiles[i]);
+    }
+    // Screen output
+    if (mOutputInfo) {
+      OutputInfo((SnapshotFile *)mFiles[i]);
     }
     ++mFilesAnalysed;
     delete mFiles[i];
@@ -251,10 +282,14 @@ void Application::MidplaneCut(SnapshotFile *file) {
     FLOAT z = abs(p->GetX().z);
     if (z <= mMidplaneCut) {
       trimmed.push_back(p);
+    } else {
+      delete part[i];
     }
   }
   file->SetParticles(trimmed);
+  file->SetNumGas(trimmed.size());
   file->SetNameDataAppend(".midplane");
+  trimmed.clear();
 }
 
 void Application::HillRadiusCut(SnapshotFile *file) {
@@ -281,6 +316,8 @@ void Application::HillRadiusCut(SnapshotFile *file) {
   for (int i = 0; i < part.size(); ++i) {
     if (part[i]->GetX().Norm() > mHillRadiusCut * hill_radius) {
       trimmed.push_back(part[i]);
+    } else {
+      delete part[i];
     }
   }
   std::cout << "Trimmed: " << part.size() - trimmed.size() << " particles\n";
@@ -292,7 +329,9 @@ void Application::HillRadiusCut(SnapshotFile *file) {
   }
 
   file->SetParticles(trimmed);
+  file->SetNumGas(trimmed.size());
   file->SetNameDataAppend(".hillradius");
+  trimmed.clear();
 }
 
 void Application::OutputFile(SnapshotFile *file) {
@@ -307,9 +346,9 @@ void Application::OutputFile(SnapshotFile *file) {
   outputName =
       nd.dir + "/" + nd.id + "." + nd.format + "." + nd.snap + nd.append;
 
-  // TODO: reduce code duplication
+  // TODO: reduce code duplication and clean up new created files.
   if (nd.format == "df") {
-    DragonFile *df = new DragonFile(nd, true);
+    DragonFile *df = new DragonFile(nd, true, mExtraData);
     df->SetParticles(file->GetParticles());
     df->SetSinks(file->GetSinks());
     df->SetNumGas(file->GetNumGas());
@@ -320,7 +359,7 @@ void Application::OutputFile(SnapshotFile *file) {
   }
 
   if (nd.format == "su") {
-    SerenFile *su = new SerenFile(nd, false);
+    SerenFile *su = new SerenFile(nd, false, mExtraData);
     su->SetParticles(file->GetParticles());
     su->SetSinks(file->GetSinks());
     su->SetNumGas(file->GetNumGas());
@@ -350,10 +389,18 @@ void Application::FindThermo(SnapshotFile *file) {
     FLOAT energy = p->GetU();
     FLOAT sigma = p->GetSigma();
     FLOAT temp = p->GetT();
-    if (mInFormat == "su" || mInFormat == "sf" || mInFormat == "column") {
-      temp = mOpacity->GetTemp(density, energy);
-    } else if (mInFormat == "df" || mInFormat == "du") {
-      energy = mOpacity->GetEnergy(density, temp);
+    if (mCoolingMethod == "stamatellos" || mCoolingMethod == "lombardi") {
+      if (mInFormat == "su" || mInFormat == "sf" || mInFormat == "column") {
+        temp = mOpacity->GetTemp(density, energy);
+      } else if (mInFormat == "df" || mInFormat == "du") {
+        energy = mOpacity->GetEnergy(density, temp);
+      }
+    } else if (mCoolingMethod == "beta_cooling") {
+      if (mInFormat == "su" || mInFormat == "sf" || mInFormat == "column") {
+        temp = (energy * mMuBar * M_P * (mGamma - 1.0)) / K;
+      } else if (mInFormat == "df" || mInFormat == "du") {
+        energy = (K * temp) / (mMuBar * M_P * (mGamma - 1.0));
+      }
     }
     FLOAT gamma = mOpacity->GetGamma(density, temp);
     FLOAT kappa = mOpacity->GetKappa(density, temp);
@@ -369,8 +416,7 @@ void Application::FindThermo(SnapshotFile *file) {
     part[i]->SetU(energy);
     part[i]->SetP(press);
     part[i]->SetCS(cs);
-    part[i]->SetOpacity(kappa);
-    part[i]->SetRealOpacity(kappar);
+    part[i]->SetKappa(kappar);
     part[i]->SetTau(tau);
     part[i]->SetDUDT(dudt);
   }
@@ -380,10 +426,8 @@ void Application::FindThermo(SnapshotFile *file) {
 void Application::FindOpticalDepth(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
 
-  OpticalDepthOctree *octree = new OpticalDepthOctree(
-      Vec3(0.0, 0.0, 0.0), Vec3(2048.0, 2048.0, 2048.0), NULL, NULL);
-
-  std::vector<OpticalDepthOctree *> list;
+  OpticalDepthOctree *octree =
+      new OpticalDepthOctree(Vec3(0.0, 0.0, 0.0), Vec3(2048.0, 2048.0, 2048.0));
 
   // Sort by z descending
   std::sort(part.begin(), part.end(),
@@ -400,8 +444,8 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
 
   // Construct, link and walk twice. First for particles with z > 0. Then take
   // particles with z < 0 and reflect about the z-axis using absolute z values.
-  octree->Construct(positive);
-  octree->LinkTree(list);
+  OpticalDepthPoint *positive_points = new OpticalDepthPoint[positive.size()];
+  octree->Construct(positive, positive_points);
   octree->Walk(positive, mOpacity);
   for (int i = 0; i < positive.size(); ++i)
     part[i] = positive[i];
@@ -413,8 +457,8 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
     FLOAT z = -(p->GetX().z);
     negative[i]->SetX(Vec3(x, y, z));
   }
-  octree->Construct(negative);
-  octree->LinkTree(list);
+  OpticalDepthPoint *negative_points = new OpticalDepthPoint[negative.size()];
+  octree->Construct(negative, negative_points);
   octree->Walk(negative, mOpacity);
   // The particles below the disc which have been flipped above now require
   // being flipped back.
@@ -425,17 +469,21 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
     negative[i]->SetX(Vec3(x, y, z));
     part[i + positive.size()] = negative[i];
   }
+  positive.clear();
+  negative.clear();
 
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part[i];
-    FLOAT sigma = p->GetRealSigma();
-    FLOAT tau = p->GetRealTau();
+    FLOAT sigma = p->GetSigma();
+    FLOAT tau = p->GetTau();
     FLOAT dudt = 1.0 / (sigma * (tau + (1.0 / tau)));
 
-    part[i]->SetRealDUDT(dudt);
+    part[i]->SetDUDT(dudt);
   }
 
   delete octree;
+  delete[] positive_points;
+  delete[] negative_points;
 }
 
 void Application::FindToomre(SnapshotFile *file) {
@@ -460,7 +508,7 @@ void Application::FindToomre(SnapshotFile *file) {
     FLOAT omega = sqrt((G * inner_mass * MSUN_TO_KG) / (r3));
 
     FLOAT cs = p->GetCS();
-    FLOAT sigma = p->GetRealSigma() * GPERCM2_TO_KGPERM2;
+    FLOAT sigma = p->GetSigma() * GPERCM2_TO_KGPERM2;
     FLOAT Q = (cs * omega) / (PI * G * sigma);
 
     part[i]->SetOmega(omega);
@@ -489,64 +537,41 @@ void Application::FindBeta(SnapshotFile *file) {
     FLOAT temp = part[i]->GetT();
     FLOAT u_bgr = mOpacity->GetEnergy(dens, 10.0) / ERGPERG_TO_JPERKG;
 
-    FLOAT dudt_norm = part[i]->GetRealDUDT();
+    FLOAT dudt_norm = part[i]->GetDUDT();
     FLOAT dudt = dudt_norm * 4.0 * SB * pow(temp, 4.0);
     FLOAT beta = u * (omega / dudt);
 
     part[i]->SetBeta(beta);
   }
   file->SetParticles(part);
+}
 
-  // FLOAT rOut = mParams->GetFloat("RADIUS_OUT");
-  // const int RESOLUTION[] = {64, 128, 256, 512};
+void Application::OutputInfo(SnapshotFile *file) {
+  std::vector<Particle *> part = file->GetParticles();
+  std::vector<Sink *> sink = file->GetSinks();
 
-  // for (int pass = 0; pass < 4; ++pass) {
-  //   const int pixels = RESOLUTION[pass] * RESOLUTION[pass];
-  //   std::vector<FLOAT> beta_totals;
-  //   std::vector<FLOAT> beta_part;
-  //   for (int i = 0; i < pixels; ++i) {
-  //     for (int j = 0; j < RESOLUTION[pass]; ++j) {
-  //       beta_totals.push_back(0.0);
-  //       beta_part.push_back(0.0);
-  //     }
-  //   }
+  for (int i = 0; i < 16; ++i)
+    std::cout << "=====";
+  std::cout << "\n   " << file->GetFileName() << "\n";
+  for (int i = 0; i < 16; ++i)
+    std::cout << "=====";
+  std::cout << "\n";
 
-  //   for (int i = 0; i < part.size(); ++i) {
-  //     FLOAT x = part[i]->GetX().x;
-  //     FLOAT y = part[i]->GetX().y;
-  //     if (part[i]->GetX().Norm() > rOut)
-  //       continue;
+  FLOAT gas_mass = 0.0, total_mass = 0.0;
+  for (int i = 0; i < sink.size(); ++i) {
+    std::cout << "   Sink " << i + 1 << "\n";
+    std::cout << "   Mass   = " << sink[i]->GetM() << "\n";
+    std::cout << "   Radius = " << sink[i]->GetX().Norm() << "\n";
+    std::cout << "   Accretion radius = " << sink[i]->GetH() << "\n";
+    for (int i = 0; i < 16; ++i)
+      std::cout << "-----";
+    std::cout << "\n";
 
-  //     int x_index =
-  //         (FLOAT)((part[i]->GetX().x + rOut) / (2.0 * rOut)) * RESOLUTION[pass];
-  //     int y_index =
-  //         (FLOAT)((part[i]->GetX().y + rOut) / (2.0 * rOut)) * RESOLUTION[pass];
-  //     int index = (y_index * RESOLUTION[pass]) + x_index;
-
-  //     beta_totals[index] += part[i]->GetBeta();
-  //     beta_part[index]++;
-  //   }
-
-  //   // Top layer beta average
-  //   for (int i = 0; i < pixels; ++i) {
-  //     if (beta_part[i] > 1) {
-  //       beta_totals[i] /= beta_part[i];
-  //     }
-  //   }
-
-  //   std::ofstream out;
-  //   // Output top layer beta heatmap
-  //   out.open(file->GetFileName() + ".beta." + std::to_string(RESOLUTION[pass]));
-  //   for (int i = 0; i < pixels; ++i) {
-  //     if (beta_part[i] < 1) {
-  //       out << 0.0 << "\t";
-  //     } else {
-  //       out << beta_totals[i] << "\t";
-  //     }
-  //     if ((i + 1) % RESOLUTION[pass] == 0) {
-  //       out << "\n";
-  //     }
-  //   }
-  //   out.close();
-  // }
+    total_mass += sink[i]->GetM();
+  }
+  for (int i = 0; i < part.size(); ++i) {
+    gas_mass += part[i]->GetM();
+  }
+  std::cout << "   Gas mass   : " << gas_mass << "\n";
+  std::cout << "   Total mass : " << gas_mass + total_mass << "\n";
 }
