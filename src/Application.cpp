@@ -93,6 +93,7 @@ bool Application::Initialise() {
            mParams->GetFloat("CENTER_Z"));
   mHillRadiusCut = mParams->GetInt("HILLRADIUS_CUT");
   mMidplaneCut = mParams->GetFloat("MIDPLANE_CUT");
+  mExtraQuantities = mParams->GetInt("EXTRA_QUANTITIES");
 
   mOpacity = new OpacityTable(mEosFilePath, true);
   if (!mOpacity->Read())
@@ -234,9 +235,11 @@ void Application::Analyse(int task, int start, int end) {
       if (mHillRadiusCut) {
         HillRadiusCut((SnapshotFile *)mFiles[i]);
       }
-      FindOpticalDepth((SnapshotFile *)mFiles[i]);
-      FindToomre((SnapshotFile *)mFiles[i]);
-      FindBeta((SnapshotFile *)mFiles[i]);
+      if (mExtraQuantities) {
+        FindOpticalDepth((SnapshotFile *)mFiles[i]);
+        FindToomre((SnapshotFile *)mFiles[i]);
+        FindBeta((SnapshotFile *)mFiles[i]);
+      }
       if (mMidplaneCut) {
         MidplaneCut((SnapshotFile *)mFiles[i]);
       }
