@@ -45,12 +45,25 @@ void MassAnalyser::ExtractValues(SnapshotFile *file) {
   }
 
   mMasses.push_back(mc);
+
+  for (int i = 0; i < 16; ++i)
+    std::cout << "-----";
+  std::cout << "\n";
+  std::cout << "   File : " << file->GetFileName() << "\n";
+  for (int i = 0; i < 16; ++i)
+    std::cout << "-----";
+  std::cout << "\n";
+
+  std::cout << "   Time       : " << file->GetTime() << " yr\n";
+  std::cout << "   Total mass : " << mc.tot_mass << " msun\n";
+  std::cout << "   Gas mas    : " << mc.gas_mass << " msun\n";
+  std::cout << "   Sink mass  : " << mc.sink_mass << " msun\n";
 }
 
 void MassAnalyser::CalculateAccretionRate() {
   std::sort(mMasses.begin(), mMasses.end(),
             [](MassComponent a, MassComponent b) { return b.time > a.time; });
-            
+
   for (int i = 1; i < mMasses.size(); ++i) {
     FLOAT dt = mMasses[i - 1].time - mMasses[i].time;
     FLOAT dM = mMasses[i - 1].tot_mass - mMasses[i].tot_mass;

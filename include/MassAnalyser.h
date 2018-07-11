@@ -39,8 +39,8 @@ public:
   ~MassAnalyser();
 
   void ExtractValues(SnapshotFile *file);
-  void CalculateAccretionRate();
-  bool Write();
+  void CalculateAccretionRate(void);
+  bool Write(void);
 
 private:
   std::ofstream mOutStream;
