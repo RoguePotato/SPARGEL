@@ -46,19 +46,20 @@ void RadialBin::CalculateValues(void) {
 
     mAverages[0] += p->GetD();
     mAverages[1] += p->GetT();
-    mAverages[2] += p->GetV().Norm();
-    mAverages[3] += p->GetQ();
-    mAverages[4] += p->GetP();
-    mAverages[5] += p->GetTau();
-    mAverages[6] += p->GetSigma();
-    mAverages[7] += p->GetDUDT();
-    mAverages[8] += p->GetCS();
-    mAverages[9] += p->GetOmega();
-    mAverages[10] += p->GetM();
-    mAverages[11] += p->GetBeta();
-    mAverages[12] += p->GetU();
+    mAverages[2] += p->GetH();
+    mAverages[3] += p->GetV().Norm();
+    mAverages[4] += p->GetQ();
+    mAverages[5] += p->GetP();
+    mAverages[6] += p->GetTau();
+    mAverages[7] += p->GetSigma();
+    mAverages[8] += p->GetDUDT();
+    mAverages[9] += p->GetCS();
+    mAverages[10] += p->GetOmega();
+    mAverages[11] += p->GetM();
+    mAverages[12] += p->GetBeta();
+    mAverages[13] += p->GetU();
     for (int i = 0; i < 16; ++i) {
-      mAverages[13 + i] += p->GetExtra(i);
+      mAverages[14 + i] += p->GetExtra(i);
     }
 
     // Vertical bins
