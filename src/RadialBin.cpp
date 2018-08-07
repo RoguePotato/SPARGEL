@@ -31,7 +31,7 @@ void RadialBin::CalculateValues(void) {
   if (mParticles.size() <= 0)
     return;
 
-  // // Create vertical bins
+  // Create vertical bins
   FLOAT height_lo = mParams->GetFloat("HEIGHT_LO");
   FLOAT height_hi = mParams->GetFloat("HEIGHT_HI");
   int vert_bins = mParams->GetInt("VERTICAL_BINS");
@@ -57,6 +57,9 @@ void RadialBin::CalculateValues(void) {
     mAverages[10] += p->GetM();
     mAverages[11] += p->GetBeta();
     mAverages[12] += p->GetU();
+    for (int i = 0; i < 16; ++i) {
+      mAverages[13 + i] += p->GetExtra(i);
+    }
 
     // Vertical bins
     for (int j = 0; j < mVerticalBins.size(); ++j) {

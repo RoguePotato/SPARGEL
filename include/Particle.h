@@ -43,6 +43,7 @@ public:
   FLOAT GetDUDT() { return mDUDT; }
   FLOAT GetBeta() { return mBeta; }
   int GetType() { return mType; }
+  FLOAT GetExtra(int index) { return mExtra[index]; }
 
   void SetID(int id) { mID = id; }
   void SetX(Vec3 x) { mX = x; }
