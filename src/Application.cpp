@@ -147,6 +147,8 @@ bool Application::Initialise() {
       mFiles.push_back(new DragonFile(nd, true, mExtraData));
     } else if (mInFormat == "column") {
       mFiles.push_back(new ColumnFile(nd));
+    } else if (mInFormat == "ascii") {
+      mFiles.push_back(new ASCIIFile(nd));
     } else if (mInFormat == "sink") {
       mFiles.push_back(new SinkFile(nd));
     } else {
@@ -395,7 +397,8 @@ void Application::FindThermo(SnapshotFile *file) {
     FLOAT sigma = p->GetSigma();
     FLOAT temp = p->GetT();
     if (mCoolingMethod == "stamatellos" || mCoolingMethod == "lombardi") {
-      if (mInFormat == "su" || mInFormat == "sf" || mInFormat == "column") {
+      if (mInFormat == "su" || mInFormat == "sf" || mInFormat == "column" ||
+          mInFormat == "ascii") {
         temp = mOpacity->GetTemp(density, energy);
       } else if (mInFormat == "df" || mInFormat == "du") {
         energy = mOpacity->GetEnergy(density, temp);

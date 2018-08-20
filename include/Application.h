@@ -17,6 +17,7 @@
 #pragma once
 
 #include "Arguments.h"
+#include "ASCIIFile.h"
 #include "CloudAnalyser.h"
 #include "ColumnFile.h"
 #include "Definitions.h"
