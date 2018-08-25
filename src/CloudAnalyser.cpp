@@ -25,7 +25,7 @@ void CloudAnalyser::FindCentralQuantities(SnapshotFile *file) {
   std::sort(part.begin(), part.end(),
             [](Particle *a, Particle *b) { return b->GetD() < a->GetD(); });
 
-  int avgNum = 128; // part.size() / 128;
+  int avgNum = (int) sqrtf(part.size());
   CentralValue m;
   for (int i = 0; i < avgNum; ++i) {
     m.density += part[i]->GetD();
