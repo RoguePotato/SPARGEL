@@ -54,10 +54,14 @@ void MassAnalyser::ExtractValues(SnapshotFile *file) {
     std::cout << "-----";
   std::cout << "\n";
 
-  std::cout << "   Time       : " << file->GetTime() << " yr\n";
-  std::cout << "   Total mass : " << mc.tot_mass << " msun\n";
-  std::cout << "   Gas mas    : " << mc.gas_mass << " msun\n";
-  std::cout << "   Sink mass  : " << mc.sink_mass << " msun\n";
+  std::cout << "   Time             : " << file->GetTime() << " yr\n";
+  std::cout << "   Total mass       : " << mc.tot_mass << " msun\n";
+  std::cout << "   Gas mas          : " << mc.gas_mass << " msun\n";
+  std::cout << "   Stellar mass     : " << mc.unique_sink_mass[0] << " msun\n";
+  std::cout << "   Companion mass   : " << mc.sink_mass - mc.unique_sink_mass[0]
+            << " msun\n";
+  std::cout << "   Disc/star mass   : " << mc.gas_mass / mc.unique_sink_mass[0]
+            << "\n";
 }
 
 void MassAnalyser::CalculateAccretionRate() {
