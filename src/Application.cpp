@@ -100,6 +100,7 @@ bool Application::Initialise() {
   if (!mOpacity->Read())
     return false;
 
+  // Generation of initial conditions
   if (mParams->GetInt("GENERATE")) {
     mGenerator = new Generator(mParams, mOpacity);
     mGenerator->Create();
@@ -114,6 +115,12 @@ bool Application::Initialise() {
     gen->SetSinks(mGenerator->GetSinks());
     OutputFile(gen);
     mFiles.push_back(gen);
+  }
+
+  // Cooling map creator
+  if (mParams->GetInt("COOLING_MAP")) {
+    mCoolingMap = new CoolingMap(mOpacity, mParams);
+    mCoolingMap->Output();
   }
 
   if (mMassAnalyse) {
@@ -158,10 +165,6 @@ bool Application::Initialise() {
     }
   }
 
-  if (mFiles.size() < 1) {
-    std::cout << "No files selected, exiting...\n";
-    return false;
-  }
   return true;
 }
 

@@ -148,6 +148,15 @@ void Parameters::SetDefaultParameters() {
   mFloatParams["HEIGHT_HI"] = 10.0;
   mIntParams["VERTICAL_BINS"] = 100;
 
+  mIntParams["COOLING_MAP"] = 0;
+  mStringParams["COOLING_MAP_NAME"] = "cooling_map";
+  mFloatParams["DENS_MIN"] = 0.0f;
+  mFloatParams["DENS_MAX"] = 0.0f;
+  mIntParams["DENS_BINS"] = 0;
+  mFloatParams["TEMP_MIN"] = 0.0f;
+  mFloatParams["TEMP_MAX"] = 0.0f;
+  mIntParams["TEMP_BINS"] = 0;
+
   mIntParams["GENERATE"] = 0;
   mStringParams["IC_TYPE"] = "disc";
   mIntParams["SEED"] = 0;

@@ -20,6 +20,7 @@
 #include "ASCIIFile.h"
 #include "CloudAnalyser.h"
 #include "ColumnFile.h"
+#include "CoolingMap.h"
 #include "Definitions.h"
 #include "DiscAnalyser.h"
 #include "DragonFile.h"
@@ -62,6 +63,7 @@ private:
   RadialAnalyser *mRadialAnalyser = NULL;
   MassAnalyser *mMassAnalyser = NULL;
   Generator *mGenerator = NULL;
+  CoolingMap *mCoolingMap = NULL;
 
   std::vector<File *> mFiles;
   int mFilesAnalysed = 0;
