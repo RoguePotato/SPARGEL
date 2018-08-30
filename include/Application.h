@@ -84,6 +84,7 @@ private:
   int mMassAnalyse = 0;
   int mCenter = 0;
   int mExtraQuantities = 0;
+  int mResetTime = 0;
   Vec3 mPosCenter = {0.0, 0.0, 0.0};
   int mHillRadiusCut = 0;
   FLOAT mMidplaneCut = 0.0;

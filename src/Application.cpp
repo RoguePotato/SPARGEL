@@ -94,6 +94,7 @@ bool Application::Initialise() {
   mHillRadiusCut = mParams->GetInt("HILLRADIUS_CUT");
   mMidplaneCut = mParams->GetFloat("MIDPLANE_CUT");
   mExtraQuantities = mParams->GetInt("EXTRA_QUANTITIES");
+  mResetTime = mParams->GetInt("RESET_TIME");
 
   mOpacity = new OpacityTable(mEosFilePath, true);
   if (!mOpacity->Read())
@@ -352,6 +353,10 @@ void Application::OutputFile(SnapshotFile *file) {
 
   outputName =
       nd.dir + "/" + nd.id + "." + nd.format + "." + nd.snap + nd.append;
+
+  if (mResetTime) {
+    file->SetTime(0.0f);
+  }
 
   // TODO: reduce code duplication and clean up new created files.
   if (nd.format == "df") {
