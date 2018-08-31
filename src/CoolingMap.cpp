@@ -33,6 +33,8 @@ CoolingMap::~CoolingMap() {}
 void CoolingMap::Output() {
   std::ofstream out;
   // TODO: User based opacity modifiers.
+
+  // Output heatmap
   for (int m = 0; m < 3; ++m) {
     out.open(mName + "_" + std::to_string(m) + ".dat");
     for (int t = 0; t < mTemperatures.size(); ++t) {
@@ -40,8 +42,30 @@ void CoolingMap::Output() {
       for (int d = 0; d < mDensities.size(); ++d) {
         FLOAT dens = mDensities[d];
         FLOAT kappa = mOpacity->GetKappa(dens, temp) * MOD_ARRAY[m];
-        out << dens << "\t" << temp << "\t"
-            << log10(CalculateDUDT(dens, temp, kappa)) << "\n";
+        FLOAT dudt = CalculateDUDT(dens, temp, kappa);
+        out << dens << "\t" << temp << "\t" << log10(dudt) << "\n";
+      }
+    }
+    out.close();
+  }
+
+  // Output optically thin/thick contour
+  for (int m = 0; m < 3; ++m) {
+    out.open(mName + "_" + std::to_string(m) + "_contour.dat");
+    for (int t = 0; t < mTemperatures.size(); ++t) {
+      FLOAT temp = mTemperatures[t];
+      FLOAT cur_tau = 0.0f;
+      for (int d = 0; d < mDensities.size(); ++d) {
+        FLOAT dens = mDensities[d];
+        FLOAT kappa = mOpacity->GetKappa(dens, temp) * MOD_ARRAY[m];
+        FLOAT tau = kappa * dens * AU_TO_CM;
+        if (cur_tau < 1.0f && tau > 1.0f) {
+          out << 0.5f * (dens + mDensities[d - 1]) << "\t"
+              << 0.5f * (temp + mTemperatures[t - 1]) << "\t"
+              << "\n";
+          break;
+        }
+        cur_tau = tau;
       }
     }
     out.close();
@@ -62,8 +86,8 @@ void CoolingMap::FillVectors() {
 
 FLOAT CoolingMap::CalculateDUDT(const FLOAT dens, const FLOAT temp,
                                 const FLOAT kappa) {
-  FLOAT sigma = dens * AU_TO_CM;
-  FLOAT numer = 4.0f * SB * powf(temp, 4.0f);
-  FLOAT denom = (sigma * sigma * kappa) + (1.0f / kappa);
+  const FLOAT sigma = dens * AU_TO_CM;
+  const FLOAT numer = 4.0f * SB * powf(temp, 4.0f);
+  const FLOAT denom = (sigma * sigma * kappa) + (1.0f / kappa);
   return numer / denom;
 }
