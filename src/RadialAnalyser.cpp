@@ -41,8 +41,13 @@ void RadialAnalyser::Run(SnapshotFile *file) {
     }
   } else {
     for (FLOAT i = mIn; i < mOut; i += mWidth) {
-      mRadialBins.push_back(new RadialBin(mParams, file->GetSinks()[0]->GetM(),
-                                          i, i + mWidth, mWidth));
+      if (file->GetSinks().size() > 1) {
+        mRadialBins.push_back(new RadialBin(
+            mParams, file->GetSinks()[0]->GetM(), i, i + mWidth, mWidth));
+      } else {
+        mRadialBins.push_back(
+            new RadialBin(mParams, 0.0, i, i + mWidth, mWidth));
+      }
     }
   }
 
