@@ -126,10 +126,6 @@ bool Application::Initialise() {
     mCoolingMap->Output();
   }
 
-  if (mMassAnalyse) {
-    mMassAnalyser = new MassAnalyser(mParams->GetString("MASS_OUTPUT"));
-  }
-
   if (mDiscAnalyse) {
     mDiscAnalyser = new DiscAnalyser(mParams);
   }
@@ -170,6 +166,10 @@ bool Application::Initialise() {
 
   if (mFragAnalyse && mFiles.size() > 0) {
     mFragAnalyser = new FragmentationAnalyser(mFiles[0]->GetNameData());
+  }
+
+  if (mMassAnalyse && mFiles.size() > 0) {
+    mMassAnalyser = new MassAnalyser(mFiles[0]->GetNameData());
   }
 
   return true;

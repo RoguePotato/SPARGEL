@@ -114,7 +114,6 @@ void Parameters::SetDefaultParameters() {
   mIntParams["CONVERT"] = 0;
   mStringParams["OUT_FORMAT"] = "sf";
   mIntParams["OUTPUT_FILES"] = 0;
-  mStringParams["MASS_OUTPUT"] = "masses.dat";
   mStringParams["COOLING_METHOD"] = "stamatellos";
   mFloatParams["GAMMA"] = 1.66;
   mFloatParams["MU_BAR"] = 2.35;

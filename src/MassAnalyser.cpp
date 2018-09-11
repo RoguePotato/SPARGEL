@@ -15,7 +15,9 @@
 
 #include "MassAnalyser.h"
 
-MassAnalyser::MassAnalyser(std::string filename) : mFileName(filename) {}
+MassAnalyser::MassAnalyser(NameData nd) : mNameData(nd) {
+    mNameData.append += "masses";
+}
 
 MassAnalyser::~MassAnalyser() {}
 
@@ -77,7 +79,14 @@ void MassAnalyser::CalculateAccretionRate() {
 }
 
 bool MassAnalyser::Write() {
-  mOutStream.open(mFileName);
+  std::string outputName = mNameData.dir + "/SPARGEL." + mNameData.id + "." +
+                           mNameData.append + ".dat";
+  mOutStream.open(outputName, std::ios::out);
+  if (!mOutStream.is_open()) {
+    std::cout << "   Could not open file " << outputName << " for writing!\n";
+    return false;
+  }
+
   for (int i = 0; i < mMasses.size(); ++i) {
     MassComponent mc = mMasses[i];
     mOutStream << mc.time << "\t" << mc.tot_mass << "\t" << mc.gas_mass << "\t"
@@ -90,4 +99,7 @@ bool MassAnalyser::Write() {
     mOutStream << "\n";
   }
   mOutStream.close();
+
+  std::cout << "   Successfully wrote " << outputName << "!\n";
+  return true;
 }

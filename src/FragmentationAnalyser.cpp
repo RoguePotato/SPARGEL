@@ -58,5 +58,6 @@ bool FragmentationAnalyser::Write() {
   }
   mOutStream.close();
 
+  std::cout << "   Successfully wrote " << outputName << "!\n";
   return true;
 }

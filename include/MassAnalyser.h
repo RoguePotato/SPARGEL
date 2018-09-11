@@ -35,15 +35,15 @@ struct MassComponent {
 
 class MassAnalyser {
 public:
-  MassAnalyser(std::string filename);
+  MassAnalyser(NameData nd);
   ~MassAnalyser();
 
   void ExtractValues(SnapshotFile *file);
-  void CalculateAccretionRate(void);
-  bool Write(void);
+  void CalculateAccretionRate();
+  bool Write();
 
 private:
-  std::ofstream mOutStream;
-  std::string mFileName;
+  NameData mNameData;
   std::vector<MassComponent> mMasses;
+  std::ofstream mOutStream;
 };
