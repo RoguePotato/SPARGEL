@@ -75,6 +75,6 @@ bool CloudAnalyser::Write() {
   }
   mOutStream.close();
 
-  std::cout << "   Successfully wrote " << outputName << "!\n";
+  std::cout << "   File output      : " << outputName << "\n";
   return true;
 }

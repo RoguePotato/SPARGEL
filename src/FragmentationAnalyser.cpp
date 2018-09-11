@@ -51,6 +51,10 @@ bool FragmentationAnalyser::Write() {
     return false;
   }
 
+  std::sort(mRecords.begin(), mRecords.end(), [](Record a, Record b) {
+    return b.time > a.time;
+  });
+
   for (int i = 0; i < mRecords.size(); ++i) {
     Record r = mRecords[i];
     mOutStream << r.time << "\t" << r.disc_mass << "\t" << r.star_mass << "\t"
@@ -58,6 +62,6 @@ bool FragmentationAnalyser::Write() {
   }
   mOutStream.close();
 
-  std::cout << "   Successfully wrote " << outputName << "!\n";
+  std::cout << "   File output      : " << outputName << "\n";
   return true;
 }
