@@ -133,6 +133,7 @@ void Parameters::SetDefaultParameters() {
   mIntParams["DISC_ANALYSIS"] = 0;
   mIntParams["RADIAL_ANALYSIS"] = 0;
   mIntParams["VERTICAL_ANALYSIS"] = 0;
+  mIntParams["FRAGMENTATION_ANALYSIS"] = 0;
   mIntParams["DISC_CENTER"] = 0;
   mStringParams["CENTER_LABEL"] = "custom";
   mFloatParams["CENTER_X"] = 0.0;

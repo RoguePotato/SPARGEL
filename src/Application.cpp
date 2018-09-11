@@ -26,6 +26,8 @@ Application::~Application() {
     delete mGenerator;
   if (mDiscAnalyser != NULL)
     delete mDiscAnalyser;
+  if (mFragAnalyser != NULL)
+    delete mFragAnalyser;
   if (mCloudAnalyser != NULL)
     delete mCloudAnalyser;
   if (mSinkAnalyser != NULL)
@@ -85,6 +87,7 @@ bool Application::Initialise() {
   mCloudAnalyse = mParams->GetInt("CLOUD_ANALYSIS");
   mCloudCenter = mParams->GetInt("CLOUD_CENTER");
   mDiscAnalyse = mParams->GetInt("DISC_ANALYSIS");
+  mFragAnalyse = mParams->GetInt("FRAGMENTATION_ANALYSIS");
   mSinkAnalyse = mParams->GetInt("SINK_ANALYSIS");
   mRadialAnalyse = mParams->GetInt("RADIAL_ANALYSIS");
   mCenter = mParams->GetInt("DISC_CENTER");
@@ -165,6 +168,10 @@ bool Application::Initialise() {
     }
   }
 
+  if (mFragAnalyse && mFiles.size() > 0) {
+    mFragAnalyser = new FragmentationAnalyser(mFiles[0]->GetNameData());
+  }
+
   return true;
 }
 
@@ -209,6 +216,9 @@ void Application::Run() {
     mSinkAnalyser->WriteMassRadius();
     mSinkAnalyser->WriteNbody();
   }
+  if (mFragAnalyse) {
+    mFragAnalyser->Write();
+  }
 
   std::cout << "   Files analysed   : " << mFilesAnalysed << "\n\n";
 }
@@ -248,6 +258,9 @@ void Application::Analyse(int task, int start, int end) {
       }
       if (mMidplaneCut) {
         MidplaneCut((SnapshotFile *)mFiles[i]);
+      }
+      if (mFragAnalyse) {
+        mFragAnalyser->Append((SnapshotFile *)mFiles[i]);
       }
     }
 

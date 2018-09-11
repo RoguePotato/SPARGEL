@@ -26,6 +26,7 @@
 #include "DragonFile.h"
 #include "File.h"
 #include "FileNameExtractor.h"
+#include "FragmentationAnalyser.h"
 #include "Generator.h"
 #include "MassAnalyser.h"
 #include "OpacityTable.h"
@@ -59,6 +60,7 @@ private:
   OpacityTable *mOpacity = NULL;
   CloudAnalyser *mCloudAnalyser = NULL;
   DiscAnalyser *mDiscAnalyser = NULL;
+  FragmentationAnalyser *mFragAnalyser = NULL;
   SinkAnalyser *mSinkAnalyser = NULL;
   RadialAnalyser *mRadialAnalyser = NULL;
   MassAnalyser *mMassAnalyser = NULL;
@@ -81,6 +83,7 @@ private:
   int mCloudAnalyse = 0;
   int mCloudCenter = 0;
   int mDiscAnalyse = 0;
+  int mFragAnalyse = 0;
   int mSinkAnalyse = 0;
   int mRadialAnalyse = 0;
   int mMassAnalyse = 0;
