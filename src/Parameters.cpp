@@ -114,7 +114,6 @@ void Parameters::SetDefaultParameters() {
   mIntParams["CONVERT"] = 0;
   mStringParams["OUT_FORMAT"] = "sf";
   mIntParams["OUTPUT_FILES"] = 0;
-  mStringParams["CLOUD_OUTPUT"] = "cloud.dat";
   mStringParams["MASS_OUTPUT"] = "masses.dat";
   mStringParams["COOLING_METHOD"] = "stamatellos";
   mFloatParams["GAMMA"] = 1.66;

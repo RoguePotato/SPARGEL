@@ -42,14 +42,21 @@ void FragmentationAnalyser::Append(SnapshotFile *file) {
   mRecords.push_back(r);
 }
 
-void FragmentationAnalyser::Write() {
+bool FragmentationAnalyser::Write() {
   std::string outputName = mNameData.dir + "/SPARGEL." + mNameData.id + "." +
                            mNameData.append + ".dat";
-  mOutStream.open(outputName);
+  mOutStream.open(outputName, std::ios::out);
+  if (!mOutStream.is_open()) {
+    std::cout << "   Could not open file " << outputName << " for writing!\n";
+    return false;
+  }
+
   for (int i = 0; i < mRecords.size(); ++i) {
     Record r = mRecords[i];
     mOutStream << r.time << "\t" << r.disc_mass << "\t" << r.star_mass << "\t"
                << r.max_dens << "\t" << r.max_temp << "\n";
   }
   mOutStream.close();
+
+  return true;
 }

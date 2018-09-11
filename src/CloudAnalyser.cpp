@@ -15,7 +15,9 @@
 
 #include "CloudAnalyser.h"
 
-CloudAnalyser::CloudAnalyser(std::string fileName) : mFileName(fileName) {}
+CloudAnalyser::CloudAnalyser(NameData nd) : mNameData(nd) {
+  mNameData.append += "cloud";
+}
 
 CloudAnalyser::~CloudAnalyser() { mMaxima.clear(); }
 
@@ -25,7 +27,7 @@ void CloudAnalyser::FindCentralQuantities(SnapshotFile *file) {
   std::sort(part.begin(), part.end(),
             [](Particle *a, Particle *b) { return b->GetD() < a->GetD(); });
 
-  int avgNum = (int) sqrtf(part.size());
+  int avgNum = (int)sqrtf(part.size());
   CentralValue m;
   for (int i = 0; i < avgNum; ++i) {
     m.density += part[i]->GetD();
@@ -55,9 +57,11 @@ void CloudAnalyser::CenterAroundDensest(SnapshotFile *file) {
 }
 
 bool CloudAnalyser::Write() {
-  mOutStream.open(mFileName, std::ios::out);
+  std::string outputName = mNameData.dir + "/SPARGEL." + mNameData.id + "." +
+                           mNameData.append + ".dat";
+  mOutStream.open(outputName, std::ios::out);
   if (!mOutStream.is_open()) {
-    std::cout << "   Could not open file " << mFileName << " for writing!\n";
+    std::cout << "   Could not open file " << outputName << " for writing!\n";
     return false;
   }
 
@@ -70,4 +74,6 @@ bool CloudAnalyser::Write() {
     mOutStream << cur.density << "\t" << cur.temperature << "\n";
   }
   mOutStream.close();
+
+  return true;
 }

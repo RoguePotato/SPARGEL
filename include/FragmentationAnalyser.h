@@ -28,7 +28,7 @@ public:
   ~FragmentationAnalyser();
 
   void Append(SnapshotFile *file);
-  void Write();
+  bool Write();
 
 private:
   struct Record {

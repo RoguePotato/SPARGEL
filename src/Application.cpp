@@ -130,10 +130,6 @@ bool Application::Initialise() {
     mMassAnalyser = new MassAnalyser(mParams->GetString("MASS_OUTPUT"));
   }
 
-  if (mCloudAnalyse) {
-    mCloudAnalyser = new CloudAnalyser(mParams->GetString("CLOUD_OUTPUT"));
-  }
-
   if (mDiscAnalyse) {
     mDiscAnalyser = new DiscAnalyser(mParams);
   }
@@ -166,6 +162,10 @@ bool Application::Initialise() {
       std::cout << "Unrecognised input file format, exiting...\n";
       return false;
     }
+  }
+
+  if (mCloudAnalyse && mFiles.size() > 0) {
+    mCloudAnalyser = new CloudAnalyser(mFiles[0]->GetNameData());
   }
 
   if (mFragAnalyse && mFiles.size() > 0) {
