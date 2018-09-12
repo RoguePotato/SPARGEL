@@ -82,4 +82,8 @@ private:
   FLOAT mPlanetRadius = 0.0;
   FLOAT mPlanetEcc = 0.0;
   FLOAT mPlanetInc = 0.0;
+
+  FLOAT mCloudRadius = 0.0;
+  FLOAT mCloudMass = 0.0;
+  FLOAT mCloudVol = 0.0;
 };

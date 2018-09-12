@@ -64,6 +64,8 @@ void Generator::SetupParams(void) {
   mPlanetRadius = mParams->GetFloat("PLANET_RADIUS");
   mPlanetEcc = mParams->GetFloat("PLANET_ECC");
   mPlanetInc = mParams->GetFloat("PLANET_INC");
+  mCloudRadius = mParams->GetFloat("CLOUD_RADIUS");
+  mCloudMass = mParams->GetFloat("CLOUD_MASS");
 
   mOmegaIn = (mRin * mRin) / (mR0 * mR0);
   mOmegaOut = (mRout * mRout) / (mR0 * mR0);
@@ -72,6 +74,8 @@ void Generator::SetupParams(void) {
       pow(pow((mR0 * mR0 + mRout * mRout) / (mR0 * mR0), 1.0 - (mP / 2.0)) -
               pow((mR0 * mR0 + mRin * mRin) / (mR0 * mR0), 1.0 - (mP / 2.0)),
           -1.0f);
+
+  mCloudVol = (4.0f / 3.0f) * PI * powf(mCloudRadius, 3.0f);
 
   if (mSeed > 0) {
     srand(mSeed);
@@ -153,7 +157,43 @@ void Generator::CreateDisc(void) {
   }
 }
 
-void Generator::CreateCloud(void) {}
+void Generator::CreateCloud(void) {
+  // Allocate memory
+  for (int i = 0; i < mNumHydro; ++i) {
+    mParticles.push_back(new Particle());
+  }
+
+  for (int i = 0; i < mNumHydro; ++i) {
+    GenerateRandoms();
+
+    FLOAT r = powf(mRands[0], (1.0f / 3.0f)) * mCloudRadius;
+    FLOAT theta = acos(1.0f - 2.0f * mRands[1]);
+    FLOAT phi = 2.0f * PI * mRands[2];
+
+    FLOAT x = r * sin(theta) * cos(phi);
+    FLOAT y = r * sin(theta) * sin(phi);
+    FLOAT z = r * cos(theta);
+
+    FLOAT m = mCloudMass / mNumHydro;
+    FLOAT rho = (mCloudMass / mCloudVol) * MSOLPERAU3_TO_GPERCM3;
+
+    FLOAT h =
+        powf((3 * mNumNeigh * m) / (32 * PI * (rho / MSOLPERAU3_TO_GPERCM3)),
+             (1.0f / 3.0f));
+    FLOAT T = 5.0f;
+    FLOAT U = (K * T) / (2.35f * M_P * 0.66666f);
+
+    mParticles[i]->SetID(i);
+    mParticles[i]->SetX(Vec3(x, y, z));
+    mParticles[i]->SetR(Vec3(x, y, z).Norm());
+    mParticles[i]->SetT(T);
+    mParticles[i]->SetH(h);
+    mParticles[i]->SetD(rho);
+    mParticles[i]->SetM(m);
+    mParticles[i]->SetU(U);
+    mParticles[i]->SetType(1);
+  }
+}
 
 void Generator::CreateStars(void) {
   Sink *s1 = new Sink();

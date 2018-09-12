@@ -185,4 +185,7 @@ void Parameters::SetDefaultParameters() {
   mFloatParams["PLANET_RADIUS"] = 0.0;
   mFloatParams["PLANET_ECC"] = 0.0;
   mFloatParams["PLANET_INC"] = 0.0;
+
+  mFloatParams["CLOUD_RADIUS"] = 0.0;
+  mFloatParams["CLOUD_MASS"] = 0.0;
 }
