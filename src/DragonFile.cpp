@@ -66,6 +66,8 @@ bool DragonFile::Write(std::string fileName, bool formatted) {
     return false;
   }
 
+  std::cout << "   File output      : " << fileName << "\n";
+
   if (formatted) {
     Formatter formatStream(mOutStream, 18, 2, 10);
     WriteHeaderForm(formatStream);

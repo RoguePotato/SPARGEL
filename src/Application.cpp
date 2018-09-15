@@ -169,7 +169,8 @@ bool Application::Initialise() {
   }
 
   if (mMassAnalyse && mFiles.size() > 0) {
-    mMassAnalyser = new MassAnalyser(mFiles[0]->GetNameData());
+    mMassAnalyser = new MassAnalyser(mParams->GetFloat("ENCLOSED_MASS_RADIUS"),
+                                     mFiles[0]->GetNameData());
   }
 
   return true;

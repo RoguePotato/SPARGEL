@@ -28,6 +28,7 @@ struct MassComponent {
   FLOAT sink_mass = 0.0;
   FLOAT unique_sink_mass[16] = {0.0};
   FLOAT mdot = 0.0;
+  FLOAT rout = 0.0;
   int gas_num = 0;
   int dust_num = 0;
   int sink_num = 0;
@@ -35,7 +36,7 @@ struct MassComponent {
 
 class MassAnalyser {
 public:
-  MassAnalyser(NameData nd);
+  MassAnalyser(FLOAT encMassRad, NameData nd);
   ~MassAnalyser();
 
   void ExtractValues(SnapshotFile *file);
@@ -43,6 +44,7 @@ public:
   bool Write();
 
 private:
+  FLOAT mEncMassRad = 0.0;
   NameData mNameData;
   std::vector<MassComponent> mMasses;
   std::ofstream mOutStream;

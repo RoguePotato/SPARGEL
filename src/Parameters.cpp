@@ -146,6 +146,7 @@ void Parameters::SetDefaultParameters() {
   mFloatParams["HEIGHT_LO"] = 0.0;
   mFloatParams["HEIGHT_HI"] = 10.0;
   mIntParams["VERTICAL_BINS"] = 100;
+  mFloatParams["ENCLOSED_MASS_RADIUS"] = 0.99;
 
   mIntParams["COOLING_MAP"] = 0;
   mStringParams["COOLING_MAP_NAME"] = "cooling_map";

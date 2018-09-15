@@ -55,6 +55,8 @@ bool ColumnFile::Write(std::string fileName) {
     return false;
   }
 
+  std::cout << "   File output      : " << fileName << "\n";
+
   Formatter formatStream(mOutStream, 18, 2, 10);
   WriteHeaderForm(formatStream);
   WriteParticleForm(formatStream);

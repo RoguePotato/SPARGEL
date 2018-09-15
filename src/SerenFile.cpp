@@ -84,7 +84,7 @@ bool SerenFile::Write(std::string fileName, bool formatted) {
               << " for writing!\n";
     return false;
   }
-  std::cout << "   Writing " << fileName << "\n";
+  std::cout << "   File output      : " << fileName << "\n";
 
   CreateHeader();
 
