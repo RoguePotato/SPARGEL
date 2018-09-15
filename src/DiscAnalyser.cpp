@@ -40,14 +40,17 @@ void DiscAnalyser::Center(SnapshotFile *file, int sinkIndex, Vec3 posCenter) {
     dX.z = sink[sinkIndex]->GetX().z;
   }
 
+  // TODO: Instead of using R, maybe replace all with GetX().Norm().
   for (int i = 0; i < part.size(); ++i) {
     Vec3 newX = part[i]->GetX() - dX;
     part[i]->SetX(newX);
+    part[i]->SetR(part[i]->GetX().Norm());
   }
 
   for (int i = 0; i < sink.size(); ++i) {
     Vec3 newX = sink[i]->GetX() - dX;
     sink[i]->SetX(newX);
+    sink[i]->SetR(sink[i]->GetX().Norm());
   }
 
   file->SetParticles(part);

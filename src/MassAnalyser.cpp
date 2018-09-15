@@ -55,6 +55,18 @@ void MassAnalyser::ExtractValues(SnapshotFile *file) {
     }
   }
 
+  // Find maximum density
+  // TODO: Repeated code, this is also done in fragment analyser.
+  FLOAT max_dens = 0.0f;
+  for (int i = 0; i < part.size(); ++i) {
+    Particle *p = part[i];
+    if (p->GetD() > max_dens) {
+      max_dens = p->GetD();
+      mc.pos_dens = p->GetX();
+      mc.rdens = p->GetR();
+    }
+  }
+
   for (int i = 0; i < sinks.size(); ++i) {
     mc.tot_mass += sinks[i]->GetM();
     mc.sink_mass += sinks[i]->GetM();
@@ -82,6 +94,9 @@ void MassAnalyser::ExtractValues(SnapshotFile *file) {
             << "\n";
   std::cout << "   Outer radius     : " << mc.rout << " AU (" << mEncMassRad
             << " mass)\n";
+  std::cout << "   Pos max dens     : " << mc.pos_dens.x << "\t"
+            << mc.pos_dens.y << "\t" << mc.pos_dens.z << " AU\n";
+  std::cout << "   Radius max dens  : " << mc.rdens << " AU\n";
 }
 
 void MassAnalyser::CalculateAccretionRate() {

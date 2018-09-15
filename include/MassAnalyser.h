@@ -29,6 +29,8 @@ struct MassComponent {
   FLOAT unique_sink_mass[16] = {0.0};
   FLOAT mdot = 0.0;
   FLOAT rout = 0.0;
+  Vec3 pos_dens = {0.0, 0.0, 0.0};
+  FLOAT rdens;
   int gas_num = 0;
   int dust_num = 0;
   int sink_num = 0;
