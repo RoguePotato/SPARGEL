@@ -37,7 +37,7 @@ public:
   void AddParticle(Particle *p) { mParticles.push_back(p); }
   void AddSink(Sink *s) { mSinks.push_back(s); }
 
-  void CalculateValues(void);
+  void CalculateValues();
 
   FLOAT GetMid() { return mIn + (mWidth / 2.0); }
   FLOAT GetAverage(int index) { return mAverages[index]; }

@@ -36,7 +36,7 @@ Application::~Application() {
     delete mMassAnalyser;
 }
 
-void Application::StartSplash(void) {
+void Application::StartSplash() {
   std::cout << "\n";
   for (int i = 0; i < 16; ++i)
     std::cout << "=====";
@@ -48,7 +48,7 @@ void Application::StartSplash(void) {
   std::cout << "\n\n";
 }
 
-void Application::EndSplash(void) {
+void Application::EndSplash() {
   for (int i = 0; i < 16; ++i)
     std::cout << "=====";
   std::cout << "\n";

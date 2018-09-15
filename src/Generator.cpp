@@ -18,12 +18,12 @@
 Generator::Generator(Parameters *params, OpacityTable *opacity)
     : mParams(params), mOpacity(opacity) {}
 
-Generator::~Generator(void) {
+Generator::~Generator() {
   delete mOctree;
   delete[] mOctreePoints;
 }
 
-void Generator::Create(void) {
+void Generator::Create() {
   SetupParams();
 
   if (mParams->GetString("IC_TYPE") == "disc" ||
@@ -39,7 +39,7 @@ void Generator::Create(void) {
   }
 }
 
-void Generator::SetupParams(void) {
+void Generator::SetupParams() {
   mSeed = mParams->GetInt("SEED");
   mNumHydro = mParams->GetInt("N_HYDRO");
   mDim = mParams->GetInt("DIMENSIONS");
@@ -91,7 +91,7 @@ void Generator::GenerateRandoms() {
   }
 }
 
-void Generator::CreateDisc(void) {
+void Generator::CreateDisc() {
   // Allocate memory
   for (int i = 0; i < mNumHydro; ++i) {
     mParticles.push_back(new Particle());
@@ -157,7 +157,7 @@ void Generator::CreateDisc(void) {
   }
 }
 
-void Generator::CreateCloud(void) {
+void Generator::CreateCloud() {
   // Allocate memory
   for (int i = 0; i < mNumHydro; ++i) {
     mParticles.push_back(new Particle());
@@ -195,7 +195,7 @@ void Generator::CreateCloud(void) {
   }
 }
 
-void Generator::CreateStars(void) {
+void Generator::CreateStars() {
   Sink *s1 = new Sink();
   s1->SetID(mParticles.size() + 1);
   s1->SetH(mSinkRadius);
@@ -223,7 +223,7 @@ void Generator::CreateStars(void) {
   mSinks.push_back(s1);
 }
 
-void Generator::CreatePlanet(void) {
+void Generator::CreatePlanet() {
   Sink *s = new Sink();
   s->SetID(mParticles.size() + mSinks.size() + 1);
   Vec3 star_pos = mSinks[0]->GetX();
@@ -252,7 +252,7 @@ void Generator::CreatePlanet(void) {
   mSinks.push_back(s);
 }
 
-void Generator::CalculateVelocity(void) {
+void Generator::CalculateVelocity() {
   mOctree = new Octree(Vec3(0.0, 0.0, 0.0), Vec3(512.0, 512.0, 512.0));
 
   // Insert particles

@@ -82,7 +82,7 @@ public:
   }
   virtual void SetSinks(std::vector<Sink *> sinks) { mSinks = sinks; }
 
-  virtual void CreateHeader(void){};
+  virtual void CreateHeader(){};
 
   virtual void SetNumGas(int i) { mNumGas = i; }
   virtual void SetNumSinks(int i) { mNumSink = i; }
@@ -93,23 +93,23 @@ protected:
   virtual bool Read(){};
   virtual bool Write(std::string fileName, bool formatted){};
 
-  virtual void AllocateMemory(void){};
+  virtual void AllocateMemory(){};
 
-  virtual bool ReadHeaderForm(void){};
-  virtual void ReadParticleForm(void){};
-  virtual void ReadSinkForm(void){};
+  virtual bool ReadHeaderForm(){};
+  virtual void ReadParticleForm(){};
+  virtual void ReadSinkForm(){};
 
-  virtual bool ReadHeaderUnform(void){};
-  virtual void ReadParticleUnform(void){};
-  virtual void ReadSinkUnform(void){};
+  virtual bool ReadHeaderUnform(){};
+  virtual void ReadParticleUnform(){};
+  virtual void ReadSinkUnform(){};
 
   virtual void WriteHeaderForm(Formatter formatStream){};
   virtual void WriteParticleForm(Formatter formatStream){};
   virtual void WriteSinkForm(Formatter formatStream){};
 
-  virtual void WriteHeaderUnform(void){};
-  virtual void WriteParticleUnform(void){};
-  virtual void WriteSinkUnform(void){};
+  virtual void WriteHeaderUnform(){};
+  virtual void WriteParticleUnform(){};
+  virtual void WriteSinkUnform(){};
 
   BinaryReader *mBR;
   BinaryWriter *mBW;

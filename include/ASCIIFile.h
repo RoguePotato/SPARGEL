@@ -31,6 +31,6 @@ public:
 private:
   int mDimensions = 3;
 
-  void ReadParticleForm(void);
+  void ReadParticleForm();
   void SetSmoothingLength();
 };

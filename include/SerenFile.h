@@ -33,7 +33,7 @@ public:
   bool Write(std::string fileName, bool formatted);
   void FindTemperatures(OpacityTable *op);
 
-  void CreateHeader(void);
+  void CreateHeader();
 
 private:
   const int STRING_LENGTH = 20;
@@ -62,21 +62,21 @@ private:
   int mTypeData[8][5] = {};
   int mUnknownValues[50] = {};
 
-  void AllocateMemory(void);
+  void AllocateMemory();
 
-  bool ReadHeaderForm(void);
-  void ReadParticleForm(void);
-  void ReadSinkForm(void);
+  bool ReadHeaderForm();
+  void ReadParticleForm();
+  void ReadSinkForm();
 
-  bool ReadHeaderUnform(void);
-  void ReadParticleUnform(void);
-  void ReadSinkUnform(void);
+  bool ReadHeaderUnform();
+  void ReadParticleUnform();
+  void ReadSinkUnform();
 
   void WriteHeaderForm(Formatter formatStream);
   void WriteParticleForm(Formatter formatStream);
   void WriteSinkForm(Formatter formatStream);
 
-  void WriteHeaderUnform(void);
-  void WriteParticleUnform(void);
-  void WriteSinkUnform(void);
+  void WriteHeaderUnform();
+  void WriteParticleUnform();
+  void WriteSinkUnform();
 };

@@ -27,20 +27,20 @@ public:
   Generator(Parameters *params, OpacityTable *opacity);
   ~Generator();
 
-  void Create(void);
+  void Create();
 
   std::vector<Particle *> GetParticles() { return mParticles; }
   std::vector<Sink *> GetSinks() { return mSinks; }
 
 private:
-  void SetupParams(void);
-  void GenerateRandoms(void);
-  void CreateDisc(void);
-  void CreateCloud(void);
+  void SetupParams();
+  void GenerateRandoms();
+  void CreateDisc();
+  void CreateCloud();
 
-  void CreateStars(void);
-  void CreatePlanet(void);
-  void CalculateVelocity(void);
+  void CreateStars();
+  void CreatePlanet();
+  void CalculateVelocity();
 
   Parameters *mParams = NULL;
   OpacityTable *mOpacity = NULL;

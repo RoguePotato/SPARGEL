@@ -33,7 +33,7 @@ bool ASCIIFile::Read() {
   mInStream.close();
 }
 
-void ASCIIFile::ReadParticleForm(void) {
+void ASCIIFile::ReadParticleForm() {
   FLOAT temp[9] = {};
 
   std::string line;

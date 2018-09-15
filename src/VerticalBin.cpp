@@ -20,7 +20,7 @@ VerticalBin::VerticalBin(FLOAT in, FLOAT out, FLOAT width)
 
 VerticalBin::~VerticalBin() {}
 
-void VerticalBin::CalculateValues(void) {
+void VerticalBin::CalculateValues() {
   if (mParticles.size() <= 0)
     return;
 

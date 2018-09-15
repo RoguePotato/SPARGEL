@@ -27,7 +27,7 @@ RadialBin::~RadialBin() {
   mVerticalBins.clear();
 }
 
-void RadialBin::CalculateValues(void) {
+void RadialBin::CalculateValues() {
   if (mParticles.size() <= 0)
     return;
 

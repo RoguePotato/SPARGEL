@@ -33,11 +33,11 @@ public:
 private:
   int mDimensions = 3;
 
-  void AllocateMemory(void);
+  void AllocateMemory();
 
-  bool ReadHeaderForm(void);
-  void ReadParticleForm(void);
-  void ReadSinkForm(void);
+  bool ReadHeaderForm();
+  void ReadParticleForm();
+  void ReadSinkForm();
 
   void WriteHeaderForm(Formatter formatStream);
   void WriteParticleForm(Formatter formatStream);

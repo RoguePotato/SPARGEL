@@ -118,7 +118,7 @@ bool SerenFile::Write(std::string fileName, bool formatted) {
   return true;
 }
 
-void SerenFile::AllocateMemory(void) {
+void SerenFile::AllocateMemory() {
   mPrecision = mHeader[0];
   mPosDim = mHeader[1];
   mVelDim = mHeader[2];
@@ -144,7 +144,7 @@ void SerenFile::AllocateMemory(void) {
   }
 }
 
-void SerenFile::CreateHeader(void) {
+void SerenFile::CreateHeader() {
   mNumGas = mParticles.size();
   mNumSink = mSinks.size();
 
@@ -269,7 +269,7 @@ void SerenFile::CreateHeader(void) {
   mSinkDataLength = 12 + 2 * mPosDim;
 }
 
-bool SerenFile::ReadHeaderForm(void) {
+bool SerenFile::ReadHeaderForm() {
   std::string temp = "";
 
   mInStream >> mFormatID;
@@ -309,7 +309,7 @@ bool SerenFile::ReadHeaderForm(void) {
   return true;
 }
 
-void SerenFile::ReadParticleForm(void) {
+void SerenFile::ReadParticleForm() {
   double temp[3] = {0.0};
 
   for (int i = 0; i < mNumGas + mNumDust; ++i) {
@@ -367,7 +367,7 @@ void SerenFile::ReadParticleForm(void) {
   }
 }
 
-void SerenFile::ReadSinkForm(void) {
+void SerenFile::ReadSinkForm() {
   double temp[3] = {0.0};
   std::string dummyStr = "";
 
@@ -386,7 +386,7 @@ void SerenFile::ReadSinkForm(void) {
   }
 }
 
-bool SerenFile::ReadHeaderUnform(void) {
+bool SerenFile::ReadHeaderUnform() {
   std::vector<char> fileTag(STRING_LENGTH);
   mInStream.read(&fileTag[0], STRING_LENGTH);
   std::string concatString(fileTag.begin(), fileTag.end());
@@ -429,7 +429,7 @@ bool SerenFile::ReadHeaderUnform(void) {
   return true;
 }
 
-void SerenFile::ReadParticleUnform(void) {
+void SerenFile::ReadParticleUnform() {
   int intTemp = 0;
   double temp[3] = {0.0, 0.0, 0.0};
 
@@ -478,7 +478,7 @@ void SerenFile::ReadParticleUnform(void) {
   }
 }
 
-void SerenFile::ReadSinkUnform(void) {
+void SerenFile::ReadSinkUnform() {
   double temp[3] = {0.0};
   int tempInt = 0;
   int dummyBool = 0;
@@ -582,7 +582,7 @@ void SerenFile::WriteSinkForm(Formatter formatStream) {
   }
 }
 
-void SerenFile::WriteHeaderUnform(void) {
+void SerenFile::WriteHeaderUnform() {
   std::ostringstream stream;
   stream << std::left << std::setw(STRING_LENGTH) << std::setfill(' ')
          << BINARY_FORMAT;
@@ -618,7 +618,7 @@ void SerenFile::WriteHeaderUnform(void) {
   }
 }
 
-void SerenFile::WriteParticleUnform(void) {
+void SerenFile::WriteParticleUnform() {
   for (int i = 0; i < mNumGas + mNumDust; ++i)
     mBW->WriteValue(mParticles[i]->GetID());
 
@@ -647,7 +647,7 @@ void SerenFile::WriteParticleUnform(void) {
     mBW->WriteValue(mParticles[i]->GetU());
 }
 
-void SerenFile::WriteSinkUnform(void) {
+void SerenFile::WriteSinkUnform() {
   int sinkValues[6] = {2, 2, 0, mSinkDataLength, 0, 0};
   for (int i = 0; i < 6; ++i) {
     mBW->WriteValue(sinkValues[i]);
