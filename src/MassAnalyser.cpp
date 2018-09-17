@@ -15,9 +15,8 @@
 
 #include "MassAnalyser.h"
 
-MassAnalyser::MassAnalyser(FLOAT encMassRad, NameData nd)
-    : mEncMassRad(encMassRad), mNameData(nd) {
-  mNameData.append += "masses";
+MassAnalyser::MassAnalyser(FLOAT encMassRad)
+    : mEncMassRad(encMassRad) {
 }
 
 MassAnalyser::~MassAnalyser() {}
@@ -112,8 +111,7 @@ void MassAnalyser::CalculateAccretionRate() {
 }
 
 bool MassAnalyser::Write() {
-  std::string outputName = mNameData.dir + "/SPARGEL." + mNameData.id + "." +
-                           mNameData.append + ".dat";
+  std::string outputName = "./SPARGEL_masses.dat";
   mOutStream.open(outputName, std::ios::out);
   if (!mOutStream.is_open()) {
     std::cout << "   Could not open file " << outputName << " for writing!\n";

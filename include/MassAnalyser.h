@@ -38,7 +38,7 @@ struct MassComponent {
 
 class MassAnalyser {
 public:
-  MassAnalyser(FLOAT encMassRad, NameData nd);
+  MassAnalyser(FLOAT encMassRad);
   ~MassAnalyser();
 
   void ExtractValues(SnapshotFile *file);
@@ -47,7 +47,6 @@ public:
 
 private:
   FLOAT mEncMassRad = 0.0;
-  NameData mNameData;
   std::vector<MassComponent> mMasses;
   std::ofstream mOutStream;
 };
