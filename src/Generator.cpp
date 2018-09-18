@@ -137,7 +137,7 @@ void Generator::CreateDisc() {
 
     FLOAT m = mMDisc / mNumHydro;
 
-    FLOAT h = pow((3 * mNumNeigh * m) / (32.0 * PI * (rho)), (1.0 / 3.0));
+    FLOAT h = pow((3 * mNumNeigh * m) / (32.0 * PI * rho), (1.0 / 3.0));
 
     FLOAT U = mOpacity->GetEnergy(rho, T);
 
