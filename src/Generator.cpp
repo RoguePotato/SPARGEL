@@ -131,16 +131,13 @@ void Generator::CreateDisc() {
     FLOAT z = (2.0 / PI) * z_0 * asin(2.0 * mRands[2] - 1.0);
 
     FLOAT rho_0 = ((PI * mSigma0) / (4.0 * z_0)) *
-                  pow((mR0 * mR0) / (mR0 * mR0 + R * R), mP / 2.0) *
-                  MSOLPERAU3_TO_GPERCM3;
+                  pow((mR0 * mR0) / (mR0 * mR0 + R * R), mP / 2.0);
 
     FLOAT rho = (rho_0 * cos((PI * z) / (2 * z_0)));
 
     FLOAT m = mMDisc / mNumHydro;
 
-    FLOAT h =
-        pow((3 * mNumNeigh * m) / (32.0 * PI * (rho / MSOLPERAU3_TO_GPERCM3)),
-            (1.0 / 3.0));
+    FLOAT h = pow((3 * mNumNeigh * m) / (32.0 * PI * (rho)), (1.0 / 3.0));
 
     FLOAT U = mOpacity->GetEnergy(rho, T);
 
@@ -149,7 +146,7 @@ void Generator::CreateDisc() {
     mParticles[i]->SetR(Vec3(x, y, z).Norm());
     mParticles[i]->SetT(T);
     mParticles[i]->SetH(h);
-    mParticles[i]->SetD(rho);
+    mParticles[i]->SetD(rho * MSOLPERAU3_TO_GPERCM3);
     mParticles[i]->SetM(m);
     mParticles[i]->SetU(U);
     mParticles[i]->SetSigma(sigma);
@@ -175,11 +172,9 @@ void Generator::CreateCloud() {
     FLOAT z = r * cos(theta);
 
     FLOAT m = mCloudMass / mNumHydro;
-    FLOAT rho = (mCloudMass / mCloudVol) * MSOLPERAU3_TO_GPERCM3;
+    FLOAT rho = mCloudMass / mCloudVol;
 
-    FLOAT h =
-        powf((3 * mNumNeigh * m) / (32 * PI * (rho / MSOLPERAU3_TO_GPERCM3)),
-             (1.0f / 3.0f));
+    FLOAT h = powf((3 * mNumNeigh * m) / (32 * PI * (rho)), (1.0f / 3.0f));
     FLOAT T = 5.0f;
     FLOAT U = (K * T) / (2.35f * M_P * 0.66666f);
 
@@ -188,7 +183,7 @@ void Generator::CreateCloud() {
     mParticles[i]->SetR(Vec3(x, y, z).Norm());
     mParticles[i]->SetT(T);
     mParticles[i]->SetH(h);
-    mParticles[i]->SetD(rho);
+    mParticles[i]->SetD(rho * MSOLPERAU3_TO_GPERCM3);
     mParticles[i]->SetM(m);
     mParticles[i]->SetU(U);
     mParticles[i]->SetType(1);
