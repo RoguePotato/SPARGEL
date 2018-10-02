@@ -165,6 +165,7 @@ void Parameters::SetDefaultParameters() {
 
   mFloatParams["M_STAR"] = 0.5;
   mFloatParams["M_DISC"] = 0.01;
+  mFloatParams["STAR_SMOOTHING"] = 1.0;
   mFloatParams["BINARY_M"] = 0.0;
   mFloatParams["BINARY_A"] = 0.0;
   mFloatParams["BINARY_ECC"] = 0.0;
@@ -184,6 +185,7 @@ void Parameters::SetDefaultParameters() {
   mIntParams["PLANET"] = 0;
   mFloatParams["PLANET_MASS"] = 0.0;
   mFloatParams["PLANET_RADIUS"] = 0.0;
+  mFloatParams["PLANET_SMOOTHING"] = 0.1;
   mFloatParams["PLANET_ECC"] = 0.0;
   mFloatParams["PLANET_INC"] = 0.0;
 
