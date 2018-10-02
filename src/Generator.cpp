@@ -60,7 +60,7 @@ void Generator::SetupParams() {
   mQ = mParams->GetFloat("Q");
   mSinkRadius = mParams->GetFloat("SINK_RADIUS");
   mPlanet = mParams->GetInt("PLANET");
-  mPlanetMass = mParams->GetFloat("PLANET_MASS");
+  mPlanetMass = mParams->GetFloat("PLANET_MASS") / MSUN_TO_MJUP;
   mPlanetRadius = mParams->GetFloat("PLANET_RADIUS");
   mPlanetEcc = mParams->GetFloat("PLANET_ECC");
   mPlanetInc = mParams->GetFloat("PLANET_INC");

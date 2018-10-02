@@ -30,6 +30,7 @@ static const FLOAT THETA = 0.57735026919;
 
 static const FLOAT MSUN_TO_KG = 1.9891E30;
 static const FLOAT MSUN_TO_G = 1.9891E33;
+static const FLOAT MSUN_TO_MJUP = 1047.56;
 static const FLOAT PC_TO_M = 3.08567758E16;
 static const FLOAT PC_TO_AU = 206265.0;
 static const FLOAT AU_TO_CM = 1.495978707E13;
