@@ -93,6 +93,7 @@ private:
   Vec3 mPosCenter = {0.0, 0.0, 0.0};
   int mHillRadiusCut = 0;
   FLOAT mMidplaneCut = 0.0;
+  int mInsertPlanet = 0.0;
 
   void Analyse(int task, int start, int end);
   void MidplaneCut(SnapshotFile *file);
@@ -102,6 +103,7 @@ private:
   void FindOpticalDepth(SnapshotFile *file);
   void FindToomre(SnapshotFile *file);
   void FindBeta(SnapshotFile *file);
+  void InsertPlanet(SnapshotFile *file);
 
   void OutputInfo(SnapshotFile *file);
 };

@@ -98,6 +98,7 @@ bool Application::Initialise() {
   mMidplaneCut = mParams->GetFloat("MIDPLANE_CUT");
   mExtraQuantities = mParams->GetInt("EXTRA_QUANTITIES");
   mResetTime = mParams->GetInt("RESET_TIME");
+  mInsertPlanet = mParams->GetInt("INSERT_PLANET");
 
   mOpacity = new OpacityTable(mEosFilePath, true);
   if (!mOpacity->Read())
@@ -234,6 +235,11 @@ void Application::Analyse(int task, int start, int end) {
     // Extra quantity calculation
     FindThermo((SnapshotFile *)mFiles[i]);
     FindToomre((SnapshotFile *)mFiles[i]);
+
+    // Planet insertion
+    if (mInsertPlanet) {
+      InsertPlanet((SnapshotFile *)mFiles[i]);
+    }
 
     // Cloud analysis
     if (mCloudAnalyse) {
@@ -573,6 +579,42 @@ void Application::FindBeta(SnapshotFile *file) {
     part[i]->SetBeta(beta);
   }
   file->SetParticles(part);
+}
+
+void Application::InsertPlanet(SnapshotFile *file) {
+  std::vector<Particle *> part = file->GetParticles();
+  std::vector<Sink *> sink = file->GetSinks();
+
+  FLOAT mass = mParams->GetFloat("PLANET_MASS") / MSUN_TO_MJUP;
+  FLOAT radius = mParams->GetFloat("PLANET_RADIUS");
+  FLOAT smoothing = mParams->GetFloat("PLANET_SMOOTHING");
+  FLOAT ecc = mParams->GetFloat("PLANET_ECC");
+  FLOAT inc = mParams->GetFloat("PLANET_INC");
+
+  Vec3 vel = Vec3(0.0, 0.0, 0.0);
+
+  FLOAT hill_radius = radius * pow(mass / (3.0 * sink[0]->GetM()), 1.0 / 3.0);
+  FLOAT interior_mass = 0.0;
+  for (int i = 0; i < part.size(); ++i) {
+    if (part[i]->GetX().Norm() < radius) {
+      interior_mass += part[i]->GetM();
+    }
+  }
+  vel[1] = sqrt((G * (sink[0]->GetM() + interior_mass) * MSUN_TO_KG) /
+                (radius * AU_TO_M)) /
+           KMPERS_TO_MPERS;
+
+  // TODO: Set velocity based on ecc and inc.
+
+  Sink *planet = new Sink();
+  planet->SetX(Vec3(radius, 0.0, 0.0));
+  planet->SetV(vel);
+  planet->SetM(mass);
+  planet->SetH(smoothing);
+  planet->SetType(-1);
+  sink.push_back(planet);
+
+  file->SetSinks(sink);
 }
 
 void Application::OutputInfo(SnapshotFile *file) {
