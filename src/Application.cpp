@@ -614,6 +614,7 @@ void Application::InsertPlanet(SnapshotFile *file) {
   planet->SetType(-1);
   sink.push_back(planet);
 
+  file->SetNameDataAppend(".planet");
   file->SetSinks(sink);
 }
 
