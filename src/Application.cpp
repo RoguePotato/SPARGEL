@@ -233,6 +233,7 @@ void Application::Analyse(int task, int start, int end) {
 
     // Extra quantity calculation
     FindThermo((SnapshotFile *)mFiles[i]);
+    FindToomre((SnapshotFile *)mFiles[i]);
 
     // Cloud analysis
     if (mCloudAnalyse) {
@@ -253,7 +254,6 @@ void Application::Analyse(int task, int start, int end) {
       }
       if (mExtraQuantities) {
         FindOpticalDepth((SnapshotFile *)mFiles[i]);
-        FindToomre((SnapshotFile *)mFiles[i]);
         FindBeta((SnapshotFile *)mFiles[i]);
       }
       if (mMidplaneCut) {
