@@ -162,7 +162,8 @@ bool Application::Initialise() {
   }
 
   if (mCloudAnalyse && mFiles.size() > 0) {
-    mCloudAnalyser = new CloudAnalyser(mFiles[0]->GetNameData());
+    mCloudAnalyser = new CloudAnalyser(mFiles[0]->GetNameData(),
+                                       mParams->GetInt("CLOUD_AVERAGE"));
   }
 
   if (mFragAnalyse && mFiles.size() > 0) {

@@ -15,7 +15,8 @@
 
 #include "CloudAnalyser.h"
 
-CloudAnalyser::CloudAnalyser(NameData nd) : mNameData(nd) {
+CloudAnalyser::CloudAnalyser(NameData nd, const int avg)
+    : mNameData(nd), mAverage(avg) {
   mNameData.append += "cloud";
 }
 
@@ -27,7 +28,12 @@ void CloudAnalyser::FindCentralQuantities(SnapshotFile *file) {
   std::sort(part.begin(), part.end(),
             [](Particle *a, Particle *b) { return b->GetD() < a->GetD(); });
 
-  int avgNum = (int)sqrtf(part.size());
+  // Default average to sqrt(N), but override if user has provided a value.
+  int avgNum = sqrt(part.size());
+  if (mAverage) {
+      avgNum = mAverage;
+  }
+
   CentralValue m;
   for (int i = 0; i < avgNum; ++i) {
     m.density += part[i]->GetD();

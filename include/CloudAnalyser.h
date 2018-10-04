@@ -27,7 +27,7 @@ struct CentralValue {
 
 class CloudAnalyser {
 public:
-  CloudAnalyser(NameData nd);
+  CloudAnalyser(NameData nd, const int avg);
   ~CloudAnalyser();
 
   void FindCentralQuantities(SnapshotFile *file);
@@ -36,6 +36,7 @@ public:
 
 private:
   NameData mNameData;
+  int mAverage;
   std::vector<CentralValue> mMaxima;
   std::ofstream mOutStream;
 };
