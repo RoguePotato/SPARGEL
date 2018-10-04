@@ -58,7 +58,8 @@ void Generator::SetupParams() {
   mNumNeigh = mParams->GetInt("N_NEIGH");
   mP = mParams->GetFloat("P");
   mQ = mParams->GetFloat("Q");
-  mSinkRadius = mParams->GetFloat("SINK_RADIUS");
+  mStarSmoothing = mParams->GetFloat("STAR_SMOOTHING");
+  mPlanetSmoothing = mParams->GetFloat("PLANET_SMOOTHING");
   mPlanet = mParams->GetInt("PLANET");
   mPlanetMass = mParams->GetFloat("PLANET_MASS") / MSUN_TO_MJUP;
   mPlanetRadius = mParams->GetFloat("PLANET_RADIUS");
@@ -193,14 +194,14 @@ void Generator::CreateCloud() {
 void Generator::CreateStars() {
   Sink *s1 = new Sink();
   s1->SetID(mParticles.size() + 1);
-  s1->SetH(mSinkRadius);
+  s1->SetH(mStarSmoothing);
   s1->SetM(mMStar);
   s1->SetType(-1);
 
   if (mParams->GetString("IC_TYPE") == "binary") {
     Sink *s2 = new Sink();
     s2->SetID(mParticles.size() + 2);
-    s2->SetH(mSinkRadius);
+    s2->SetH(mStarSmoothing);
     s2->SetM(mMBinary);
 
     FLOAT x1 = -mBinarySep * (1.0 - mBinaryEcc) * (mMBinary / mMTotal) +
@@ -228,7 +229,6 @@ void Generator::CreatePlanet() {
 
   FLOAT hill_radius =
       mPlanetRadius * pow(mPlanetMass / (3.0 * mMStar), 1.0 / 3.0);
-  FLOAT h = 0.1;
   FLOAT interior_mass = 0.0;
   for (int i = 0; i < mParticles.size(); ++i) {
     if (mParticles[i]->GetX().Norm() < mPlanetRadius) {
@@ -239,7 +239,7 @@ void Generator::CreatePlanet() {
   planet_vel[1] = sqrt((G * (mMStar + interior_mass) * MSUN_TO_KG) /
                        (mPlanetRadius * AU_TO_M)) /
                   KMPERS_TO_MPERS;
-  s->SetH(h);
+  s->SetH(mPlanetSmoothing);
   s->SetM(mPlanetMass);
   s->SetType(-1);
   s->SetX(planet_pos);
