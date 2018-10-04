@@ -125,6 +125,7 @@ void Parameters::SetDefaultParameters() {
 
   mIntParams["CLOUD_ANALYSIS"] = 0;
   mIntParams["CLOUD_CENTER"] = 0;
+  mIntParams["CLOUD_AVERAGE"] = 0;
 
   mIntParams["MASS_ANALYSIS"] = 0;
   mIntParams["SINK_ANALYSIS"] = 0;
