@@ -56,5 +56,5 @@ private:
   std::vector<Particle *> mParticles;
   std::vector<Sink *> mSinks;
   std::vector<VerticalBin *> mVerticalBins;
-  FLOAT mAverages[RADIAL_QUANTITIES] = {};
+  FLOAT mAverages[TOT_RAD_QUAN] = {};
 };

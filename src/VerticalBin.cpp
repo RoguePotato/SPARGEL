@@ -42,7 +42,7 @@ void VerticalBin::CalculateValues() {
     mAverages[15] += p->GetU();
   }
 
-  for (int i = 0; i < RADIAL_QUANTITIES; ++i) {
+  for (int i = 0; i < TOT_RAD_QUAN; ++i) {
     mAverages[i] /= mParticles.size();
   }
 }

@@ -47,4 +47,6 @@ static const FLOAT YR_TO_SEC = 3.154E7;
 
 static const FLOAT TIME_UNIT = 0.159146;
 
-static const int RADIAL_QUANTITIES = 32;
+static const int RADIAL_QUAN = 14;
+static const int EXTRA_DATA = 4;
+static const int TOT_RAD_QUAN = RADIAL_QUAN + EXTRA_DATA;

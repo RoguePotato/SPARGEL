@@ -58,8 +58,8 @@ void RadialBin::CalculateValues() {
     mAverages[11] += p->GetM();
     mAverages[12] += p->GetBeta();
     mAverages[13] += p->GetU();
-    for (int i = 0; i < 16; ++i) {
-      mAverages[14 + i] += p->GetExtra(i);
+    for (int j = 0; j < EXTRA_DATA; ++j) {
+      mAverages[RADIAL_QUAN + j] += p->GetExtra(j);
     }
 
     // Vertical bins
@@ -76,15 +76,15 @@ void RadialBin::CalculateValues() {
     mVerticalBins[i]->CalculateValues();
   }
 
-  FLOAT r1 = mIn * AU_TO_M;
-  FLOAT r2 = mOut * AU_TO_M;
-  FLOAT sigma = (mAverages[13] * MSUN_TO_KG) / (PI * ((r2 * r2) - (r1 * r1)));
-  sigma *= GPERCM2_TO_KGPERM2;
+  FLOAT r1 = mIn * AU_TO_CM;
+  FLOAT r2 = mOut * AU_TO_CM;
+  FLOAT sigma = (mAverages[11] * MSUN_TO_G) / (PI * ((r2 * r2) - (r1 * r1)));
+  sigma /= GPERCM2_TO_KGPERM2;
 
   // Toomre calculated via bin width and mass
-  mAverages[3] = (mAverages[11] * mAverages[12]) / (PI * G * sigma);
+  mAverages[4] = (mAverages[9] * mAverages[10]) / (PI * G * sigma);
 
-  for (int i = 0; i < RADIAL_QUANTITIES; ++i) {
+  for (int i = 0; i < TOT_RAD_QUAN; ++i) {
     mAverages[i] /= mParticles.size();
   }
 }

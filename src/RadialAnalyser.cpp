@@ -82,10 +82,12 @@ void RadialAnalyser::Run(SnapshotFile *file) {
   out.open(outputName);
   for (int i = 0; i < mRadialBins.size(); ++i) {
     RadialBin *b = mRadialBins[i];
-    if (b->GetNumParticles() <= 0)
+    if (b->GetNumParticles() <= 0) {
       continue;
+    }
+
     out << b->GetMid() << "\t";
-    for (int j = 0; j < RADIAL_QUANTITIES; ++j) {
+    for (int j = 0; j < TOT_RAD_QUAN; ++j) {
       out << b->GetAverage(j) << "\t";
     }
     out << "\n";
@@ -110,7 +112,7 @@ void RadialAnalyser::Run(SnapshotFile *file) {
           continue;
 
         out << v->GetMid() << "\t";
-        for (int j = 0; j < RADIAL_QUANTITIES; ++j) {
+        for (int j = 0; j < TOT_RAD_QUAN; ++j) {
           out << v->GetAverage(j) << "\t";
         }
         out << "\n";

@@ -15,6 +15,7 @@
 
 #pragma once
 
+#include "Constants.h"
 #include "Definitions.h"
 #include "Vec.h"
 
@@ -89,7 +90,7 @@ private:
   FLOAT mDUDT = 0.0;
   FLOAT mBeta = 0.0;
   int mType = 1;
-  FLOAT mExtra[EXTRA_DATA_MAX] = {0.0};
+  FLOAT mExtra[EXTRA_DATA] = {0.0};
 };
 
 class Gas : public Particle {

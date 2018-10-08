@@ -78,7 +78,7 @@ bool Application::Initialise() {
   mInFormat = mParams->GetString("IN_FORMAT");
   mOutFormat = mParams->GetString("OUT_FORMAT");
   mOutput = mParams->GetInt("OUTPUT_FILES");
-  mExtraData = std::min(EXTRA_DATA_MAX, mParams->GetInt("EXTRA_DATA"));
+  mExtraData = std::min(EXTRA_DATA, mParams->GetInt("EXTRA_DATA"));
   mCoolingMethod = mParams->GetString("COOLING_METHOD");
   mGamma = mParams->GetFloat("GAMMA");
   mMuBar = mParams->GetFloat("MU_BAR");
