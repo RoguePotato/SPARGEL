@@ -114,6 +114,7 @@ void Parameters::SetDefaultParameters() {
   mIntParams["CONVERT"] = 0;
   mStringParams["OUT_FORMAT"] = "sf";
   mIntParams["OUTPUT_FILES"] = 0;
+  mIntParams["NBODY_OUTPUT"] = 0;
   mStringParams["COOLING_METHOD"] = "stamatellos";
   mFloatParams["GAMMA"] = 1.66;
   mFloatParams["MU_BAR"] = 2.35;
@@ -122,6 +123,7 @@ void Parameters::SetDefaultParameters() {
   mIntParams["EXTRA_DATA"] = 0;
   mIntParams["EXTRA_QUANTITIES"] = 0;
   mIntParams["RESET_TIME"] = 0;
+  mIntParams["REDUCE_PARTICLES"] = 0;
 
   mIntParams["CLOUD_ANALYSIS"] = 0;
   mIntParams["CLOUD_CENTER"] = 0;
@@ -147,7 +149,7 @@ void Parameters::SetDefaultParameters() {
   mFloatParams["HEIGHT_LO"] = 0.0;
   mFloatParams["HEIGHT_HI"] = 10.0;
   mIntParams["VERTICAL_BINS"] = 100;
-  mFloatParams["ENCLOSED_MASS_RADIUS"] = 0.99;
+
 
   mIntParams["COOLING_MAP"] = 0;
   mStringParams["COOLING_MAP_NAME"] = "cooling_map";

@@ -78,6 +78,7 @@ private:
   FLOAT mGamma = 0.0;
   FLOAT mMuBar = 0.0;
   int mOutput = 0;
+  int mReduceParticles = 0;
   int mExtraData = 0;
   int mConvert = 0;
   int mCloudAnalyse = 0;
@@ -85,6 +86,7 @@ private:
   int mDiscAnalyse = 0;
   int mFragAnalyse = 0;
   int mSinkAnalyse = 0;
+  int mNbodyOutput = 0;
   int mRadialAnalyse = 0;
   int mMassAnalyse = 0;
   int mCenter = 0;
@@ -104,6 +106,7 @@ private:
   void FindToomre(SnapshotFile *file);
   void FindBeta(SnapshotFile *file);
   void InsertPlanet(SnapshotFile *file);
+  void ReduceParticles(SnapshotFile *file);
 
   void OutputInfo(SnapshotFile *file);
 };

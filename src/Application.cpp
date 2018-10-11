@@ -78,6 +78,7 @@ bool Application::Initialise() {
   mInFormat = mParams->GetString("IN_FORMAT");
   mOutFormat = mParams->GetString("OUT_FORMAT");
   mOutput = mParams->GetInt("OUTPUT_FILES");
+  mReduceParticles = mParams->GetInt("REDUCE_PARTICLES");
   mExtraData = std::min(EXTRA_DATA, mParams->GetInt("EXTRA_DATA"));
   mCoolingMethod = mParams->GetString("COOLING_METHOD");
   mGamma = mParams->GetFloat("GAMMA");
@@ -89,6 +90,7 @@ bool Application::Initialise() {
   mDiscAnalyse = mParams->GetInt("DISC_ANALYSIS");
   mFragAnalyse = mParams->GetInt("FRAGMENTATION_ANALYSIS");
   mSinkAnalyse = mParams->GetInt("SINK_ANALYSIS");
+  mNbodyOutput = mParams->GetInt("NBODY_OUTPUT");
   mRadialAnalyse = mParams->GetInt("RADIAL_ANALYSIS");
   mCenter = mParams->GetInt("DISC_CENTER");
   mPosCenter =
@@ -216,7 +218,9 @@ void Application::Run() {
   }
   if (mSinkAnalyse) {
     mSinkAnalyser->WriteMassRadius();
-    mSinkAnalyser->WriteNbody();
+    if (mNbodyOutput) {
+      mSinkAnalyser->WriteNbody();
+    }
   }
   if (mFragAnalyse) {
     mFragAnalyser->Write();
@@ -233,9 +237,9 @@ void Application::Analyse(int task, int start, int end) {
         break;
     }
 
-    // Extra quantity calculation
+    // Thermal property calculation. Independant between particles/sinks. Can be
+    // done before all other analysis.
     FindThermo((SnapshotFile *)mFiles[i]);
-    FindToomre((SnapshotFile *)mFiles[i]);
 
     // Planet insertion
     if (mInsertPlanet) {
@@ -271,6 +275,16 @@ void Application::Analyse(int task, int start, int end) {
       }
     }
 
+    // Necessary Toomre quantity calculations. Needs to be done after moving the
+    // disc (e.g. centering).
+    FindToomre((SnapshotFile *)mFiles[i]);
+
+    // Particle reduction.
+    // TODO: Double-free when deleting snapshot file.
+    if (mReduceParticles) {
+      ReduceParticles((SnapshotFile *)mFiles[i]);
+    }
+
     // Mass analysis
     if (mMassAnalyse) {
       mMassAnalyser->ExtractValues((SnapshotFile *)mFiles[i]);
@@ -279,7 +293,9 @@ void Application::Analyse(int task, int start, int end) {
     // Sink analysis
     if (mSinkAnalyse) {
       mSinkAnalyser->AddMassRadius((SinkFile *)mFiles[i]);
-      mSinkAnalyser->AddNbody((SinkFile *)mFiles[i]);
+      if (mNbodyOutput) {
+        mSinkAnalyser->AddNbody((SinkFile *)mFiles[i]);
+      }
     }
     // Radial analysis
     if (mRadialAnalyse) {
@@ -447,7 +463,6 @@ void Application::FindThermo(SnapshotFile *file) {
     FLOAT tau = kappa * sigma;
     FLOAT dudt = 1.0 / ((sigma * sigma * kappa) + (1 / kappar));
 
-    part[i]->SetR(part[i]->GetX().Norm());
     part[i]->SetT(temp);
     part[i]->SetU(energy);
     part[i]->SetP(press);
@@ -617,6 +632,33 @@ void Application::InsertPlanet(SnapshotFile *file) {
 
   file->SetNameDataAppend(".planet");
   file->SetSinks(sink);
+}
+
+void Application::ReduceParticles(SnapshotFile *file) {
+  std::vector<Particle *> part = file->GetParticles();
+  int curr_num = part.size();
+  int final_num = std::min(mReduceParticles, curr_num);
+  if (final_num >= curr_num) {
+    return;
+  }
+
+  FLOAT new_mass = part[0]->GetM() * (curr_num / final_num);
+
+  std::vector<Particle *> new_part;
+  for (int i = 0; i < final_num; ++i) {
+    int r = rand() % curr_num;
+    new_part.push_back(part[r]);
+  }
+
+  for (int i = 0; i < final_num; ++i) {
+    Particle *p = new_part[i];
+    FLOAT h = powf((3 * 50 * new_mass) / (32 * PI * p->GetD()), (1.0f / 3.0f));
+    new_part[i]->SetM(new_mass);
+    new_part[i]->SetH(h);
+  }
+  file->SetNumGas(new_part.size());
+  file->SetNameDataAppend(".reduced");
+  file->SetParticles(new_part);
 }
 
 void Application::OutputInfo(SnapshotFile *file) {
