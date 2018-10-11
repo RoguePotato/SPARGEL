@@ -19,6 +19,7 @@ Application::Application(Arguments *args) : mArgs(args) {}
 
 Application::~Application() {
   mFiles.clear();
+  mSinkFiles.clear();
   delete mParams;
   delete mOpacity;
   delete mFNE;
@@ -156,7 +157,7 @@ bool Application::Initialise() {
     } else if (mInFormat == "ascii") {
       mFiles.push_back(new ASCIIFile(nd));
     } else if (mInFormat == "sink") {
-      mFiles.push_back(new SinkFile(nd));
+      mSinkFiles.push_back(new SinkFile(nd));
     } else {
       std::cout << "Unrecognised input file format, exiting...\n";
       return false;
@@ -181,32 +182,47 @@ bool Application::Initialise() {
 
 void Application::Run() {
   // Set up file batches
-  if (mFiles.size() < mNumThreads)
-    mNumThreads = mFiles.size();
-  mFilesPerThread = mFiles.size() / (mNumThreads);
-  mRemainder = mFiles.size() % (mNumThreads);
-  std::thread threads[mNumThreads];
+  if (mFiles.size() > 0) {
+    if (mFiles.size() < mNumThreads) {
+      mNumThreads = mFiles.size();
+    }
+    mFilesPerThread = mFiles.size() / (mNumThreads);
+    mRemainder = mFiles.size() % (mNumThreads);
+    std::thread threads[mNumThreads];
 
-  std::cout << "   Threads          : " << mNumThreads << "\n";
-  std::cout << "   Files            : " << mFiles.size() << "\n";
-  std::cout << "   Files per thread : " << mFilesPerThread << "\n";
-  std::cout << "   Remainder        : " << mRemainder << "\n\n";
+    std::cout << "   Threads          : " << mNumThreads << "\n";
+    std::cout << "   Files            : " << mFiles.size() << "\n";
+    std::cout << "   Files per thread : " << mFilesPerThread << "\n";
+    std::cout << "   Remainder        : " << mRemainder << "\n\n";
 
-  std::cout << "   EOS table        : " << mOpacity->GetFileName() << "\n\n";
+    std::cout << "   EOS table        : " << mOpacity->GetFileName() << "\n\n";
 
-  int pos = 0;
-  for (int i = 0; i < mNumThreads; ++i) {
-    int start = pos;
-    int end = pos + mFilesPerThread + ((mRemainder > 0) ? 1 : 0);
-    pos = end;
-    --mRemainder;
+    int pos = 0;
+    for (int i = 0; i < mNumThreads; ++i) {
+      int start = pos;
+      int end = pos + mFilesPerThread + ((mRemainder > 0) ? 1 : 0);
+      pos = end;
+      --mRemainder;
 
-    threads[i] = std::thread(&Application::Analyse, this, i, start, end);
+      threads[i] = std::thread(&Application::Analyse, this, i, start, end);
+    }
+    // Join the threads
+    for (int i = 0; i < mNumThreads; ++i) {
+      threads[i].join();
+    }
   }
 
-  // Join the threads
-  for (int i = 0; i < mNumThreads; ++i) {
-    threads[i].join();
+  // Sink file analysis.
+  if (mSinkAnalyse) {
+    for (int i = 0; i < mSinkFiles.size(); ++i) {
+      mSinkFiles[i]->Read();
+      mSinkAnalyser->AddMassRadius(mSinkFiles[i]);
+      mSinkAnalyser->CalculateAccRate(mSinkFiles[i]);
+      if (mNbodyOutput) {
+        mSinkAnalyser->AddNbody(mSinkFiles[i]);
+      }
+      ++mFilesAnalysed;
+    }
   }
 
   if (mMassAnalyse) {
@@ -290,13 +306,6 @@ void Application::Analyse(int task, int start, int end) {
       mMassAnalyser->ExtractValues((SnapshotFile *)mFiles[i]);
     }
 
-    // Sink analysis
-    if (mSinkAnalyse) {
-      mSinkAnalyser->AddMassRadius((SinkFile *)mFiles[i]);
-      if (mNbodyOutput) {
-        mSinkAnalyser->AddNbody((SinkFile *)mFiles[i]);
-      }
-    }
     // Radial analysis
     if (mRadialAnalyse) {
       RadialAnalyser *ra = new RadialAnalyser(mParams);

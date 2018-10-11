@@ -68,6 +68,7 @@ private:
   CoolingMap *mCoolingMap = NULL;
 
   std::vector<File *> mFiles;
+  std::vector<SinkFile *> mSinkFiles;
   int mFilesAnalysed = 0;
   std::vector<std::string> mFileNames;
 

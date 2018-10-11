@@ -24,6 +24,7 @@ public:
   ~SinkAnalyser();
 
   void AddMassRadius(SinkFile *sf);
+  void CalculateAccRate(SinkFile *sf);
   void AddNbody(SinkFile *sf);
   bool WriteMassRadius();
   bool WriteNbody();
@@ -31,4 +32,6 @@ public:
 private:
   std::vector<SinkRecord> mRecords;
   std::vector<SinkRecord> mNbodyRecords;
+  int avg_num[3] = {0, 0, 0};
+  FLOAT avg_dmdt[3] = {0.0, 0.0, 0.0};
 };

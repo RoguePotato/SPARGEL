@@ -44,6 +44,7 @@ bool SinkFile::Read() {
     r->pos = Vec3(temp[2], temp[3], temp[4]);
     r->vel = Vec3(temp[5], temp[6], temp[7]);
     r->m = temp[14];
+    r->dmdt = temp[20];
     mRecords.push_back(r);
   }
 
