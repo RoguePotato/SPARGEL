@@ -218,6 +218,7 @@ void Application::Run() {
       mSinkFiles[i]->Read();
       mSinkAnalyser->AddMassRadius(mSinkFiles[i]);
       mSinkAnalyser->CalculateAccRate(mSinkFiles[i]);
+      mSinkAnalyser->WriteMassAccretion();
       if (mNbodyOutput) {
         mSinkAnalyser->AddNbody(mSinkFiles[i]);
       }

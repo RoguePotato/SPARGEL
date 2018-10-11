@@ -18,6 +18,13 @@
 #include "Definitions.h"
 #include "SinkFile.h"
 
+struct AccretionRecord {
+  std::string id = "";
+  FLOAT avg_begin = 0.0;
+  FLOAT avg_end = 0.0;
+  FLOAT avg_tot = 0.0;
+};
+
 class SinkAnalyser {
 public:
   SinkAnalyser();
@@ -27,6 +34,7 @@ public:
   void CalculateAccRate(SinkFile *sf);
   void AddNbody(SinkFile *sf);
   bool WriteMassRadius();
+  bool WriteMassAccretion();
   bool WriteNbody();
 
 private:
@@ -34,4 +42,5 @@ private:
   std::vector<SinkRecord> mNbodyRecords;
   int avg_num[3] = {0, 0, 0};
   FLOAT avg_dmdt[3] = {0.0, 0.0, 0.0};
+  std::vector<AccretionRecord> avg_dmdt_records;
 };

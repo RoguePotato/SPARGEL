@@ -70,6 +70,13 @@ void SinkAnalyser::CalculateAccRate(SinkFile *sf) {
     avg_dmdt[i] /= avg_num[i];
   }
 
+  AccretionRecord ar;
+  ar.id = sf->GetNameData().id;
+  ar.avg_begin = avg_dmdt[0];
+  ar.avg_end = avg_dmdt[1];
+  ar.avg_tot = avg_dmdt[2];
+  avg_dmdt_records.push_back(ar);
+
   for (int i = 0; i < 16; ++i)
     std::cout << "-----";
   std::cout << "\n";
@@ -82,6 +89,12 @@ void SinkAnalyser::CalculateAccRate(SinkFile *sf) {
   std::cout << "   Avg.mdot (< 0.1) : " << avg_dmdt[0] << " Msun/yr\n";
   std::cout << "   Avg.mdot (> 0.9) : " << avg_dmdt[1] << " Msun/yr\n";
   std::cout << "   Avg.mdot         : " << avg_dmdt[2] << " Msun/yr\n";
+
+  // Zero the arrays.
+  for (int i = 0; i < 3; ++i) {
+    avg_dmdt[i] = 0.0;
+    avg_num[i] = 0;
+  }
 }
 
 void SinkAnalyser::AddNbody(SinkFile *sf) {
@@ -103,10 +116,26 @@ bool SinkAnalyser::WriteMassRadius() {
   // Combine mRecords and mNbodyRecords?
   for (int i = 0; i < mRecords.size(); i += 2) {
     outStream << i << mRecords[i].m << "\t" << mRecords[i].pos.Norm() << "\t"
-              << mRecords[i + 1].m << "\t" << mRecords[i + 1].pos.Norm()
-              << "\n";
+                                      << mRecords[i + 1].m << "\t"
+                                      << mRecords[i + 1].pos.Norm() << "\n";
   }
   outStream.close();
+
+  return true;
+}
+
+bool SinkAnalyser::WriteMassAccretion() {
+  std::ofstream outStream;
+  outStream.open("./SPARGEL_sink_accretion.dat", std::ios::out);
+  if (!outStream.is_open()) {
+    return false;
+  }
+
+  for (int i = 0; i < avg_dmdt_records.size(); ++i) {
+    outStream << avg_dmdt_records[i].id << "\t" << avg_dmdt_records[i].avg_begin
+              << "\t" << avg_dmdt_records[i].avg_end << "\t"
+              << avg_dmdt_records[i].avg_tot << "\n";
+  }
 
   return true;
 }
