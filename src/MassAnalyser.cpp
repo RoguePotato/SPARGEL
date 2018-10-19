@@ -78,6 +78,25 @@ void MassAnalyser::ExtractValues(SnapshotFile *file) {
 
   mMasses.push_back(mc);
 
+  // Mass within 1 AU of companion.
+  FLOAT sink_mass[3] = {0.0, 0.0, 0.0};
+  if (sinks.size() > 0) {
+    Vec3 sink_pos = sinks[1]->GetX();
+    for (int i = 0; i < part.size(); ++i) {
+      FLOAT dx = (part[i]->GetX() - sink_pos).Norm();
+
+      if (dx < 0.25) {
+        sink_mass[0] += part[i]->GetM() * MSUN_TO_MJUP;
+      }
+      if (dx < 0.5) {
+        sink_mass[1] += part[i]->GetM() * MSUN_TO_MJUP;
+      }
+      if (dx < 1.0) {
+        sink_mass[2] += part[i]->GetM() * MSUN_TO_MJUP;
+      }
+    }
+  }
+
   for (int i = 0; i < 16; ++i)
     std::cout << "-----";
   std::cout << "\n";
@@ -90,12 +109,15 @@ void MassAnalyser::ExtractValues(SnapshotFile *file) {
   std::cout << "   Total mass       : " << mc.tot_mass << " msun\n";
   std::cout << "   Gas mas          : " << mc.gas_mass << " msun\n";
   std::cout << "   Stellar mass     : " << mc.unique_sink_mass[0] << " msun\n";
-  std::cout << "   Companion mass   : " << mc.sink_mass - mc.unique_sink_mass[0]
-            << " msun\n";
+  std::cout << "   Planet mass      : "
+            << (mc.sink_mass - mc.unique_sink_mass[0]) * MSUN_TO_MJUP
+            << " mjup\n";
+  std::cout << "   Planet mass enc. : " << sink_mass[0] << " " << sink_mass[1]
+            << " " << sink_mass[2] << " mjup\n";
   std::cout << "   Disc/star mass   : " << mc.gas_mass / mc.unique_sink_mass[0]
             << "\n";
-  std::cout << "   Outer radius     : " << mc.rout[0] << ", " << mc.rout[1]
-            << ", " << mc.rout[2] << " AU\n";
+  std::cout << "   Outer radius     : " << mc.rout[0] << " " << mc.rout[1]
+            << " " << mc.rout[2] << " AU\n";
   std::cout << "   Radius clump     : " << mc.rdens << " AU\n";
 }
 

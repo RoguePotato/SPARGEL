@@ -75,14 +75,9 @@ void RadialBin::CalculateValues() {
   for (int i = 0; i < mVerticalBins.size(); ++i) {
     mVerticalBins[i]->CalculateValues();
   }
-
-  FLOAT r1 = mIn * AU_TO_CM;
-  FLOAT r2 = mOut * AU_TO_CM;
-  FLOAT sigma = (mAverages[11] * MSUN_TO_G) / (PI * ((r2 * r2) - (r1 * r1)));
-  sigma /= GPERCM2_TO_KGPERM2;
-
-  // Toomre calculated via bin width and mass
-  mAverages[4] = (mAverages[9] * mAverages[10]) / (PI * G * sigma);
+  
+  // TODO: Calculate Toomre parameter properly.
+  mAverages[4] = (mAverages[9] * mAverages[10]) / (PI * G * mAverages[7]);
 
   for (int i = 0; i < TOT_RAD_QUAN; ++i) {
     mAverages[i] /= mParticles.size();
