@@ -51,7 +51,7 @@ void RadialBin::CalculateValues() {
     mAverages[4] += p->GetQ();
     mAverages[5] += p->GetP();
     mAverages[6] += p->GetTau();
-    mAverages[7] += p->GetSigma();
+    mAverages[7] += std::max(p->GetSigma(), p->GetD() * p->GetH() * AU_TO_CM);
     mAverages[8] += p->GetDUDT();
     mAverages[9] += p->GetCS();
     mAverages[10] += p->GetOmega();
@@ -75,9 +75,9 @@ void RadialBin::CalculateValues() {
   for (int i = 0; i < mVerticalBins.size(); ++i) {
     mVerticalBins[i]->CalculateValues();
   }
-  
-  // TODO: Calculate Toomre parameter properly.
-  mAverages[4] = (mAverages[9] * mAverages[10]) / (PI * G * mAverages[7]);
+
+  mAverages[4] = (mAverages[9] * mAverages[10]) /
+                 (PI * G * (mAverages[7] * GPERCM2_TO_KGPERM2));
 
   for (int i = 0; i < TOT_RAD_QUAN; ++i) {
     mAverages[i] /= mParticles.size();
