@@ -37,7 +37,7 @@ struct MassComponent {
 
 class MassAnalyser {
 public:
-  MassAnalyser(FLOAT encMassRad);
+  MassAnalyser();
   ~MassAnalyser();
 
   void ExtractValues(SnapshotFile *file);
@@ -45,7 +45,6 @@ public:
   bool Write();
 
 private:
-  FLOAT mEncMassRad = 0.0;
   std::vector<MassComponent> mMasses;
   std::ofstream mOutStream;
   FLOAT rout_percs[3] = {0.9, 0.95, 0.99};

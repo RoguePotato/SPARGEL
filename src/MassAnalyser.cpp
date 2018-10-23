@@ -15,7 +15,7 @@
 
 #include "MassAnalyser.h"
 
-MassAnalyser::MassAnalyser(FLOAT encMassRad) : mEncMassRad(encMassRad) {}
+MassAnalyser::MassAnalyser() {}
 
 MassAnalyser::~MassAnalyser() {}
 
@@ -78,8 +78,10 @@ void MassAnalyser::ExtractValues(SnapshotFile *file) {
 
   mMasses.push_back(mc);
 
-  // Mass within 1 AU of companion.
+  // Mass and N within 1 AU of companion. Hill radius calculation.
   FLOAT sink_mass[3] = {0.0, 0.0, 0.0};
+  FLOAT sink_n[3] = {0.0, 0.0, 0.0};
+  FLOAT hill_radius = 0.0;
   if (sinks.size() > 0) {
     Vec3 sink_pos = sinks[1]->GetX();
     for (int i = 0; i < part.size(); ++i) {
@@ -87,14 +89,24 @@ void MassAnalyser::ExtractValues(SnapshotFile *file) {
 
       if (dx < 0.25) {
         sink_mass[0] += part[i]->GetM() * MSUN_TO_MJUP;
+        sink_n[0]++;
       }
       if (dx < 0.5) {
         sink_mass[1] += part[i]->GetM() * MSUN_TO_MJUP;
+        sink_n[1]++;
       }
       if (dx < 1.0) {
         sink_mass[2] += part[i]->GetM() * MSUN_TO_MJUP;
+        sink_n[2]++;
       }
     }
+    for (int i = 0; i < 3; ++i) {
+      sink_n[i] /= part.size();
+    }
+    // Hill radius
+    hill_radius =
+        sinks[1]->GetR() *
+        powf(sink_mass[2] / (3 * sinks[0]->GetM() * MSUN_TO_MJUP), 0.33f);
   }
 
   for (int i = 0; i < 16; ++i)
@@ -109,11 +121,16 @@ void MassAnalyser::ExtractValues(SnapshotFile *file) {
   std::cout << "   Total mass       : " << mc.tot_mass << " msun\n";
   std::cout << "   Gas mas          : " << mc.gas_mass << " msun\n";
   std::cout << "   Stellar mass     : " << mc.unique_sink_mass[0] << " msun\n";
-  std::cout << "   Planet mass      : "
-            << (mc.sink_mass - mc.unique_sink_mass[0]) * MSUN_TO_MJUP
-            << " mjup\n";
-  std::cout << "   Planet mass enc. : " << sink_mass[0] << " " << sink_mass[1]
-            << " " << sink_mass[2] << " mjup\n";
+  if (sinks.size() > 0) {
+    std::cout << "   Planet mass      : "
+              << (mc.sink_mass - mc.unique_sink_mass[0]) * MSUN_TO_MJUP
+              << " mjup\n";
+    std::cout << "   Planet mass enc. : " << sink_mass[0] << " " << sink_mass[1]
+              << " " << sink_mass[2] << " mjup\n";
+    std::cout << "   Planet N % enc   : " << sink_n[0] << " " << sink_n[1]
+              << " " << sink_n[2] << "\n";
+    std::cout << "   Planet R_hill    : " << hill_radius << "\n";
+  }
   std::cout << "   Disc/star mass   : " << mc.gas_mass / mc.unique_sink_mass[0]
             << "\n";
   std::cout << "   Outer radius     : " << mc.rout[0] << " " << mc.rout[1]
