@@ -258,11 +258,6 @@ void Application::Analyse(int task, int start, int end) {
     // done before all other analysis.
     FindThermo((SnapshotFile *)mFiles[i]);
 
-    // Planet insertion
-    if (mInsertPlanet) {
-      InsertPlanet((SnapshotFile *)mFiles[i]);
-    }
-
     // Cloud analysis
     if (mCloudAnalyse) {
       mCloudAnalyser->FindCentralQuantities((SnapshotFile *)mFiles[i]);
@@ -290,6 +285,11 @@ void Application::Analyse(int task, int start, int end) {
       if (mFragAnalyse) {
         mFragAnalyser->Append((SnapshotFile *)mFiles[i]);
       }
+    }
+
+    // Planet insertion
+    if (mInsertPlanet) {
+      InsertPlanet((SnapshotFile *)mFiles[i]);
     }
 
     // Necessary Toomre quantity calculations. Needs to be done after moving the
