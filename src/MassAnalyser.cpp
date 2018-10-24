@@ -121,7 +121,7 @@ void MassAnalyser::ExtractValues(SnapshotFile *file) {
   std::cout << "   Total mass       : " << mc.tot_mass << " msun\n";
   std::cout << "   Gas mas          : " << mc.gas_mass << " msun\n";
   std::cout << "   Stellar mass     : " << mc.unique_sink_mass[0] << " msun\n";
-  if (sinks.size() > 0) {
+  if (sinks.size() > 1) {
     std::cout << "   Planet mass      : "
               << (mc.sink_mass - mc.unique_sink_mass[0]) * MSUN_TO_MJUP
               << " mjup\n";
@@ -129,7 +129,7 @@ void MassAnalyser::ExtractValues(SnapshotFile *file) {
               << " " << sink_mass[2] << " mjup\n";
     std::cout << "   Planet N % enc   : " << sink_n[0] << " " << sink_n[1]
               << " " << sink_n[2] << "\n";
-    std::cout << "   Planet R_hill    : " << hill_radius << "\n";
+    std::cout << "   Planet R_hill    : " << hill_radius << " AU\n";
   }
   std::cout << "   Disc/star mass   : " << mc.gas_mass / mc.unique_sink_mass[0]
             << "\n";
