@@ -486,9 +486,25 @@ void Application::FindThermo(SnapshotFile *file) {
 
 void Application::FindOpticalDepth(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
+  std::vector<Particle *> trimmed;
 
   OpticalDepthOctree *octree =
       new OpticalDepthOctree(Vec3(0.0, 0.0, 0.0), Vec3(2048.0, 2048.0, 2048.0));
+
+  // Trim particles outside of octree
+  // TODO: Move the disc to positive space?
+  std::sort(part.begin(), part.end(),
+            [](Particle *a, Particle *b) { return b->GetR() > a->GetR(); });
+
+  for (int i = 0; i < part.size(); ++i) {
+    if (part[i]->GetR() > 1024.0) {
+      continue;
+    }
+
+    Particle *p = part[i];
+    trimmed.push_back(p);
+  }
+  part = trimmed;
 
   // Sort by z descending
   std::sort(part.begin(), part.end(),
