@@ -536,31 +536,31 @@ void SerenFile::WriteHeaderForm(Formatter formatStream) {
 }
 
 void SerenFile::WriteParticleForm(Formatter formatStream) {
-  for (int i = 0; i < mNumDust; ++i)
+  for (int i = 0; i < mNumGas + mNumDust; ++i)
     formatStream << mParticles[i]->GetID() << "\n";
 
-  for (int i = 0; i < mNumDust; ++i) {
+  for (int i = 0; i < mNumGas + mNumDust; ++i) {
     for (int j = 0; j < mPosDim; ++j)
       formatStream << mParticles[i]->GetX()[j] << "\t";
     formatStream << "\n";
   }
 
-  for (int i = 0; i < mNumDust; ++i)
+  for (int i = 0; i < mNumGas + mNumDust; ++i)
     formatStream << mParticles[i]->GetM() << "\n";
 
-  for (int i = 0; i < mNumDust; ++i)
+  for (int i = 0; i < mNumGas + mNumDust; ++i)
     formatStream << mParticles[i]->GetH() << "\n";
 
-  for (int i = 0; i < mNumDust; ++i) {
+  for (int i = 0; i < mNumGas + mNumDust; ++i) {
     for (int j = 0; j < mVelDim; ++j)
       formatStream << mParticles[i]->GetV()[j] << "\t";
     formatStream << "\n";
   }
 
-  for (int i = 0; i < mNumDust; ++i)
+  for (int i = 0; i < mNumGas + mNumDust; ++i)
     formatStream << mParticles[i]->GetD() << "\n";
 
-  for (int i = 0; i < mNumDust; ++i)
+  for (int i = 0; i < mNumGas + mNumDust; ++i)
     formatStream << mParticles[i]->GetU() << "\n";
 }
 
