@@ -31,6 +31,40 @@ void SinkAnalyser::AddMassRadius(SinkFile *sf) {
   mRecords.push_back(*b);
 }
 
+void SinkAnalyser::CalculateMassRadius(SnapshotFile *file, int sink_id) {
+  std::vector<Particle *> part = file->GetParticles();
+  std::vector<Sink *> sink = file->GetSinks();
+
+  if (sink_id < 0 || sink_id > sink.size()) {
+    return;
+  }
+
+  // Center particles around the sink.
+  for (int i = 0; i < part.size(); ++i) {
+    Vec3 newX = part.at(i)->GetX() - sink.at(sink_id)->GetX();
+    part.at(i)->SetX(newX);
+  }
+
+  // Sort particles by radius.
+  std::sort(part.begin(), part.end(), [](Particle *a, Particle *b) {
+    return b->GetX().Norm() > a->GetX().Norm();
+  });
+
+  // Find the radius of the sink at the point the density drops below 1e-13
+  // g/cm^-3.
+  FLOAT total_mass = sink.at(sink_id)->GetM();
+  for (int i = 0; i < part.size(); ++i) {
+    if (part.at(i)->GetD() < 1e-13) {
+      sink.at(sink_id)->SetClumpR(part.at(i)->GetX().Norm()); 
+      break;
+    }
+    total_mass += part.at(i)->GetM();
+  }
+  sink.at(sink_id)->SetClumpM(total_mass * MSUN_TO_MJUP);
+
+  file->SetSinks(sink);
+}
+
 void SinkAnalyser::CalculateAccRate(SinkFile *sf) {
   std::vector<SinkRecord *> records = sf->GetRecords();
   FLOAT dt = records.back()->time - records.front()->time;
@@ -116,8 +150,8 @@ bool SinkAnalyser::WriteMassRadius() {
   // Combine mRecords and mNbodyRecords?
   for (int i = 0; i < mRecords.size(); i += 2) {
     outStream << i << mRecords[i].m << "\t" << mRecords[i].pos.Norm() << "\t"
-                                      << mRecords[i + 1].m << "\t"
-                                      << mRecords[i + 1].pos.Norm() << "\n";
+              << mRecords[i + 1].m << "\t" << mRecords[i + 1].pos.Norm()
+              << "\n";
   }
   outStream.close();
 

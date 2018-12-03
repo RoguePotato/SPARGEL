@@ -285,6 +285,9 @@ void Application::Analyse(int task, int start, int end) {
       if (mFragAnalyse) {
         mFragAnalyser->Append((SnapshotFile *)mFiles[i]);
       }
+      if (mSinkAnalyse) {
+        mSinkAnalyser->CalculateMassRadius((SnapshotFile *)mFiles[i], 1);
+      }
     }
 
     // Planet insertion

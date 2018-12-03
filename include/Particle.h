@@ -110,6 +110,13 @@ public:
   FLOAT GetData(int index) { return mSerenData[index]; }
   void SetData(int index, FLOAT data) { mSerenData[index] = data; }
 
+  FLOAT GetClumpR() { return mClumpR; }
+  FLOAT SetClumpR(FLOAT r) { mClumpR = r; }
+  FLOAT GetClumpM() { return mClumpM; }
+  FLOAT SetClumpM(FLOAT m) { mClumpM = m; }
+
 private:
   FLOAT mSerenData[255] = {0.0};
+  FLOAT mClumpR = 0.0;
+  FLOAT mClumpM = 0.0;
 };

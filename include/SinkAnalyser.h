@@ -31,6 +31,7 @@ public:
   ~SinkAnalyser();
 
   void AddMassRadius(SinkFile *sf);
+  void CalculateMassRadius(SnapshotFile *file, int sink_id);
   void CalculateAccRate(SinkFile *sf);
   void AddNbody(SinkFile *sf);
   bool WriteMassRadius();

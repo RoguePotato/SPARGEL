@@ -135,7 +135,15 @@ void MassAnalyser::ExtractValues(SnapshotFile *file) {
             << "\n";
   std::cout << "   Outer radius     : " << mc.rout[0] << " " << mc.rout[1]
             << " " << mc.rout[2] << " AU\n";
-  std::cout << "   Radius clump     : " << mc.rdens << " AU\n";
+  std::cout << "   a clump          : " << mc.rdens << " AU\n";
+
+  if (sinks.size() < 1) { 
+    return;
+  }
+  
+  std::cout << "   R clump          : " << sinks.at(1)->GetClumpR() << " AU\n";
+  std::cout << "   M clump          : " << sinks.at(1)->GetClumpM()
+            << " Mjup\n";
 }
 
 void MassAnalyser::CalculateAccretionRate() {
