@@ -137,7 +137,7 @@ void MassAnalyser::ExtractValues(SnapshotFile *file) {
             << " " << mc.rout[2] << " AU\n";
   std::cout << "   a clump          : " << mc.rdens << " AU\n";
 
-  if (sinks.size() < 1) { 
+  if (sinks.size() < 2) { 
     return;
   }
   
