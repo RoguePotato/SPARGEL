@@ -119,6 +119,7 @@ void Parameters::SetDefaultParameters() {
   mFloatParams["GAMMA"] = 1.66;
   mFloatParams["MU_BAR"] = 2.35;
   mStringParams["EOS_TABLE"] = "eos.bell.cc.dat";
+  mFloatParams["OPACITY_MOD"] = 1.0;
   mIntParams["OUTPUT_COOLING"] = 0;
   mIntParams["EXTRA_DATA"] = 0;
   mIntParams["EXTRA_QUANTITIES"] = 0;

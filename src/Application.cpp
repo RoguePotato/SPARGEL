@@ -103,7 +103,8 @@ bool Application::Initialise() {
   mResetTime = mParams->GetInt("RESET_TIME");
   mInsertPlanet = mParams->GetInt("INSERT_PLANET");
 
-  mOpacity = new OpacityTable(mEosFilePath, true);
+  mOpacity =
+      new OpacityTable(mEosFilePath, true, mParams->GetFloat("OPACITY_MOD"));
   if (!mOpacity->Read())
     return false;
 

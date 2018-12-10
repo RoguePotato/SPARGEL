@@ -15,8 +15,10 @@
 
 #include "OpacityTable.h"
 
-OpacityTable::OpacityTable(std::string fileName, bool formatted) {
+OpacityTable::OpacityTable(std::string fileName, bool formatted,
+                           FLOAT opacityMod) {
   mNameData.name = fileName;
+  mOpacityMod = opacityMod;
 }
 
 OpacityTable::~OpacityTable() {
@@ -98,9 +100,9 @@ bool OpacityTable::Read() {
 
       mEnergy[i][j] = energy;
       mMu[i][j] = mu;
-      mKappa[i][j] = kappa;
-      mKappar[i][j] = kappar;
-      mKappap[i][j] = kappap;
+      mKappa[i][j] = kappa * mOpacityMod;
+      mKappar[i][j] = kappar * mOpacityMod;
+      mKappap[i][j] = kappap * mOpacityMod;
       mGamma[i][j] = gamma;
       mGamma1[i][j] = gamma1;
 

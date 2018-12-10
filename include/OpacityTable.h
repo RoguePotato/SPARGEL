@@ -21,7 +21,7 @@
 
 class OpacityTable : public File {
 public:
-  OpacityTable(std::string fileName, bool formatted);
+  OpacityTable(std::string fileName, bool formatted, FLOAT opacityMod);
   ~OpacityTable();
 
   bool Read();
@@ -50,6 +50,7 @@ private:
   FLOAT **mKappap;
   FLOAT **mGamma;
   FLOAT **mGamma1;
+  FLOAT mOpacityMod = 1.0;
 
   int GetIDens(const FLOAT density);
   int GetITemp(const FLOAT temperature);
