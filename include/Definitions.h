@@ -17,7 +17,7 @@
 #pragma once
 
 #include <algorithm>
-#include <cmath>
+#include <math.h>
 #include <ctime>
 #include <fstream>
 #include <iomanip>

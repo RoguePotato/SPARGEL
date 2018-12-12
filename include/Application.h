@@ -19,6 +19,7 @@
 #include "Arguments.h"
 #include "ASCIIFile.h"
 #include "CloudAnalyser.h"
+#include "ClumpAnalyser.h"
 #include "ColumnFile.h"
 #include "CoolingMap.h"
 #include "Definitions.h"
@@ -59,6 +60,7 @@ private:
   FileNameExtractor *mFNE = NULL;
   OpacityTable *mOpacity = NULL;
   CloudAnalyser *mCloudAnalyser = NULL;
+  ClumpAnalyser *mClumpAnalyser = NULL;
   DiscAnalyser *mDiscAnalyser = NULL;
   FragmentationAnalyser *mFragAnalyser = NULL;
   SinkAnalyser *mSinkAnalyser = NULL;
@@ -84,6 +86,7 @@ private:
   int mConvert = 0;
   int mCloudAnalyse = 0;
   int mCloudCenter = 0;
+  int mClumpAnalyse = 0;
   int mDiscAnalyse = 0;
   int mFragAnalyse = 0;
   int mSinkAnalyse = 0;

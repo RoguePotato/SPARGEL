@@ -31,6 +31,8 @@ Application::~Application() {
     delete mFragAnalyser;
   if (mCloudAnalyser != NULL)
     delete mCloudAnalyser;
+  if (mClumpAnalyser != NULL)
+    delete mClumpAnalyser;
   if (mSinkAnalyser != NULL)
     delete mSinkAnalyser;
   if (mMassAnalyser != NULL)
@@ -88,6 +90,7 @@ bool Application::Initialise() {
   mMassAnalyse = mParams->GetInt("MASS_ANALYSIS");
   mCloudAnalyse = mParams->GetInt("CLOUD_ANALYSIS");
   mCloudCenter = mParams->GetInt("CLOUD_CENTER");
+  mClumpAnalyse = mParams->GetInt("CLUMP_ANALYSIS");
   mDiscAnalyse = mParams->GetInt("DISC_ANALYSIS");
   mFragAnalyse = mParams->GetInt("FRAGMENTATION_ANALYSIS");
   mSinkAnalyse = mParams->GetInt("SINK_ANALYSIS");
@@ -133,6 +136,10 @@ bool Application::Initialise() {
 
   if (mDiscAnalyse) {
     mDiscAnalyser = new DiscAnalyser(mParams);
+  }
+
+  if (mClumpAnalyse) {
+    mClumpAnalyser = new ClumpAnalyser(mParams);
   }
 
   if (mSinkAnalyse) {

@@ -136,6 +136,7 @@ void Parameters::SetDefaultParameters() {
   mIntParams["RADIAL_ANALYSIS"] = 0;
   mIntParams["VERTICAL_ANALYSIS"] = 0;
   mIntParams["FRAGMENTATION_ANALYSIS"] = 0;
+  mIntParams["CLUMP_ANALYSIS"] = 0;
   mIntParams["DISC_CENTER"] = 0;
   mStringParams["CENTER_LABEL"] = "custom";
   mFloatParams["CENTER_X"] = 0.0;
@@ -159,6 +160,9 @@ void Parameters::SetDefaultParameters() {
   mFloatParams["TEMP_MIN"] = 0.0f;
   mFloatParams["TEMP_MAX"] = 0.0f;
   mIntParams["TEMP_BINS"] = 0;
+
+  mIntParams["CLUMP_FROM_SINK"] = 0;
+  mIntParams["CLUMP_FROM_PART"] = 0;
 
   mIntParams["GENERATE"] = 0;
   mStringParams["IC_TYPE"] = "disc";
