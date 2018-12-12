@@ -624,27 +624,27 @@ void SerenFile::WriteParticleUnform() {
 
   for (int i = 0; i < mNumGas + mNumDust; ++i) {
     for (int j = 0; j < mPosDim; ++j) {
-      mBW->WriteValue(mParticles[i]->GetX()[j]);
+      mBW->WriteValue((double)mParticles[i]->GetX()[j]);
     }
   }
 
   for (int i = 0; i < mNumGas + mNumDust; ++i)
-    mBW->WriteValue(mParticles[i]->GetM());
+    mBW->WriteValue((double)mParticles[i]->GetM());
 
   for (int i = 0; i < mNumGas + mNumDust; ++i)
-    mBW->WriteValue(mParticles[i]->GetH());
+    mBW->WriteValue((double)mParticles[i]->GetH());
 
   for (int i = 0; i < mNumGas + mNumDust; ++i) {
     for (int j = 0; j < mVelDim; ++j) {
-      mBW->WriteValue(mParticles[i]->GetV()[j]);
+      mBW->WriteValue((double)mParticles[i]->GetV()[j]);
     }
   }
 
   for (int i = 0; i < mNumGas + mNumDust; ++i)
-    mBW->WriteValue(mParticles[i]->GetD());
+    mBW->WriteValue((double)mParticles[i]->GetD());
 
   for (int i = 0; i < mNumGas + mNumDust; ++i)
-    mBW->WriteValue(mParticles[i]->GetU());
+    mBW->WriteValue((double)mParticles[i]->GetU());
 }
 
 void SerenFile::WriteSinkUnform() {
@@ -660,7 +660,7 @@ void SerenFile::WriteSinkUnform() {
     mBW->WriteValue(0);
 
     for (int j = 0; j < mSinkDataLength; ++j) {
-      mBW->WriteValue(mSinks[i]->GetData(j));
+      mBW->WriteValue((double)mSinks[i]->GetData(j));
     }
   }
 }
