@@ -30,8 +30,8 @@
 
 class RadialBin {
 public:
-  RadialBin(Parameters *params, FLOAT starMass, FLOAT in, FLOAT out,
-            FLOAT width);
+  RadialBin(Parameters *params, float starMass, float in, float out,
+            float width);
   ~RadialBin();
 
   void AddParticle(Particle *p) { mParticles.push_back(p); }
@@ -39,22 +39,22 @@ public:
 
   void CalculateValues();
 
-  FLOAT GetMid() { return mIn + (mWidth / 2.0); }
-  FLOAT GetAverage(int index) { return mAverages[index]; }
+  float GetMid() { return mIn + (mWidth / 2.0); }
+  float GetAverage(int index) { return mAverages[index]; }
   int GetNumParticles() { return mParticles.size(); }
   std::vector<VerticalBin *> GetVerticalBins() { return mVerticalBins; }
 
 private:
   Parameters *mParams = NULL;
 
-  FLOAT mIn = 0;
-  FLOAT mOut = 0;
-  FLOAT mWidth = 0.0;
-  FLOAT mStarMass = 0.0;
+  float mIn = 0;
+  float mOut = 0;
+  float mWidth = 0.0;
+  float mStarMass = 0.0;
   int mMidplanes = 0;
 
   std::vector<Particle *> mParticles;
   std::vector<Sink *> mSinks;
   std::vector<VerticalBin *> mVerticalBins;
-  FLOAT mAverages[TOT_RAD_QUAN] = {};
+  float mAverages[TOT_RAD_QUAN] = {};
 };

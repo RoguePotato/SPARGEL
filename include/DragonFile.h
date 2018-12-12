@@ -34,7 +34,7 @@ public:
 
 private:
   int mIntData[20] = {0};
-  FLOAT mFloatData[50] = {0};
+  float mFloatData[50] = {0};
 
   int mTypeData[8][5] = {};
 

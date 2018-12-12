@@ -44,8 +44,8 @@ private:
   int mHeader[4] = {0}; // precision (4 or 8), ndim, vdim, bdim
   int mIntData[50] = {0};
   long mLongData[50] = {0};
-  FLOAT mFloatData[50] = {0};
-  DOUBLE mDoubleData[50] = {0};
+  double mFloatData[50] = {0};
+  double mDoubleData[50] = {0};
 
   int mPrecision = 8;
   int mPosDim = 3;

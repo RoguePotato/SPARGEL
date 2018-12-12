@@ -34,7 +34,7 @@ bool ASCIIFile::Read() {
 }
 
 void ASCIIFile::ReadParticleForm() {
-  FLOAT temp[9] = {};
+  float temp[9] = {};
 
   std::string line;
   while (getline(mInStream, line)) {
@@ -58,9 +58,9 @@ void ASCIIFile::ReadParticleForm() {
 
 void ASCIIFile::SetSmoothingLength() {
   for (int i = 0; i < mNumGas; ++i) {
-    FLOAT m = mParticles[i]->GetM();
-    FLOAT rho = mParticles[i]->GetD() * MSOLPERAU2_TO_GPERCM2;
-    FLOAT h = pow((3 * 50 * m) / (32.0 * PI * rho), (1.0 / 3.0));
+    float m = mParticles[i]->GetM();
+    float rho = mParticles[i]->GetD() * MSOLPERAU2_TO_GPERCM2;
+    float h = pow((3 * 50 * m) / (32.0 * PI * rho), (1.0 / 3.0));
     mParticles[i]->SetH(h);
   }
 }

@@ -66,7 +66,7 @@ bool SerenFile::Read() {
 
   // Set sink data
   for (int i = 0; i < mSinks.size(); ++i) {
-    double *curData = mSinks[i]->GetAllData();
+    float *curData = mSinks[i]->GetAllData();
     mSinks[i]->SetX(Vec3(curData[1], curData[2], curData[3]));
     mSinks[i]->SetV(Vec3(curData[4], curData[5], curData[6]));
     mSinks[i]->SetM(curData[7]);

@@ -17,7 +17,6 @@
 
 #include "Application.h"
 #include "Arguments.h"
-#include "Definitions.h"
 
 int main(int argc, char *argv[]) {
   Arguments *args = new Arguments(argc, argv);

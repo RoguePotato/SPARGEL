@@ -53,38 +53,38 @@ private:
   int mNumHydro = 0;
   int mDim = 0;
 
-  FLOAT mMStar = 0.0;
-  FLOAT mMDisc = 0.0;
-  FLOAT mMBinary = 0.0;
-  FLOAT mMTotal = 0.0;
-  FLOAT mBinarySep = 0.0;
-  FLOAT mBinaryEcc = 0.0;
-  FLOAT mBinaryInc = 0.0;
-  FLOAT mRin = 0.0;
-  FLOAT mRout = 0.0;
-  FLOAT mR0 = 0.0;
-  FLOAT mT0 = 0.0;
-  FLOAT mTinf = 0.0;
+  float mMStar = 0.0;
+  float mMDisc = 0.0;
+  float mMBinary = 0.0;
+  float mMTotal = 0.0;
+  float mBinarySep = 0.0;
+  float mBinaryEcc = 0.0;
+  float mBinaryInc = 0.0;
+  float mRin = 0.0;
+  float mRout = 0.0;
+  float mR0 = 0.0;
+  float mT0 = 0.0;
+  float mTinf = 0.0;
   int mNumNeigh = 0;
 
-  FLOAT mP = 0.0;
-  FLOAT mQ = 0.0;
+  float mP = 0.0;
+  float mQ = 0.0;
 
-  FLOAT mStarSmoothing = 0.0;
-  FLOAT mPlanetSmoothing = 0.0;
+  float mStarSmoothing = 0.0;
+  float mPlanetSmoothing = 0.0;
 
-  FLOAT mRands[3];
-  FLOAT mOmegaIn = 0.0;
-  FLOAT mOmegaOut = 0.0;
-  FLOAT mSigma0 = 0.0;
+  float mRands[3];
+  float mOmegaIn = 0.0;
+  float mOmegaOut = 0.0;
+  float mSigma0 = 0.0;
 
   int mPlanet = 0;
-  FLOAT mPlanetMass = 0.0;
-  FLOAT mPlanetRadius = 0.0;
-  FLOAT mPlanetEcc = 0.0;
-  FLOAT mPlanetInc = 0.0;
+  float mPlanetMass = 0.0;
+  float mPlanetRadius = 0.0;
+  float mPlanetEcc = 0.0;
+  float mPlanetInc = 0.0;
 
-  FLOAT mCloudRadius = 0.0;
-  FLOAT mCloudMass = 0.0;
-  FLOAT mCloudVol = 0.0;
+  float mCloudRadius = 0.0;
+  float mCloudMass = 0.0;
+  float mCloudVol = 0.0;
 };

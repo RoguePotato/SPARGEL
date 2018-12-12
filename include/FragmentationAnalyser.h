@@ -32,11 +32,11 @@ public:
 
 private:
   struct Record {
-    FLOAT time = 0.0f;
-    FLOAT max_dens = 0.0f;
-    FLOAT max_temp = 0.0f;
-    FLOAT disc_mass = 0.0f;
-    FLOAT star_mass = 0.0f;
+    float time = 0.0f;
+    float max_dens = 0.0f;
+    float max_temp = 0.0f;
+    float disc_mass = 0.0f;
+    float star_mass = 0.0f;
   };
 
   NameData mNameData;

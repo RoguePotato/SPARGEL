@@ -55,7 +55,7 @@ public:
         data(copy.data) {}
 
   ~Octree() {
-    for (uint i = 0; i < 8; ++i) {
+    for (int i = 0; i < 8; ++i) {
       delete children[i];
     }
   }
@@ -85,7 +85,7 @@ public:
         OctreePoint *oldPoint = data;
         data = NULL;
 
-        for (uint i = 0; i < 8; ++i) {
+        for (int i = 0; i < 8; ++i) {
           Vec3 newOrigin = origin;
           newOrigin.x += halfDimension.x * (i & 4 ? 0.5 : -0.5);
           newOrigin.y += halfDimension.y * (i & 2 ? 0.5 : -0.5);
@@ -115,7 +115,7 @@ public:
           acc += sumAcc;
       }
     } else {
-      for (uint i = 0; i < 8; ++i) {
+      for (int i = 0; i < 8; ++i) {
         Vec3 R = (totalMassRadius / totalMass) - particlePos;
 
         double s = 2.0f * children[i]->halfDimension[0];

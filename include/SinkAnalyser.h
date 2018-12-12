@@ -20,9 +20,9 @@
 
 struct AccretionRecord {
   std::string id = "";
-  FLOAT avg_begin = 0.0;
-  FLOAT avg_end = 0.0;
-  FLOAT avg_tot = 0.0;
+  float avg_begin = 0.0;
+  float avg_end = 0.0;
+  float avg_tot = 0.0;
 };
 
 class SinkAnalyser {
@@ -42,6 +42,6 @@ private:
   std::vector<SinkRecord> mRecords;
   std::vector<SinkRecord> mNbodyRecords;
   int avg_num[3] = {0, 0, 0};
-  FLOAT avg_dmdt[3] = {0.0, 0.0, 0.0};
+  float avg_dmdt[3] = {0.0, 0.0, 0.0};
   std::vector<AccretionRecord> avg_dmdt_records;
 };

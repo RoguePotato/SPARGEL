@@ -121,7 +121,7 @@ bool DragonFile::ReadHeaderForm() {
 }
 
 void DragonFile::ReadParticleForm() {
-  FLOAT temp[3] = {0.0};
+  float temp[3] = {0.0};
   
   // Positions
   for (int i = 0; i < mNumGas; ++i) {

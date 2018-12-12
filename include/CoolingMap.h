@@ -29,19 +29,19 @@ public:
   void Output();
 
 private:
-  const FLOAT MOD_ARRAY[3] = {0.1f, 1.0f, 10.0f};
+  const float MOD_ARRAY[3] = {0.1f, 1.0f, 10.0f};
   OpacityTable *mOpacity = NULL;
-  FLOAT mDensMin = 0.0f;
-  FLOAT mDensMax = 0.0f;
-  FLOAT mTempMin = 0.0f;
-  FLOAT mTempMax = 0.0f;
+  float mDensMin = 0.0f;
+  float mDensMax = 0.0f;
+  float mTempMin = 0.0f;
+  float mTempMax = 0.0f;
   int mDensBins = 0;
   int mTempBins = 0;
 
   std::string mName = "";
-  std::vector<FLOAT> mDensities;
-  std::vector<FLOAT> mTemperatures;
+  std::vector<float> mDensities;
+  std::vector<float> mTemperatures;
 
   void FillVectors();
-  FLOAT CalculateDUDT(const FLOAT dens, const FLOAT temp, const FLOAT kappa);
+  float CalculateDUDT(const float dens, const float temp, const float kappa);
 };

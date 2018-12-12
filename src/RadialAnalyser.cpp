@@ -34,13 +34,13 @@ RadialAnalyser::~RadialAnalyser() {
 void RadialAnalyser::Run(SnapshotFile *file) {
   // Create bins
   if (mLog) {
-    for (FLOAT i = mIn; i < mOut; i += mWidth) {
-      FLOAT inner = pow(10.0, i);
-      FLOAT outer = pow(10.0, i + mWidth);
+    for (float i = mIn; i < mOut; i += mWidth) {
+      float inner = pow(10.0, i);
+      float outer = pow(10.0, i + mWidth);
       mRadialBins.push_back(new RadialBin(mParams, 0.0, inner, outer, mWidth));
     }
   } else {
-    for (FLOAT i = mIn; i < mOut; i += mWidth) {
+    for (float i = mIn; i < mOut; i += mWidth) {
       if (file->GetSinks().size() > 1) {
         mRadialBins.push_back(new RadialBin(
             mParams, file->GetSinks()[0]->GetM(), i, i + mWidth, mWidth));
@@ -55,7 +55,7 @@ void RadialAnalyser::Run(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
   std::vector<Sink *> sink = file->GetSinks();
   for (int i = 0; i < part.size(); ++i) {
-    FLOAT r = part[i]->GetX().Norm();
+    float r = part[i]->GetX().Norm();
     if (mLog)
       r = log10(r);
 
@@ -122,14 +122,14 @@ void RadialAnalyser::Run(SnapshotFile *file) {
   }
 }
 
-int RadialAnalyser::GetBinID(FLOAT r) {
+int RadialAnalyser::GetBinID(float r) {
   int intRadius = r * 1E10;
   int intWidth = mWidth * 1E10;
 
   int diff = intRadius % intWidth;
-  FLOAT floatDiff = diff / 1E10;
+  float floatDiff = diff / 1E10;
 
-  FLOAT rounded = r - floatDiff;
+  float rounded = r - floatDiff;
 
   return (rounded / mWidth);
 }

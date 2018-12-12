@@ -15,8 +15,8 @@
 
 #include "RadialBin.h"
 
-RadialBin::RadialBin(Parameters *params, FLOAT starMass, FLOAT in, FLOAT out,
-                     FLOAT width)
+RadialBin::RadialBin(Parameters *params, float starMass, float in, float out,
+                     float width)
     : mParams(params), mStarMass(starMass * MSUN_TO_KG), mIn(in), mOut(out),
       mWidth(width) {}
 
@@ -32,17 +32,17 @@ void RadialBin::CalculateValues() {
     return;
 
   // Create vertical bins
-  FLOAT height_lo = mParams->GetFloat("HEIGHT_LO");
-  FLOAT height_hi = mParams->GetFloat("HEIGHT_HI");
+  float height_lo = mParams->GetFloat("HEIGHT_LO");
+  float height_hi = mParams->GetFloat("HEIGHT_HI");
   int vert_bins = mParams->GetInt("VERTICAL_BINS");
-  FLOAT bin_height = (height_hi - height_lo) / vert_bins;
-  for (FLOAT i = height_lo; i < height_hi; i += bin_height) {
+  float bin_height = (height_hi - height_lo) / vert_bins;
+  for (float i = height_lo; i < height_hi; i += bin_height) {
     mVerticalBins.push_back(new VerticalBin(i, i + bin_height, bin_height));
   }
 
   for (int i = 0; i < mParticles.size(); ++i) {
     Particle *p = mParticles[i];
-    FLOAT z = fabs(p->GetX().z);
+    float z = fabs(p->GetX().z);
 
     mAverages[0] += p->GetD();
     mAverages[1] += p->GetT();
@@ -64,8 +64,8 @@ void RadialBin::CalculateValues() {
 
     // Vertical bins
     for (int j = 0; j < mVerticalBins.size(); ++j) {
-      FLOAT lo = mVerticalBins[j]->GetLow();
-      FLOAT hi = mVerticalBins[j]->GetHigh();
+      float lo = mVerticalBins[j]->GetLow();
+      float hi = mVerticalBins[j]->GetHigh();
 
       if (z > lo && z <= hi)
         mVerticalBins.at(j)->AddParticle(p);

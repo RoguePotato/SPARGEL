@@ -21,7 +21,7 @@
 
 class OpacityTable : public File {
 public:
-  OpacityTable(std::string fileName, bool formatted, FLOAT opacityMod);
+  OpacityTable(std::string fileName, bool formatted, float opacityMod);
   ~OpacityTable();
 
   bool Read();
@@ -29,29 +29,29 @@ public:
 
   int GetNDens() { return mNumDens; }
 
-  FLOAT GetKappa(FLOAT density, FLOAT temperature);
-  FLOAT GetKappar(FLOAT density, FLOAT temperature);
-  FLOAT GetEnergy(FLOAT density, FLOAT temperature);
-  FLOAT GetMuBar(FLOAT density, FLOAT temperature);
-  FLOAT GetGamma(FLOAT density, FLOAT temperature);
-  FLOAT GetGamma1(FLOAT density, FLOAT temperature);
-  FLOAT GetTemp(FLOAT density, FLOAT energy);
+  float GetKappa(float density, float temperature);
+  float GetKappar(float density, float temperature);
+  float GetEnergy(float density, float temperature);
+  float GetMuBar(float density, float temperature);
+  float GetGamma(float density, float temperature);
+  float GetGamma1(float density, float temperature);
+  float GetTemp(float density, float energy);
 
 private:
   int mNumDens = 0;
   int mNumTemp = 0;
-  FLOAT mFcol = 0.0;
-  FLOAT *mDens;
-  FLOAT *mTemp;
-  FLOAT **mEnergy;
-  FLOAT **mMu;
-  FLOAT **mKappa;
-  FLOAT **mKappar;
-  FLOAT **mKappap;
-  FLOAT **mGamma;
-  FLOAT **mGamma1;
-  FLOAT mOpacityMod = 1.0;
+  float mFcol = 0.0;
+  float *mDens;
+  float *mTemp;
+  float **mEnergy;
+  float **mMu;
+  float **mKappa;
+  float **mKappar;
+  float **mKappap;
+  float **mGamma;
+  float **mGamma1;
+  float mOpacityMod = 1.0;
 
-  int GetIDens(const FLOAT density);
-  int GetITemp(const FLOAT temperature);
+  int GetIDens(const float density);
+  int GetITemp(const float temperature);
 };

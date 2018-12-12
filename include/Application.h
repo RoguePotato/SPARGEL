@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include "Arguments.h"
 #include "ASCIIFile.h"
+#include "Arguments.h"
 #include "CloudAnalyser.h"
 #include "ClumpAnalyser.h"
 #include "ColumnFile.h"
@@ -78,8 +78,8 @@ private:
   std::string mOutFormat = "";
   std::string mCoolingMethod = "";
   std::string mEosFilePath = "";
-  FLOAT mGamma = 0.0;
-  FLOAT mMuBar = 0.0;
+  float mGamma = 0.0;
+  float mMuBar = 0.0;
   int mOutput = 0;
   int mReduceParticles = 0;
   int mExtraData = 0;
@@ -98,7 +98,7 @@ private:
   int mResetTime = 0;
   Vec3 mPosCenter = {0.0, 0.0, 0.0};
   int mHillRadiusCut = 0;
-  FLOAT mMidplaneCut = 0.0;
+  float mMidplaneCut = 0.0;
   int mInsertPlanet = 0.0;
 
   void Analyse(int task, int start, int end);

@@ -15,7 +15,7 @@
 
 #include "VerticalBin.h"
 
-VerticalBin::VerticalBin(FLOAT in, FLOAT out, FLOAT width)
+VerticalBin::VerticalBin(float in, float out, float width)
     : mIn(in), mOut(out), mWidth(width) {}
 
 VerticalBin::~VerticalBin() {}

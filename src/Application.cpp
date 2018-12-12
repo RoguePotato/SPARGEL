@@ -346,8 +346,8 @@ void Application::MidplaneCut(SnapshotFile *file) {
   std::vector<Particle *> trimmed;
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part[i];
-    FLOAT R = p->GetX().Norm();
-    FLOAT z = abs(p->GetX().z);
+    float R = p->GetX().Norm();
+    float z = abs(p->GetX().z);
     if (z <= mMidplaneCut) {
       trimmed.push_back(p);
     } else {
@@ -368,8 +368,8 @@ void Application::HillRadiusCut(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
   std::vector<Particle *> trimmed;
 
-  FLOAT planet_radius = sinks[1]->GetX().Norm();
-  FLOAT hill_radius =
+  float planet_radius = sinks[1]->GetX().Norm();
+  float hill_radius =
       planet_radius * pow(sinks[1]->GetM() / sinks[0]->GetM(), 0.333);
 
   std::cout << "Hill radius: " << hill_radius << " AU\n";
@@ -457,10 +457,10 @@ void Application::FindThermo(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part[i];
-    FLOAT density = p->GetD();
-    FLOAT energy = p->GetU();
-    FLOAT sigma = p->GetSigma();
-    FLOAT temp = p->GetT();
+    float density = p->GetD();
+    float energy = p->GetU();
+    float sigma = p->GetSigma();
+    float temp = p->GetT();
     if (mCoolingMethod == "stamatellos" || mCoolingMethod == "lombardi") {
       if (mInFormat == "su" || mInFormat == "sf" || mInFormat == "column" ||
           mInFormat == "ascii") {
@@ -475,14 +475,14 @@ void Application::FindThermo(SnapshotFile *file) {
         energy = (K * temp) / (mMuBar * M_P * (mGamma - 1.0));
       }
     }
-    FLOAT gamma = mOpacity->GetGamma(density, temp);
-    FLOAT kappa = mOpacity->GetKappa(density, temp);
-    FLOAT kappar = mOpacity->GetKappar(density, temp);
-    FLOAT mu_bar = mOpacity->GetMuBar(density, temp);
-    FLOAT press = (gamma - 1.0) * density * energy;
-    FLOAT cs = sqrt((K * temp) / (M_P * mu_bar));
-    FLOAT tau = kappa * sigma;
-    FLOAT dudt = 1.0 / ((sigma * sigma * kappa) + (1 / kappar));
+    float gamma = mOpacity->GetGamma(density, temp);
+    float kappa = mOpacity->GetKappa(density, temp);
+    float kappar = mOpacity->GetKappar(density, temp);
+    float mu_bar = mOpacity->GetMuBar(density, temp);
+    float press = (gamma - 1.0) * density * energy;
+    float cs = sqrt((K * temp) / (M_P * mu_bar));
+    float tau = kappa * sigma;
+    float dudt = 1.0 / ((sigma * sigma * kappa) + (1 / kappar));
 
     part[i]->SetT(temp);
     part[i]->SetU(energy);
@@ -540,9 +540,9 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
 
   for (int i = 0; i < negative.size(); ++i) {
     Particle *p = negative[i];
-    FLOAT x = p->GetX().x;
-    FLOAT y = p->GetX().y;
-    FLOAT z = -(p->GetX().z);
+    float x = p->GetX().x;
+    float y = p->GetX().y;
+    float z = -(p->GetX().z);
     negative[i]->SetX(Vec3(x, y, z));
   }
   OpticalDepthPoint *negative_points = new OpticalDepthPoint[negative.size()];
@@ -551,9 +551,9 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
   // The particles below the disc which have been flipped above now require
   // being flipped back.
   for (int i = 0; i < negative.size(); ++i) {
-    FLOAT x = negative[i]->GetX().x;
-    FLOAT y = negative[i]->GetX().y;
-    FLOAT z = -(negative[i]->GetX().z);
+    float x = negative[i]->GetX().x;
+    float y = negative[i]->GetX().y;
+    float z = -(negative[i]->GetX().z);
     negative[i]->SetX(Vec3(x, y, z));
     part[i + positive.size()] = negative[i];
   }
@@ -562,9 +562,9 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
 
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part[i];
-    FLOAT sigma = p->GetSigma();
-    FLOAT tau = p->GetTau();
-    FLOAT dudt = 1.0 / (sigma * (tau + (1.0 / tau)));
+    float sigma = p->GetSigma();
+    float tau = p->GetTau();
+    float dudt = 1.0 / (sigma * (tau + (1.0 / tau)));
 
     part[i]->SetDUDT(dudt);
   }
@@ -580,7 +580,7 @@ void Application::FindToomre(SnapshotFile *file) {
   std::sort(part.begin(), part.end(), [](Particle *a, Particle *b) {
     return b->GetX().Norm() > a->GetX().Norm();
   });
-  FLOAT inner_mass = 0.0;
+  float inner_mass = 0.0;
   int sink_index = 0;
 
   // Add mass contribution from central star if it exists
@@ -591,13 +591,13 @@ void Application::FindToomre(SnapshotFile *file) {
 
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part[i];
-    FLOAT r = p->GetX().Norm();
-    FLOAT r3 = pow(r * AU_TO_M, 3.0);
-    FLOAT omega = sqrt((G * inner_mass * MSUN_TO_KG) / (r3));
+    float r = p->GetX().Norm();
+    float r3 = pow(r * AU_TO_M, 3.0);
+    float omega = sqrt((G * inner_mass * MSUN_TO_KG) / (r3));
 
-    FLOAT cs = p->GetCS();
-    FLOAT sigma = p->GetSigma() * GPERCM2_TO_KGPERM2;
-    FLOAT Q = (cs * omega) / (PI * G * sigma);
+    float cs = p->GetCS();
+    float sigma = p->GetSigma() * GPERCM2_TO_KGPERM2;
+    float Q = (cs * omega) / (PI * G * sigma);
 
     part[i]->SetOmega(omega);
     part[i]->SetQ(Q);
@@ -618,16 +618,16 @@ void Application::FindToomre(SnapshotFile *file) {
 void Application::FindBeta(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
   for (int i = 0; i < part.size(); ++i) {
-    FLOAT r = part[i]->GetX().Norm();
-    FLOAT omega = part[i]->GetOmega();
-    FLOAT u = part[i]->GetU() / ERGPERG_TO_JPERKG;
-    FLOAT dens = part[i]->GetD();
-    FLOAT temp = part[i]->GetT();
-    FLOAT u_bgr = mOpacity->GetEnergy(dens, 10.0) / ERGPERG_TO_JPERKG;
+    float r = part[i]->GetX().Norm();
+    float omega = part[i]->GetOmega();
+    float u = part[i]->GetU() / ERGPERG_TO_JPERKG;
+    float dens = part[i]->GetD();
+    float temp = part[i]->GetT();
+    float u_bgr = mOpacity->GetEnergy(dens, 10.0) / ERGPERG_TO_JPERKG;
 
-    FLOAT dudt_norm = part[i]->GetDUDT();
-    FLOAT dudt = dudt_norm * 4.0 * SB * pow(temp, 4.0);
-    FLOAT beta = u * (omega / dudt);
+    float dudt_norm = part[i]->GetDUDT();
+    float dudt = dudt_norm * 4.0 * SB * pow(temp, 4.0);
+    float beta = u * (omega / dudt);
 
     part[i]->SetBeta(beta);
   }
@@ -638,16 +638,16 @@ void Application::InsertPlanet(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
   std::vector<Sink *> sink = file->GetSinks();
 
-  FLOAT mass = mParams->GetFloat("PLANET_MASS") / MSUN_TO_MJUP;
-  FLOAT radius = mParams->GetFloat("PLANET_RADIUS");
-  FLOAT smoothing = mParams->GetFloat("PLANET_SMOOTHING");
-  FLOAT ecc = mParams->GetFloat("PLANET_ECC");
-  FLOAT inc = mParams->GetFloat("PLANET_INC");
+  float mass = mParams->GetFloat("PLANET_MASS") / MSUN_TO_MJUP;
+  float radius = mParams->GetFloat("PLANET_RADIUS");
+  float smoothing = mParams->GetFloat("PLANET_SMOOTHING");
+  float ecc = mParams->GetFloat("PLANET_ECC");
+  float inc = mParams->GetFloat("PLANET_INC");
 
   Vec3 vel = Vec3(0.0, 0.0, 0.0);
 
-  FLOAT hill_radius = radius * pow(mass / (3.0 * sink[0]->GetM()), 1.0 / 3.0);
-  FLOAT interior_mass = 0.0;
+  float hill_radius = radius * pow(mass / (3.0 * sink[0]->GetM()), 1.0 / 3.0);
+  float interior_mass = 0.0;
   for (int i = 0; i < part.size(); ++i) {
     if (part[i]->GetX().Norm() < radius) {
       interior_mass += part[i]->GetM();
@@ -679,7 +679,7 @@ void Application::ReduceParticles(SnapshotFile *file) {
     return;
   }
 
-  FLOAT new_mass = part[0]->GetM() * (curr_num / final_num);
+  float new_mass = part[0]->GetM() * (curr_num / final_num);
 
   std::vector<Particle *> new_part;
   for (int i = 0; i < final_num; ++i) {
@@ -689,7 +689,7 @@ void Application::ReduceParticles(SnapshotFile *file) {
 
   for (int i = 0; i < final_num; ++i) {
     Particle *p = new_part[i];
-    FLOAT h = powf((3 * 50 * new_mass) / (32 * PI * p->GetD()), (1.0f / 3.0f));
+    float h = pow((3 * 50 * new_mass) / (32 * PI * p->GetD()), (1.0f / 3.0f));
     new_part[i]->SetM(new_mass);
     new_part[i]->SetH(h);
   }
@@ -709,7 +709,7 @@ void Application::OutputInfo(SnapshotFile *file) {
     std::cout << "=====";
   std::cout << "\n";
 
-  FLOAT gas_mass = 0.0, total_mass = 0.0;
+  float gas_mass = 0.0, total_mass = 0.0;
   for (int i = 0; i < sink.size(); ++i) {
     std::cout << "   Sink " << i + 1 << "\n";
     std::cout << "   Mass   = " << sink[i]->GetM() << "\n";

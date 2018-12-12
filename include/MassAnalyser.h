@@ -21,15 +21,15 @@
 #include "Particle.h"
 
 struct MassComponent {
-  FLOAT time = 0.0;
-  FLOAT tot_mass = 0.0;
-  FLOAT gas_mass = 0.0;
-  FLOAT dust_mass = 0.0;
-  FLOAT sink_mass = 0.0;
-  FLOAT unique_sink_mass[16] = {0.0};
-  FLOAT mdot = 0.0;
-  FLOAT rout[3] = {0.0, 0.0, 0.0};
-  FLOAT rdens;
+  float time = 0.0;
+  float tot_mass = 0.0;
+  float gas_mass = 0.0;
+  float dust_mass = 0.0;
+  float sink_mass = 0.0;
+  float unique_sink_mass[16] = {0.0};
+  float mdot = 0.0;
+  float rout[3] = {0.0, 0.0, 0.0};
+  float rdens;
   int gas_num = 0;
   int dust_num = 0;
   int sink_num = 0;
@@ -47,5 +47,5 @@ public:
 private:
   std::vector<MassComponent> mMasses;
   std::ofstream mOutStream;
-  FLOAT rout_percs[3] = {0.9, 0.95, 0.99};
+  float rout_percs[3] = {0.9, 0.95, 0.99};
 };

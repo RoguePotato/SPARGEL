@@ -76,7 +76,7 @@ void Generator::SetupParams() {
               pow((mR0 * mR0 + mRin * mRin) / (mR0 * mR0), 1.0 - (mP / 2.0)),
           -1.0f);
 
-  mCloudVol = (4.0f / 3.0f) * PI * powf(mCloudRadius, 3.0f);
+  mCloudVol = (4.0f / 3.0f) * PI * pow(mCloudRadius, 3.0f);
 
   if (mSeed > 0) {
     srand(mSeed);
@@ -88,7 +88,7 @@ void Generator::SetupParams() {
 void Generator::GenerateRandoms() {
   // TODO: Add Mersenne twister
   for (int i = 0; i < 3; ++i) {
-    mRands[i] = rand() / (FLOAT)RAND_MAX;
+    mRands[i] = rand() / (float)RAND_MAX;
   }
 }
 
@@ -101,46 +101,46 @@ void Generator::CreateDisc() {
   for (int i = 0; i < mNumHydro; ++i) {
     GenerateRandoms();
 
-    FLOAT index[2];
+    float index[2];
     index[0] = 1.0f - (mP / 2.0f);
     index[1] = 2.0f / (2.0f - mP);
 
-    FLOAT omegaIn = pow(1.0 + mOmegaIn, index[0]);
-    FLOAT omegaOut = pow(1.0 + mOmegaOut, index[0]);
-    FLOAT inner = (omegaIn + mRands[0] * (omegaOut - omegaIn));
+    float omegaIn = pow(1.0 + mOmegaIn, index[0]);
+    float omegaOut = pow(1.0 + mOmegaOut, index[0]);
+    float inner = (omegaIn + mRands[0] * (omegaOut - omegaIn));
 
-    FLOAT omega = pow(inner, index[1]) - 1.0;
-    FLOAT R = mR0 * pow(omega, 0.5f);
-    FLOAT phi = 2 * PI * mRands[1];
+    float omega = pow(inner, index[1]) - 1.0;
+    float R = mR0 * pow(omega, 0.5f);
+    float phi = 2 * PI * mRands[1];
 
-    FLOAT x = R * cos(phi);
-    FLOAT y = R * sin(phi);
+    float x = R * cos(phi);
+    float y = R * sin(phi);
 
-    FLOAT sigma = mSigma0 * pow((mR0 * mR0) / (mR0 * mR0 + R * R), mP / 2.0);
+    float sigma = mSigma0 * pow((mR0 * mR0) / (mR0 * mR0 + R * R), mP / 2.0);
 
-    FLOAT T =
+    float T =
         pow(pow(mTinf, 4.0) +
                 pow(mT0, 4.0) * pow(pow(R, 2.0) + pow(mR0, 2.0), -2.0 * mQ),
             0.25);
-    FLOAT cS2 = ((K * T) / (MU * M_P)) / (AU_TO_M * AU_TO_M);
+    float cS2 = ((K * T) / (MU * M_P)) / (AU_TO_M * AU_TO_M);
 
-    FLOAT z_0 = -((PI * sigma * R * R * R) / (2.0 * mMStar)) +
+    float z_0 = -((PI * sigma * R * R * R) / (2.0 * mMStar)) +
                 pow(pow((PI * sigma * R * R * R) / (2.0 * mMStar), 2.0) +
                         ((cS2 * R * R * R) / (G_AU * mMStar)),
                     0.5);
 
-    FLOAT z = (2.0 / PI) * z_0 * asin(2.0 * mRands[2] - 1.0);
+    float z = (2.0 / PI) * z_0 * asin(2.0 * mRands[2] - 1.0);
 
-    FLOAT rho_0 = ((PI * mSigma0) / (4.0 * z_0)) *
+    float rho_0 = ((PI * mSigma0) / (4.0 * z_0)) *
                   pow((mR0 * mR0) / (mR0 * mR0 + R * R), mP / 2.0);
 
-    FLOAT rho = (rho_0 * cos((PI * z) / (2 * z_0)));
+    float rho = (rho_0 * cos((PI * z) / (2 * z_0)));
 
-    FLOAT m = mMDisc / mNumHydro;
+    float m = mMDisc / mNumHydro;
 
-    FLOAT h = pow((3 * mNumNeigh * m) / (32.0 * PI * rho), (1.0 / 3.0));
+    float h = pow((3 * mNumNeigh * m) / (32.0 * PI * rho), (1.0 / 3.0));
 
-    FLOAT U = mOpacity->GetEnergy(rho, T);
+    float U = mOpacity->GetEnergy(rho, T);
 
     mParticles[i]->SetID(i);
     mParticles[i]->SetX(Vec3(x, y, z));
@@ -164,20 +164,20 @@ void Generator::CreateCloud() {
   for (int i = 0; i < mNumHydro; ++i) {
     GenerateRandoms();
 
-    FLOAT r = powf(mRands[0], (1.0f / 3.0f)) * mCloudRadius;
-    FLOAT theta = acos(1.0f - 2.0f * mRands[1]);
-    FLOAT phi = 2.0f * PI * mRands[2];
+    float r = pow(mRands[0], (1.0f / 3.0f)) * mCloudRadius;
+    float theta = acos(1.0f - 2.0f * mRands[1]);
+    float phi = 2.0f * PI * mRands[2];
 
-    FLOAT x = r * sin(theta) * cos(phi);
-    FLOAT y = r * sin(theta) * sin(phi);
-    FLOAT z = r * cos(theta);
+    float x = r * sin(theta) * cos(phi);
+    float y = r * sin(theta) * sin(phi);
+    float z = r * cos(theta);
 
-    FLOAT m = mCloudMass / mNumHydro;
-    FLOAT rho = mCloudMass / mCloudVol;
+    float m = mCloudMass / mNumHydro;
+    float rho = mCloudMass / mCloudVol;
 
-    FLOAT h = powf((3 * mNumNeigh * m) / (32 * PI * (rho)), (1.0f / 3.0f));
-    FLOAT T = 5.0f;
-    FLOAT U = (K * T) / (2.35f * M_P * 0.66666f);
+    float h = pow((3 * mNumNeigh * m) / (32 * PI * (rho)), (1.0f / 3.0f));
+    float T = 5.0f;
+    float U = (K * T) / (2.35f * M_P * 0.66666f);
 
     mParticles[i]->SetID(i);
     mParticles[i]->SetX(Vec3(x, y, z));
@@ -204,12 +204,12 @@ void Generator::CreateStars() {
     s2->SetH(mStarSmoothing);
     s2->SetM(mMBinary);
 
-    FLOAT x1 = -mBinarySep * (1.0 - mBinaryEcc) * (mMBinary / mMTotal) +
+    float x1 = -mBinarySep * (1.0 - mBinaryEcc) * (mMBinary / mMTotal) +
                ((mBinarySep / 2.0) * (1.0 - cos(mBinaryInc)));
-    FLOAT x2 = mBinarySep * (1.0 - mBinaryEcc) * (mMStar / mMTotal) -
+    float x2 = mBinarySep * (1.0 - mBinaryEcc) * (mMStar / mMTotal) -
                ((mBinarySep / 2.0) * (1.0 - cos(mBinaryInc)));
-    FLOAT z1 = (mBinarySep / 2.0) * sin(mBinaryInc);
-    FLOAT z2 = -(mBinarySep / 2.0) * sin(mBinaryInc);
+    float z1 = (mBinarySep / 2.0) * sin(mBinaryInc);
+    float z2 = -(mBinarySep / 2.0) * sin(mBinaryInc);
 
     s1->SetX(Vec3(x1, 0.0, z1));
     s2->SetX(Vec3(x2, 0.0, z2));
@@ -227,9 +227,9 @@ void Generator::CreatePlanet() {
   Vec3 planet_pos = Vec3(mPlanetRadius * (1.0 - mPlanetEcc), 0.0, 0.0);
   Vec3 planet_vel = Vec3(0.0, 0.0, 0.0);
 
-  FLOAT hill_radius =
+  float hill_radius =
       mPlanetRadius * pow(mPlanetMass / (3.0 * mMStar), 1.0 / 3.0);
-  FLOAT interior_mass = 0.0;
+  float interior_mass = 0.0;
   for (int i = 0; i < mParticles.size(); ++i) {
     if (mParticles[i]->GetX().Norm() < mPlanetRadius) {
       interior_mass += mParticles[i]->GetM();
@@ -254,7 +254,7 @@ void Generator::CalculateVelocity() {
   mOctreePoints = new OctreePoint[mParticles.size() + mSinks.size()];
   for (int i = 0; i < mParticles.size(); ++i) {
     Vec3 pos = mParticles.at(i)->GetX();
-    FLOAT M = mParticles.at(i)->GetM();
+    float M = mParticles.at(i)->GetM();
 
     mOctreePoints[i].SetPosition(pos);
     mOctreePoints[i].SetMass(M);
@@ -264,7 +264,7 @@ void Generator::CalculateVelocity() {
   // Insert sinks
   for (int i = 0; i < mSinks.size(); ++i) {
     Vec3 pos = mSinks.at(i)->GetX();
-    FLOAT M = mSinks.at(i)->GetM();
+    float M = mSinks.at(i)->GetM();
 
     mOctreePoints[i].SetPosition(pos);
     mOctreePoints[i].SetMass(M);
@@ -274,25 +274,25 @@ void Generator::CalculateVelocity() {
   for (int i = 0; i < mParticles.size(); ++i) {
     Vec3 acc = Vec3(0.0, 0.0, 0.0);
     Vec3 pos = mParticles.at(i)->GetX();
-    FLOAT R = mParticles.at(i)->GetR();
-    FLOAT x = mParticles.at(i)->GetX()[0];
-    FLOAT y = mParticles.at(i)->GetX()[1];
-    FLOAT h = mParticles.at(i)->GetH();
+    float R = mParticles.at(i)->GetR();
+    float x = mParticles.at(i)->GetX()[0];
+    float y = mParticles.at(i)->GetX()[1];
+    float h = mParticles.at(i)->GetH();
 
     mOctree->TraverseTree(pos, acc, h);
 
-    FLOAT v = sqrt(acc.Norm() * R) * AU_TO_KM;
-    FLOAT vX = (-v * y) / (R + 0.000001);
-    FLOAT vY = (v * x) / (R + 0.000001);
+    float v = sqrt(acc.Norm() * R) * AU_TO_KM;
+    float vX = (-v * y) / (R + 0.000001);
+    float vY = (v * x) / (R + 0.000001);
 
     mParticles.at(i)->SetV(Vec3(vX, vY, 0.0));
   }
 
   if (mParams->GetString("IC_TYPE") == "binary") {
-    FLOAT v_y1 = -sqrt((G * mMTotal * MSUN_TO_KG) / (mBinarySep * AU_TO_M)) *
+    float v_y1 = -sqrt((G * mMTotal * MSUN_TO_KG) / (mBinarySep * AU_TO_M)) *
                  sqrt((1.0 + mBinaryEcc) / (1.0 - mBinaryEcc)) *
                  (mMBinary / mMTotal);
-    FLOAT v_y2 = sqrt((G * mMTotal * MSUN_TO_KG) / (mBinarySep * AU_TO_M)) *
+    float v_y2 = sqrt((G * mMTotal * MSUN_TO_KG) / (mBinarySep * AU_TO_M)) *
                  sqrt((1 + mBinaryEcc) / (1.0 - mBinaryEcc)) *
                  (mMStar / mMTotal);
 

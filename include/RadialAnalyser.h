@@ -33,14 +33,14 @@ public:
 private:
   Parameters *mParams = NULL;
 
-  FLOAT mIn = 0.0;
-  FLOAT mOut = 0.0;
+  float mIn = 0.0;
+  float mOut = 0.0;
   int mBins = 0;
   int mLog = 0;
   int mVert = 0;
-  FLOAT mWidth = 0.0f;
+  float mWidth = 0.0f;
 
   std::vector<RadialBin *> mRadialBins;
 
-  int GetBinID(FLOAT r);
+  int GetBinID(float r);
 };

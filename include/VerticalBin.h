@@ -29,24 +29,24 @@
 
 class VerticalBin {
 public:
-  VerticalBin(FLOAT in, FLOAT out, FLOAT width);
+  VerticalBin(float in, float out, float width);
   ~VerticalBin();
 
   void AddParticle(Particle *p) { mParticles.push_back(p); }
 
   void CalculateValues();
 
-  FLOAT GetMid() { return mIn + (mWidth / 2.0); }
-  FLOAT GetLow() { return mIn; }
-  FLOAT GetHigh() { return mOut; }
-  FLOAT GetAverage(int index) { return mAverages[index]; }
+  float GetMid() { return mIn + (mWidth / 2.0); }
+  float GetLow() { return mIn; }
+  float GetHigh() { return mOut; }
+  float GetAverage(int index) { return mAverages[index]; }
   int GetNumParticles() { return mParticles.size(); }
 
 private:
-  FLOAT mIn = 0;
-  FLOAT mOut = 0;
-  FLOAT mWidth = 0.0;
+  float mIn = 0;
+  float mOut = 0;
+  float mWidth = 0.0;
 
   std::vector<Particle *> mParticles;
-  FLOAT mAverages[TOT_RAD_QUAN] = {};
+  float mAverages[TOT_RAD_QUAN] = {};
 };

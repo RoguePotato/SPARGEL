@@ -32,7 +32,7 @@ bool SinkFile::Read() {
     return false;
   }
 
-  FLOAT temp[27] = {};
+  float temp[27] = {};
   std::string line;
   while (getline(mInStream, line)) {
     std::istringstream istr(line);

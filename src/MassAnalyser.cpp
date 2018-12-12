@@ -43,8 +43,8 @@ void MassAnalyser::ExtractValues(SnapshotFile *file) {
 
   // Find radius encompassing [90%, 95%, 99%] of the gas mass.
   for (int i = 0; i < 3; ++i) {
-    FLOAT accum_mass = 0.0f;
-    FLOAT threshold = mc.gas_mass * rout_percs[i];
+    float accum_mass = 0.0f;
+    float threshold = mc.gas_mass * rout_percs[i];
     for (int j = 0; j < part.size(); ++j) {
       Particle *p = part[j];
       accum_mass += p->GetM();
@@ -57,7 +57,7 @@ void MassAnalyser::ExtractValues(SnapshotFile *file) {
 
   // Find maximum density position of that of a formed companion if it exists.
   if (sinks.size() == 1) {
-    FLOAT max_dens = 0.0f;
+    float max_dens = 0.0f;
     for (int i = 0; i < part.size(); ++i) {
       Particle *p = part[i];
       if (p->GetD() > max_dens) {
@@ -79,13 +79,13 @@ void MassAnalyser::ExtractValues(SnapshotFile *file) {
   mMasses.push_back(mc);
 
   // Mass and N within 1 AU of companion. Hill radius calculation.
-  FLOAT sink_mass[3] = {0.0, 0.0, 0.0};
-  FLOAT sink_n[3] = {0.0, 0.0, 0.0};
-  FLOAT hill_radius = 0.0;
+  float sink_mass[3] = {0.0, 0.0, 0.0};
+  float sink_n[3] = {0.0, 0.0, 0.0};
+  float hill_radius = 0.0;
   if (sinks.size() > 0) {
     Vec3 sink_pos = sinks[1]->GetX();
     for (int i = 0; i < part.size(); ++i) {
-      FLOAT dx = (part[i]->GetX() - sink_pos).Norm();
+      float dx = (part[i]->GetX() - sink_pos).Norm();
 
       if (dx < 0.25) {
         sink_mass[0] += part[i]->GetM() * MSUN_TO_MJUP;
@@ -106,7 +106,7 @@ void MassAnalyser::ExtractValues(SnapshotFile *file) {
     // Hill radius
     hill_radius =
         sinks[1]->GetR() *
-        powf(sink_mass[2] / (3 * sinks[0]->GetM() * MSUN_TO_MJUP), 0.33f);
+        pow(sink_mass[2] / (3 * sinks[0]->GetM() * MSUN_TO_MJUP), 0.33f);
   }
 
   for (int i = 0; i < 16; ++i)
@@ -137,10 +137,10 @@ void MassAnalyser::ExtractValues(SnapshotFile *file) {
             << " " << mc.rout[2] << " AU\n";
   std::cout << "   a clump          : " << mc.rdens << " AU\n";
 
-  if (sinks.size() < 2) { 
+  if (sinks.size() < 2) {
     return;
   }
-  
+
   std::cout << "   R clump          : " << sinks.at(1)->GetClumpR() << " AU\n";
   std::cout << "   M clump          : " << sinks.at(1)->GetClumpM()
             << " Mjup\n";
@@ -151,8 +151,8 @@ void MassAnalyser::CalculateAccretionRate() {
             [](MassComponent a, MassComponent b) { return b.time > a.time; });
 
   for (int i = 1; i < mMasses.size(); ++i) {
-    FLOAT dt = mMasses[i - 1].time - mMasses[i].time;
-    FLOAT dM = mMasses[i - 1].tot_mass - mMasses[i].tot_mass;
+    float dt = mMasses[i - 1].time - mMasses[i].time;
+    float dM = mMasses[i - 1].tot_mass - mMasses[i].tot_mass;
     if (dt != 0.0)
       mMasses[i].mdot = dM / dt;
   }

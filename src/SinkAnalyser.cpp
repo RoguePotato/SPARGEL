@@ -52,7 +52,7 @@ void SinkAnalyser::CalculateMassRadius(SnapshotFile *file, int sink_id) {
 
   // Find the radius of the sink at the point the density drops below 1e-13
   // g/cm^-3.
-  FLOAT total_mass = sink.at(sink_id)->GetM();
+  float total_mass = sink.at(sink_id)->GetM();
   for (int i = 0; i < part.size(); ++i) {
     if (part.at(i)->GetD() < 1e-13) {
       sink.at(sink_id)->SetClumpR(part.at(i)->GetX().Norm()); 
@@ -67,12 +67,12 @@ void SinkAnalyser::CalculateMassRadius(SnapshotFile *file, int sink_id) {
 
 void SinkAnalyser::CalculateAccRate(SinkFile *sf) {
   std::vector<SinkRecord *> records = sf->GetRecords();
-  FLOAT dt = records.back()->time - records.front()->time;
+  float dt = records.back()->time - records.front()->time;
 
   // Average dmdt for first 10 percent of the simulation.
   for (int i = 0; i < records.size(); ++i) {
     SinkRecord *r = records[i];
-    FLOAT t = r->time;
+    float t = r->time;
 
     if (t > dt * 0.1) {
       break;
@@ -84,7 +84,7 @@ void SinkAnalyser::CalculateAccRate(SinkFile *sf) {
   // Average dmdt for last 10 percent of the simulation.
   for (int i = 0; i < records.size(); ++i) {
     SinkRecord *r = records[i];
-    FLOAT t = r->time;
+    float t = r->time;
 
     if (t > dt * 0.9) {
       avg_num[1]++;

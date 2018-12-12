@@ -24,25 +24,25 @@ public:
   SinkRecord(){};
   ~SinkRecord(){};
 
-  FLOAT time = 0.0;
+  float time = 0.0;
   int nsteps = 0;
   Vec3 pos = {0.0, 0.0, 0.0};
   Vec3 vel = {0.0, 0.0, 0.0};
   Vec3 acc = {0.0, 0.0, 0.0};
   Vec3 angmom = {0.0, 0.0, 0.0};
-  FLOAT m = 0.0;
-  FLOAT menc = 0.0;
-  FLOAT mmax = 0.0;
-  FLOAT macctot = 0.0;
-  FLOAT dmdt = 0.0;
-  FLOAT ketot = 0.0;
-  FLOAT gpetot = 0.0;
-  FLOAT rotketot = 0.0;
-  FLOAT utot = 0.0;
-  FLOAT taccrete = 0.0;
-  FLOAT trad = 0.0;
-  FLOAT trot = 0.0;
-  FLOAT tvisc = 0.0;
+  float m = 0.0;
+  float menc = 0.0;
+  float mmax = 0.0;
+  float macctot = 0.0;
+  float dmdt = 0.0;
+  float ketot = 0.0;
+  float gpetot = 0.0;
+  float rotketot = 0.0;
+  float utot = 0.0;
+  float taccrete = 0.0;
+  float trad = 0.0;
+  float trot = 0.0;
+  float tvisc = 0.0;
 };
 
 class SinkFile : public File {

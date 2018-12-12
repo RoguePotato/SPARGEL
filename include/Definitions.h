@@ -17,31 +17,15 @@
 #pragma once
 
 #include <algorithm>
-#include <math.h>
-#include <ctime>
+#include <cmath>
+#include <cstdlib>
 #include <fstream>
 #include <iomanip>
-#include <ios>
 #include <iostream>
 #include <map>
 #include <sstream>
-#include <stdint.h>
 #include <thread>
-#include <time.h>
 #include <vector>
-
-#define PRECISION DOUBLE_PRECISION
-
-#define SINGLE_PRECISION 4
-#define DOUBLE_PRECISION 8
-
-#if PRECISION == SINGLE_PRECISION
-typedef float FLOAT;
-typedef double DOUBLE;
-#elif PRECISION == DOUBLE_PRECISION
-typedef double FLOAT;
-typedef double DOUBLE;
-#endif
 
 #define GAS_TYPE 1
 #define SINK_TYPE -1
