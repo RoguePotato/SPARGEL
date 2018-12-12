@@ -26,7 +26,7 @@ public:
   DiscAnalyser(Parameters *params);
   ~DiscAnalyser();
 
-  void Center(SnapshotFile *file, int sinkIndex, Vec3 posCenter);
+  void Center(SnapshotFile *file, int sinkIndex, Vec3 posCenter, int densest);
 
 private:
   Parameters *mParams = NULL;

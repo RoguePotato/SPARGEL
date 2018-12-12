@@ -97,6 +97,7 @@ bool Application::Initialise() {
   mPosCenter =
       Vec3(mParams->GetFloat("CENTER_X"), mParams->GetFloat("CENTER_Y"),
            mParams->GetFloat("CENTER_Z"));
+  mCenterDensest = mParams->GetInt("CENTER_DENSEST");
   mHillRadiusCut = mParams->GetInt("HILLRADIUS_CUT");
   mMidplaneCut = mParams->GetFloat("MIDPLANE_CUT");
   mExtraQuantities = mParams->GetInt("EXTRA_QUANTITIES");
@@ -270,7 +271,7 @@ void Application::Analyse(int task, int start, int end) {
     if (mDiscAnalyse) {
       if (mCenter) {
         mDiscAnalyser->Center((SnapshotFile *)mFiles[i], mCenter - 1,
-                              mPosCenter);
+                              mPosCenter, mCenterDensest);
       }
       // Find vertically integrated quantities
       if (mHillRadiusCut) {

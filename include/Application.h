@@ -94,6 +94,7 @@ private:
   int mExtraQuantities = 0;
   int mResetTime = 0;
   Vec3 mPosCenter = {0.0, 0.0, 0.0};
+  int mCenterDensest = 0;
   int mHillRadiusCut = 0;
   float mMidplaneCut = 0.0;
   int mInsertPlanet = 0.0;
