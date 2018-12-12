@@ -16,6 +16,7 @@
 #include "RadialAnalyser.h"
 
 RadialAnalyser::RadialAnalyser(Parameters *params) : mParams(params) {
+  mSpherical = mParams->GetInt("SPHERICAL");
   mIn = mParams->GetFloat("RADIUS_IN");
   mOut = mParams->GetFloat("RADIUS_OUT");
   mBins = mParams->GetInt("RADIAL_BINS");
@@ -55,7 +56,13 @@ void RadialAnalyser::Run(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
   std::vector<Sink *> sink = file->GetSinks();
   for (int i = 0; i < part.size(); ++i) {
-    float r = part[i]->GetX().Norm();
+    float r = 0.0;
+    if (mSpherical) {
+      r = part[i]->GetX().Norm();
+    } else {
+      r = part[i]->GetX().Norm2();
+    }
+
     if (mLog)
       r = log10(r);
 
@@ -75,8 +82,15 @@ void RadialAnalyser::Run(SnapshotFile *file) {
   NameData nd = file->GetNameData();
   if (nd.dir == "")
     nd.dir = ".";
-  std::string outputName = nd.dir + "/SPARGEL." + nd.id + "." + nd.format +
-                           "." + nd.snap + nd.append + ".radial";
+  std::string outputName = "";
+
+  if (mSpherical) {
+    outputName = nd.dir + "/SPARGEL." + nd.id + "." + nd.format + "." +
+                 nd.snap + nd.append + ".spherical";
+  } else {
+    outputName = nd.dir + "/SPARGEL." + nd.id + "." + nd.format + "." +
+                 nd.snap + nd.append + ".radial";
+  }
 
   std::ofstream out;
   out.open(outputName);

@@ -148,6 +148,7 @@ void Parameters::SetDefaultParameters() {
   mFloatParams["RADIUS_OUT"] = 100.0;
   mIntParams["RADIAL_BINS"] = 100;
   mIntParams["RADIAL_LOG"] = 0;
+  mIntParams["SPHERICAL"] = 0;
   mFloatParams["HEIGHT_LO"] = 0.0;
   mFloatParams["HEIGHT_HI"] = 10.0;
   mIntParams["VERTICAL_BINS"] = 100;
@@ -160,9 +161,6 @@ void Parameters::SetDefaultParameters() {
   mFloatParams["TEMP_MIN"] = 0.0f;
   mFloatParams["TEMP_MAX"] = 0.0f;
   mIntParams["TEMP_BINS"] = 0;
-
-  mIntParams["CLUMP_FROM_SINK"] = 0;
-  mIntParams["CLUMP_FROM_PART"] = 0;
 
   mIntParams["GENERATE"] = 0;
   mStringParams["IC_TYPE"] = "disc";
