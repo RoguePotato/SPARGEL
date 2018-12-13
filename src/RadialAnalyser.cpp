@@ -78,6 +78,14 @@ void RadialAnalyser::Run(SnapshotFile *file) {
     mRadialBins[i]->CalculateValues();
   }
 
+  // Find the cumulative mass of the bins.
+  float total_mass = 0.0f;
+  for (int i = 0; i < mRadialBins.size(); ++i) {
+    total_mass +=
+        mRadialBins[i]->GetAverage(11) * mRadialBins[i]->GetNumParticles();
+    mRadialBins[i]->SetAverage(total_mass, 11);
+  }
+
   // Output azimuthally-averaged values
   NameData nd = file->GetNameData();
   if (nd.dir == "")

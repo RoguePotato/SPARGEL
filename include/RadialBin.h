@@ -44,6 +44,10 @@ public:
   int GetNumParticles() { return mParticles.size(); }
   std::vector<VerticalBin *> GetVerticalBins() { return mVerticalBins; }
 
+  float SetAverage(const float value, const int index) {
+    mAverages[index] = value;
+  }
+
 private:
   Parameters *mParams = NULL;
 
