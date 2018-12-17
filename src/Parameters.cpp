@@ -143,6 +143,7 @@ void Parameters::SetDefaultParameters() {
   mFloatParams["CENTER_Y"] = 0.0;
   mFloatParams["CENTER_Z"] = 0.0;
   mIntParams["CENTER_DENSEST"] = 0;
+  mIntParams["CENTER_DENSEST_NUM"] = 1;
   mIntParams["HILLRADIUS_CUT"] = 0;
   mFloatParams["MIDPLANE_CUT"] = 0.0;
   mFloatParams["RADIUS_IN"] = 0.0;

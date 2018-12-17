@@ -24,6 +24,7 @@ void DiscAnalyser::Center(SnapshotFile *file, int sinkIndex, Vec3 posCenter,
   std::vector<Particle *> part = file->GetParticles();
   std::vector<Sink *> sink = file->GetSinks();
   Vec3 dX = {0.0, 0.0, 0.0};
+  Vec3 dV = {0.0, 0.0, 0.0};
   std::string appendage = ".centered.";
 
   // Return if there is no position to center around
@@ -33,15 +34,22 @@ void DiscAnalyser::Center(SnapshotFile *file, int sinkIndex, Vec3 posCenter,
   }
 
   if (densest) {
-    // Find the densest particle position.
-    float max_dens = -1E30;
-    for (int i = 0; i < part.size(); ++i) {
-      Particle *p = part.at(i);
-      if (p->GetD() > max_dens) {
-        max_dens = p->GetD();
-        dX = p->GetX();
-      }
+    // Sort by density, but use a copy of the particles.
+    std::vector<Particle *> dens_sorted = part;
+    std::sort(dens_sorted.begin(), dens_sorted.end(),
+              [](Particle *a, Particle *b) { return b->GetD() < a->GetD(); });
+
+    // Find the densest however so-many particles CoM.
+    float total_mass = 0.0f;
+    int n_part = std::max(1, mParams->GetInt("CENTER_DENSEST_NUM"));
+    for (int i = 0; i < n_part; ++i) {
+      Particle *p = dens_sorted.at(i);
+      dX += p->GetX() * p->GetM();
+      dV += p->GetV() * p->GetM();
+      total_mass += p->GetM();
     }
+    dX /= total_mass;
+    dV /= total_mass;
     appendage += "densest";
   } else {
     if (posCenter.Norm() == 0.0) {
@@ -58,9 +66,11 @@ void DiscAnalyser::Center(SnapshotFile *file, int sinkIndex, Vec3 posCenter,
 
   // TODO: Instead of using R, maybe replace all with GetX().Norm().
   for (int i = 0; i < part.size(); ++i) {
-    Vec3 newX = part[i]->GetX() - dX;
-    part[i]->SetX(newX);
-    part[i]->SetR(part[i]->GetX().Norm());
+    Vec3 newX = part.at(i)->GetX() - dX;
+    Vec3 newV = part.at(i)->GetV() - dV;
+    part.at(i)->SetX(newX);
+    part.at(i)->SetR(part.at(i)->GetX().Norm());
+    part.at(i)->SetV(newV);
   }
 
   for (int i = 0; i < sink.size(); ++i) {
