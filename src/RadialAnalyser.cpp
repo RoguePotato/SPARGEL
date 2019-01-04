@@ -33,23 +33,14 @@ RadialAnalyser::~RadialAnalyser() {
 }
 
 void RadialAnalyser::Run(SnapshotFile *file) {
-  // Create bins
-  if (mLog) {
-    for (float i = mIn; i < mOut; i += mWidth) {
-      float inner = pow(10.0, i);
-      float outer = pow(10.0, i + mWidth);
-      mRadialBins.push_back(new RadialBin(mParams, 0.0, inner, outer, mWidth));
-    }
-  } else {
-    for (float i = mIn; i < mOut; i += mWidth) {
-      if (file->GetSinks().size() > 1) {
-        mRadialBins.push_back(new RadialBin(
-            mParams, file->GetSinks()[0]->GetM(), i, i + mWidth, mWidth));
-      } else {
-        mRadialBins.push_back(
-            new RadialBin(mParams, 0.0, i, i + mWidth, mWidth));
-      }
-    }
+  // Create the bins.
+  float cur_inner = mIn;
+  float cur_outer = mOut;
+  for (int i = 0; i < mBins; ++i) {
+    mRadialBins.push_back(
+        new RadialBin(mParams, cur_inner, cur_outer, mWidth));
+    cur_outer = cur_inner;
+    cur_inner += mWidth;
   }
 
   // Allocate particles to bins
@@ -63,8 +54,9 @@ void RadialAnalyser::Run(SnapshotFile *file) {
       r = part[i]->GetX().Norm2();
     }
 
-    if (mLog)
+    if (mLog) {
       r = log10(r);
+    }
 
     int binID = GetBinID(r - mIn);
 
@@ -108,8 +100,13 @@ void RadialAnalyser::Run(SnapshotFile *file) {
       continue;
     }
 
-    out << b->GetMid() << "\t";
-    for (int j = 0; j < TOT_RAD_QUAN; ++j) {
+    if (mLog) {
+      out << pow(10.0, b->GetMid()) << "\t";
+    } else {
+      out << b->GetMid() << "\t";
+    }
+
+    for (int j = 0; j < 32; ++j) {
       out << b->GetAverage(j) << "\t";
     }
     out << "\n";
