@@ -28,7 +28,6 @@ struct MassComponent {
   float sink_mass = 0.0;
   float unique_sink_mass[16] = {0.0};
   float mdot = 0.0;
-  float rout[3] = {0.0, 0.0, 0.0};
   float rdens;
   int gas_num = 0;
   int dust_num = 0;

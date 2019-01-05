@@ -27,8 +27,8 @@ Application::~Application() {
     delete mGenerator;
   if (mDiscAnalyser != NULL)
     delete mDiscAnalyser;
-  if (mFragAnalyser != NULL)
-    delete mFragAnalyser;
+  if (mEvolAnalyser != NULL)
+    delete mEvolAnalyser;
   if (mCloudAnalyser != NULL)
     delete mCloudAnalyser;
   if (mSinkAnalyser != NULL)
@@ -89,7 +89,7 @@ bool Application::Initialise() {
   mCloudAnalyse = mParams->GetInt("CLOUD_ANALYSIS");
   mCloudCenter = mParams->GetInt("CLOUD_CENTER");
   mDiscAnalyse = mParams->GetInt("DISC_ANALYSIS");
-  mFragAnalyse = mParams->GetInt("FRAGMENTATION_ANALYSIS");
+  mEvolAnalyse = mParams->GetInt("EVOLUTION_ANALYSIS");
   mSinkAnalyse = mParams->GetInt("SINK_ANALYSIS");
   mNbodyOutput = mParams->GetInt("NBODY_OUTPUT");
   mRadialAnalyse = mParams->GetInt("RADIAL_ANALYSIS");
@@ -171,8 +171,8 @@ bool Application::Initialise() {
                                        mParams->GetInt("CLOUD_AVERAGE"));
   }
 
-  if (mFragAnalyse && mFiles.size() > 0) {
-    mFragAnalyser = new FragmentationAnalyser(mFiles[0]->GetNameData());
+  if (mEvolAnalyse && mFiles.size() > 0) {
+    mEvolAnalyser = new EvolutionAnalyser(mFiles[0]->GetNameData());
   }
 
   if (mMassAnalyse && mFiles.size() > 0) {
@@ -241,8 +241,8 @@ void Application::Run() {
       mSinkAnalyser->WriteNbody();
     }
   }
-  if (mFragAnalyse) {
-    mFragAnalyser->Write();
+  if (mEvolAnalyse) {
+    mEvolAnalyser->Write();
   }
 
   std::cout << "   Files analysed   : " << mFilesAnalysed << "\n\n";
@@ -272,6 +272,7 @@ void Application::Analyse(int task, int start, int end) {
       if (mCenter) {
         mDiscAnalyser->Center((SnapshotFile *)mFiles[i], mCenter - 1,
                               mPosCenter, mCenterDensest);
+        mDiscAnalyser->FindOuterRadius((SnapshotFile *) mFiles[i]);
       }
       // Find vertically integrated quantities
       if (mHillRadiusCut) {
@@ -284,8 +285,8 @@ void Application::Analyse(int task, int start, int end) {
       if (mMidplaneCut) {
         MidplaneCut((SnapshotFile *)mFiles[i]);
       }
-      if (mFragAnalyse) {
-        mFragAnalyser->Append((SnapshotFile *)mFiles[i]);
+      if (mEvolAnalyse) {
+        mEvolAnalyser->Append((SnapshotFile *)mFiles[i]);
       }
       if (mSinkAnalyse) {
         mSinkAnalyser->CalculateMassRadius((SnapshotFile *)mFiles[i], 1);

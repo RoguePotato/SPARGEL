@@ -1,4 +1,4 @@
-//===-- FragmentationAnalyser.cpp -----------------------------------------===//
+//===-- EvolutionAnalyser.cpp ---------------------------------------------===//
 //
 //                                  SPARGEL
 //                   Smoothed Particle Generator and Loader
@@ -9,19 +9,19 @@
 //===----------------------------------------------------------------------===//
 ///
 /// \file
-/// FragmentationAnalyser.cpp
+/// EvolutionAnalyser.cpp
 ///
 //===----------------------------------------------------------------------===//
 
-#include "FragmentationAnalyser.h"
+#include "EvolutionAnalyser.h"
 
-FragmentationAnalyser::FragmentationAnalyser(NameData nd) : mNameData(nd) {
-  mNameData.append += "fragmentation";
+EvolutionAnalyser::EvolutionAnalyser(NameData nd) : mNameData(nd) {
+  mNameData.append += "evolution";
 }
 
-FragmentationAnalyser::~FragmentationAnalyser() {}
+EvolutionAnalyser::~EvolutionAnalyser() {}
 
-void FragmentationAnalyser::Append(SnapshotFile *file) {
+void EvolutionAnalyser::Append(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
   std::vector<Sink *> sink = file->GetSinks();
   Record r;
@@ -39,10 +39,14 @@ void FragmentationAnalyser::Append(SnapshotFile *file) {
     }
   }
 
+  r.r_out[0] = file->GetOuterRadius(0);
+  r.r_out[1] = file->GetOuterRadius(1);
+  r.r_out[2] = file->GetOuterRadius(2);
+
   mRecords.push_back(r);
 }
 
-bool FragmentationAnalyser::Write() {
+bool EvolutionAnalyser::Write() {
   std::string outputName = mNameData.dir + "/SPARGEL." + mNameData.id + "." +
                            mNameData.append + ".dat";
   mOutStream.open(outputName, std::ios::out);
@@ -51,14 +55,14 @@ bool FragmentationAnalyser::Write() {
     return false;
   }
 
-  std::sort(mRecords.begin(), mRecords.end(), [](Record a, Record b) {
-    return b.time > a.time;
-  });
+  std::sort(mRecords.begin(), mRecords.end(),
+            [](Record a, Record b) { return b.time > a.time; });
 
   for (int i = 0; i < mRecords.size(); ++i) {
     Record r = mRecords[i];
     mOutStream << r.time << "\t" << r.disc_mass << "\t" << r.star_mass << "\t"
-               << r.max_dens << "\t" << r.max_temp << "\n";
+               << r.max_dens << "\t" << r.max_temp << "\t" << r.r_out[0] << "\t"
+               << r.r_out[1] << "\t" << r.r_out[2] << "\n";
   }
   mOutStream.close();
 

@@ -27,6 +27,7 @@ public:
   ~DiscAnalyser();
 
   void Center(SnapshotFile *file, int sinkIndex, Vec3 posCenter, int densest);
+  void FindOuterRadius(SnapshotFile *file);
 
 private:
   Parameters *mParams = NULL;

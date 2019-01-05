@@ -37,24 +37,6 @@ void MassAnalyser::ExtractValues(SnapshotFile *file) {
     mc.tot_mass += p->GetM();
   }
 
-  // Sort by radius
-  std::sort(part.begin(), part.end(),
-            [](Particle *a, Particle *b) { return b->GetR() > a->GetR(); });
-
-  // Find radius encompassing [90%, 95%, 99%] of the gas mass.
-  for (int i = 0; i < 3; ++i) {
-    float accum_mass = 0.0f;
-    float threshold = mc.gas_mass * rout_percs[i];
-    for (int j = 0; j < part.size(); ++j) {
-      Particle *p = part[j];
-      accum_mass += p->GetM();
-      if (accum_mass >= threshold) {
-        mc.rout[i] = p->GetR();
-        break;
-      }
-    }
-  }
-
   // Find maximum density position of that of a formed companion if it exists.
   if (sinks.size() == 1) {
     float max_dens = 0.0f;
@@ -133,8 +115,9 @@ void MassAnalyser::ExtractValues(SnapshotFile *file) {
   }
   std::cout << "   Disc/star mass   : " << mc.gas_mass / mc.unique_sink_mass[0]
             << "\n";
-  std::cout << "   Outer radius     : " << mc.rout[0] << " " << mc.rout[1]
-            << " " << mc.rout[2] << " AU\n";
+  std::cout << "   Outer radius     : " << file->GetOuterRadius(0) << " "
+            << file->GetOuterRadius(1) << " " << file->GetOuterRadius(2)
+            << " AU\n";
   std::cout << "   a clump          : " << mc.rdens << " AU\n";
 
   if (sinks.size() < 2) {
@@ -169,8 +152,8 @@ bool MassAnalyser::Write() {
   for (int i = 0; i < mMasses.size(); ++i) {
     MassComponent mc = mMasses[i];
     mOutStream << mc.time << "\t" << mc.tot_mass << "\t" << mc.gas_mass << "\t"
-               << mc.mdot << "\t" << mc.rout[0] << "\t" << mc.rout[1] << "\t"
-               << mc.rout[2] << "\t" << mc.rdens << "\t" << mc.dust_mass << "\t"
+               << mc.mdot << "\t"
+               << "\t" << mc.rdens << "\t" << mc.dust_mass << "\t"
                << mc.sink_mass << "\t" << mc.gas_num << "\t" << mc.dust_num
                << "\t" << mc.sink_num << "\t";
     for (int j = 0; j < 16; ++j) {

@@ -65,6 +65,7 @@ void DiscAnalyser::Center(SnapshotFile *file, int sinkIndex, Vec3 posCenter,
   }
 
   // TODO: Instead of using R, maybe replace all with GetX().Norm().
+  // TODO: Set new velocity for all cases!
   for (int i = 0; i < part.size(); ++i) {
     Vec3 newX = part.at(i)->GetX() - dX;
     Vec3 newV = part.at(i)->GetV() - dV;
@@ -82,4 +83,69 @@ void DiscAnalyser::Center(SnapshotFile *file, int sinkIndex, Vec3 posCenter,
   file->SetParticles(part);
   file->SetSinks(sink);
   file->SetNameDataAppend(appendage);
+
+  // Ad-hoc output.
+  std::sort(part.begin(), part.end(),
+            [](Particle *a, Particle *b) { return b->GetR() > a->GetR(); });
+
+  // Get particles within 10 AU.
+  int limit = 0;
+  for (int i = 0; i < part.size(); ++i) {
+    Particle *p = part.at(i);
+    if (p->GetR() >= 10.0) {
+      std::cout << "Particles within 10 AU is " << i << "\n";
+      break;
+    } else {
+      ++limit;
+    }
+  }
+
+  int factor = (int)(limit / 10000);
+  std::ofstream out;
+  out.open("pv_" + file->GetNameData().id + ".dat");
+  for (int i = 0; i < part.size(); ++i) {
+    Particle *p = part.at(i);
+    if (p->GetR() >= 10.0) {
+      break;
+    }
+
+    float v_r = p->GetV().Norm();
+    float v_theta = acos(p->GetV().z / v_r);
+    float v_phi = atan(p->GetV().y / p->GetV().x);
+
+    if (i % factor == 0) {
+      out << p->GetX().Norm() << "\t" << p->GetV().Norm() << "\t" << p->GetV().x
+          << "\t" << p->GetV().y << "\t" << p->GetV().z << "\t" << v_r << "\t"
+          << v_theta << "\t" << v_phi << "\n";
+    }
+  }
+  out.close();
+}
+
+void DiscAnalyser::FindOuterRadius(SnapshotFile *file) {
+  std::vector<Particle *> part = file->GetParticles();
+
+  // Find the total gas mass.
+  float total_mass = 0.0f;
+  for (int i = 0; i < part.size(); ++i) {
+    total_mass += part[i]->GetM();
+  }
+
+  // Sort by radius.
+  std::sort(part.begin(), part.end(),
+            [](Particle *a, Particle *b) { return b->GetR() > a->GetR(); });
+
+  // Find radius encompassing [90%, 95%, 99%] of the gas mass.
+  for (int i = 0; i < 3; ++i) {
+    float accum_mass = 0.0f;
+    float threshold = total_mass * ROUT_PERCS[i];
+    for (int j = 0; j < part.size(); ++j) {
+      Particle *p = part[j];
+      accum_mass += p->GetM();
+      if (accum_mass >= threshold) {
+        file->SetOuterRadius(p->GetR(), i);
+        break;
+      }
+    }
+  }
 }
