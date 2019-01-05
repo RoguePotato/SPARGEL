@@ -30,8 +30,7 @@
 
 class RadialBin {
 public:
-  RadialBin(Parameters *params, float starMass, float in, float out,
-            float width);
+  RadialBin(Parameters *params, float in, float out, float width);
   ~RadialBin();
 
   void AddParticle(Particle *p) { mParticles.push_back(p); }
@@ -54,7 +53,6 @@ private:
   float mIn = 0;
   float mOut = 0;
   float mWidth = 0.0;
-  float mStarMass = 0.0;
   int mMidplanes = 0;
 
   std::vector<Particle *> mParticles;

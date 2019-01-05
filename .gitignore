@@ -14,8 +14,8 @@ splash.*
 # Data files
 *.dat
 
-Python scripts
+# Python scripts
 *.py
 
-Documents folder
+# Documents folder
 docs/*

@@ -59,6 +59,8 @@ struct Vec3 {
 
   Vec3 cdiv(const Vec3 &r) const { return Vec3(x / r.x, y / r.y, z / r.z); }
 
+  float dot(const Vec3 &r) const { return x * r.x + y * r.y + z * r.z; }
+
   Vec3 &operator+=(const Vec3 &r) {
     x += r.x;
     y += r.y;

@@ -15,10 +15,8 @@
 
 #include "RadialBin.h"
 
-RadialBin::RadialBin(Parameters *params, float starMass, float in, float out,
-                     float width)
-    : mParams(params), mStarMass(starMass * MSUN_TO_KG), mIn(in), mOut(out),
-      mWidth(width) {}
+RadialBin::RadialBin(Parameters *params, float in, float out, float width)
+    : mParams(params), mIn(in), mOut(out), mWidth(width) {}
 
 RadialBin::~RadialBin() {
   for (int i = 0; i < mVerticalBins.size(); ++i) {
@@ -58,6 +56,11 @@ void RadialBin::CalculateValues() {
     mAverages[11] += p->GetM();
     mAverages[12] += p->GetBeta();
     mAverages[13] += p->GetU();
+    mAverages[14] += abs(p->GetV().x);
+    mAverages[15] += abs(p->GetV().y);
+    mAverages[16] += abs(p->GetV().z);
+    mAverages[17] += acos(p->GetV().z / p->GetV().Norm());
+    mAverages[18] += atan(p->GetV().y / p->GetV().x);
     for (int j = 0; j < EXTRA_DATA; ++j) {
       mAverages[RADIAL_QUAN + j] += p->GetExtra(j);
     }
