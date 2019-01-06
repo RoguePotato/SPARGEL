@@ -261,7 +261,7 @@ void SerenFile::CreateHeader() {
   mLongData[10] = 0;   // Noutlitesnap
   mFloatData[0] = 1.2; // h_fac
   mFloatData[1] = 0.0;
-  mDoubleData[0] = 0.0;                   // time
+  mDoubleData[0] = mTime;                 // time
   mDoubleData[1] = 0.0;                   // time lastsnap
   mDoubleData[2] = mParticles[0]->GetM(); // avg. hydro mass
   mDoubleData[10] = 0.0;                  // tlite lastsnap
