@@ -76,7 +76,7 @@ public:
   virtual int GetNumSinks() { return mNumSink; }
   virtual int GetNumPart() { return mNumTot; }
   virtual bool GetFormatted() { return mFormatted; }
-  virtual float GetOuterRadius(const int i) { return mRout[i]; }
+  virtual double GetOuterRadius(const int i) { return mRout[i]; }
 
   virtual void SetParticles(std::vector<Particle *> particles) {
     mParticles = particles;
@@ -89,7 +89,7 @@ public:
   virtual void SetNumSinks(const int i) { mNumSink = i; }
   virtual void SetNumTot(const int i) { mNumTot = i; }
   virtual void SetTime(const double t) { mTime = t; }
-  virtual void SetOuterRadius(const float val, const int i) { mRout[i] = val; }
+  virtual void SetOuterRadius(const double val, const int i) { mRout[i] = val; }
 
 protected:
   virtual bool Read(){};
@@ -127,5 +127,5 @@ protected:
   int mNumTot = 0;
 
   double mTime = 0.0;
-  float mRout[3] = {0.0f, 0.0f, 0.0f};
+  double mRout[3] = {0.0f, 0.0f, 0.0f};
 };

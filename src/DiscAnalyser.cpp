@@ -89,10 +89,7 @@ void DiscAnalyser::FindOuterRadius(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
 
   // Find the total gas mass.
-  float total_mass = 0.0f;
-  for (int i = 0; i < part.size(); ++i) {
-    total_mass += part[i]->GetM();
-  }
+  double total_mass = part.size() * part[0]->GetM();
 
   // Sort by radius.
   std::sort(part.begin(), part.end(),
@@ -100,13 +97,13 @@ void DiscAnalyser::FindOuterRadius(SnapshotFile *file) {
 
   // Find radius encompassing [90%, 95%, 99%] of the gas mass.
   for (int i = 0; i < 3; ++i) {
-    float accum_mass = 0.0f;
-    float threshold = total_mass * ROUT_PERCS[i];
+    double accum_mass = 0.0f;
+    double threshold = total_mass * ROUT_PERCS[i];
     for (int j = 0; j < part.size(); ++j) {
       Particle *p = part[j];
       accum_mass += p->GetM();
       if (accum_mass >= threshold) {
-        file->SetOuterRadius(p->GetR(), i);
+        file->SetOuterRadius(p->GetX().Norm(), i);
         break;
       }
     }

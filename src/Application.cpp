@@ -443,7 +443,7 @@ void Application::OutputFile(SnapshotFile *file) {
     cf->SetNumGas(file->GetParticles().size());
     cf->SetNumSinks(file->GetSinks().size());
     cf->SetNumTot(file->GetParticles().size() + file->GetSinks().size());
-    cf->SetTime(0.0);
+    cf->SetTime(file->GetTime());
     cf->Write(outputName);
   }
 }
