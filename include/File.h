@@ -81,7 +81,9 @@ public:
   virtual void SetParticles(std::vector<Particle *> particles) {
     mParticles = particles;
   }
+  virtual void ClearParticles() { mParticles.clear(); }
   virtual void SetSinks(std::vector<Sink *> sinks) { mSinks = sinks; }
+  virtual void ClearSinks() { mSinks.clear(); }
 
   virtual void CreateHeader(){};
 

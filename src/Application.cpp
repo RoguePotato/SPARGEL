@@ -98,6 +98,8 @@ bool Application::Initialise() {
       Vec3(mParams->GetFloat("CENTER_X"), mParams->GetFloat("CENTER_Y"),
            mParams->GetFloat("CENTER_Z"));
   mCenterDensest = mParams->GetInt("CENTER_DENSEST");
+  mRadialCut = mParams->GetInt("RADIAL_CUT");
+  mRadialCutDist = mParams->GetFloat("RADIAL_CUT_DIST");
   mHillRadiusCut = mParams->GetInt("HILLRADIUS_CUT");
   mMidplaneCut = mParams->GetFloat("MIDPLANE_CUT");
   mExtraQuantities = mParams->GetInt("EXTRA_QUANTITIES");
@@ -272,9 +274,13 @@ void Application::Analyse(int task, int start, int end) {
       if (mCenter) {
         mDiscAnalyser->Center((SnapshotFile *)mFiles[i], mCenter - 1,
                               mPosCenter, mCenterDensest);
-        mDiscAnalyser->FindOuterRadius((SnapshotFile *) mFiles[i]);
+        mDiscAnalyser->FindOuterRadius((SnapshotFile *)mFiles[i]);
       }
       // Find vertically integrated quantities
+      if (mRadialCut) {
+        RadialCut((SnapshotFile *)mFiles[i], mRadialCutDist, mRadialCut);
+      }
+
       if (mHillRadiusCut) {
         HillRadiusCut((SnapshotFile *)mFiles[i]);
       }
@@ -353,6 +359,74 @@ void Application::MidplaneCut(SnapshotFile *file) {
   file->SetNumGas(trimmed.size());
   file->SetNameDataAppend(".midplane");
   trimmed.clear();
+}
+
+void Application::RadialCut(SnapshotFile *file, const float dist,
+                            const int dim) {
+  const std::vector<Particle *> part = file->GetParticles();
+  const std::vector<Sink *> sink = file->GetSinks();
+  std::vector<Particle *> trimmed_part;
+  std::vector<Sink *> trimmed_sink;
+
+  file->SetNameDataAppend(".radialcut");
+
+  for (int i = 0; i < part.size(); ++i) {
+    Particle *p = part[i];
+    float r = 0.0f;
+
+    if (dim == 2) {
+      r = p->GetX().Norm2();
+    } else if (dim == 3) {
+      r = p->GetX().Norm();
+    }
+
+    if (r < dist) {
+      trimmed_part.push_back(p);
+    }
+  }
+
+  for (int i = 0; i < sink.size(); ++i) {
+    Sink *s = sink[i];
+    float r = 0.0f;
+
+    if (dim == 2) {
+      r = s->GetX().Norm2();
+    } else if (dim == 3) {
+      r = s->GetX().Norm();
+    }
+
+    if (r < dist) {
+      trimmed_sink.push_back(s);
+    }
+  }
+
+  if (!trimmed_part.size()) {
+    file->ClearParticles();
+    return;
+  }
+
+  // Sort by density.
+  std::sort(trimmed_part.begin(), trimmed_part.end(),
+            [](Particle *a, Particle *b) { return b->GetD() < a->GetD(); });
+
+  // Velocity COM.
+  Vec3 vcom = trimmed_part.front()->GetV();
+  for (int i = 0; i < trimmed_part.size(); ++i) {
+    Vec3 new_v = trimmed_part[i]->GetV() - vcom;
+    trimmed_part[i]->SetV(new_v);
+  }
+  for (int i = 0; i < trimmed_sink.size(); ++i) {
+    Vec3 new_v = trimmed_sink[i]->GetV() - vcom;
+    trimmed_sink[i]->SetV(new_v);
+  }
+
+  file->SetParticles(trimmed_part);
+  if (trimmed_sink.size()) {
+    file->SetSinks(trimmed_sink);
+
+  } else {
+    file->ClearSinks();
+  }
 }
 
 void Application::HillRadiusCut(SnapshotFile *file) {

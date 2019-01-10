@@ -95,12 +95,15 @@ private:
   int mResetTime = 0;
   Vec3 mPosCenter = {0.0, 0.0, 0.0};
   int mCenterDensest = 0;
+  int mRadialCut = 0;
+  float mRadialCutDist = 0.0;
   int mHillRadiusCut = 0;
   float mMidplaneCut = 0.0;
   int mInsertPlanet = 0.0;
 
   void Analyse(int task, int start, int end);
   void MidplaneCut(SnapshotFile *file);
+  void RadialCut(SnapshotFile *file, const float r, const int dim);
   void HillRadiusCut(SnapshotFile *file);
   void OutputFile(SnapshotFile *file);
   void FindThermo(SnapshotFile *file);
