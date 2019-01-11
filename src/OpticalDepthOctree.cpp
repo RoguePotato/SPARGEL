@@ -48,7 +48,7 @@ void OpticalDepthOctree::Walk(std::vector<Particle *> &Particles,
   for (int i = 0; i < Particles.size(); ++i) {
     Particle *P = Particles[i];
     Vec3 Pos = P->GetX();
-    float Sigma = 0.0, Tau = 0.0;
+    double Sigma = 0.0, Tau = 0.0;
 
     TraverseTree(Pos, Sigma, Tau, Opacity);
 
@@ -83,8 +83,8 @@ void OpticalDepthOctree::Insert(OpticalDepthPoint *Point) {
   }
 }
 
-void OpticalDepthOctree::TraverseTree(const Vec3 ParticlePos, float &Sigma,
-                                      float &Tau, OpacityTable *opacity) {
+void OpticalDepthOctree::TraverseTree(const Vec3 ParticlePos, double &Sigma,
+                                      double &Tau, OpacityTable *opacity) {
   // If the particle x-y does not intersect with the current cell boundary,
   // then we do not need to add any optical depth contribution.
   if (!Intersects(this, ParticlePos))
@@ -96,8 +96,8 @@ void OpticalDepthOctree::TraverseTree(const Vec3 ParticlePos, float &Sigma,
       if (Data->pos.z < ParticlePos.z)
         return;
 
-      float dens = Data->dens;
-      float temp = Data->temp;
+      double dens = Data->dens;
+      double temp = Data->temp;
 
       Sigma += dens * this->HalfDimension.z * 2.0 * AU_TO_CM;
 
@@ -128,13 +128,13 @@ bool OpticalDepthOctree::IsLeafNode() const { return (Children[0] == NULL); }
 bool OpticalDepthOctree::Intersects(OpticalDepthOctree *Cell,
                                     const Vec3 ParticlePos) const {
 
-  float x = ParticlePos.x;
-  float y = ParticlePos.y;
+  double x = ParticlePos.x;
+  double y = ParticlePos.y;
 
-  float l = Cell->Origin.x - Cell->HalfDimension.x;
-  float r = Cell->Origin.x + Cell->HalfDimension.x;
-  float b = Cell->Origin.y - Cell->HalfDimension.y;
-  float t = Cell->Origin.y + Cell->HalfDimension.y;
+  double l = Cell->Origin.x - Cell->HalfDimension.x;
+  double r = Cell->Origin.x + Cell->HalfDimension.x;
+  double b = Cell->Origin.y - Cell->HalfDimension.y;
+  double t = Cell->Origin.y + Cell->HalfDimension.y;
 
   if (x > l && x < r && y > b && y < t)
     return true;

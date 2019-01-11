@@ -19,25 +19,25 @@
 #include "Definitions.h"
 
 struct Vec3;
-Vec3 operator*(float r, const Vec3 &v);
+Vec3 operator*(double r, const Vec3 &v);
 
 struct Vec3 {
   union {
     struct {
-      float x;
-      float y;
-      float z;
+      double x;
+      double y;
+      double z;
     };
-    float D[3];
+    double D[3];
   };
 
   Vec3() {}
 
-  Vec3(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
+  Vec3(double _x, double _y, double _z) : x(_x), y(_y), z(_z) {}
 
-  float &operator[](unsigned int i) { return D[i]; }
+  double &operator[](unsigned int i) { return D[i]; }
 
-  const float &operator[](unsigned int i) const { return D[i]; }
+  const double &operator[](unsigned int i) const { return D[i]; }
 
   Vec3 operator+(const Vec3 &r) const {
     return Vec3(x + r.x, y + r.y, z + r.z);
@@ -47,19 +47,19 @@ struct Vec3 {
     return Vec3(x - r.x, y - r.y, z - r.z);
   }
 
-  Vec3 operator*(float r) const { return Vec3(x * r, y * r, z * r); }
+  Vec3 operator*(double r) const { return Vec3(x * r, y * r, z * r); }
 
   Vec3 operator^(const Vec3 &r) const {
     return Vec3(y * r.z - z * r.y, z * r.x - x * r.z, x * r.y - y * r.x);
   }
 
-  Vec3 operator/(float r) const { return Vec3(x / r, y / r, z / r); }
+  Vec3 operator/(double r) const { return Vec3(x / r, y / r, z / r); }
 
   Vec3 cmul(const Vec3 &r) const { return Vec3(x * r.x, y * r.y, z * r.z); }
 
   Vec3 cdiv(const Vec3 &r) const { return Vec3(x / r.x, y / r.y, z / r.z); }
 
-  float dot(const Vec3 &r) const { return x * r.x + y * r.y + z * r.z; }
+  double dot(const Vec3 &r) const { return x * r.x + y * r.y + z * r.z; }
 
   Vec3 &operator+=(const Vec3 &r) {
     x += r.x;
@@ -75,25 +75,25 @@ struct Vec3 {
     return *this;
   }
 
-  Vec3 &operator*=(float r) {
+  Vec3 &operator*=(double r) {
     x *= r;
     y *= r;
     z *= r;
     return *this;
   }
 
-  Vec3 &operator/=(float r) {
+  Vec3 &operator/=(double r) {
     x /= r;
     y /= r;
     z /= r;
     return *this;
   }
 
-  float Norm() const { return sqrt(x * x + y * y + z * z); }
+  double Norm() const { return sqrt(x * x + y * y + z * z); }
 
-  float Norm2() const { return sqrt(x * x + y * y); }
+  double Norm2() const { return sqrt(x * x + y * y); }
 
-  float NormSquared() const { return x * x + y * y + z * z; }
+  double NormSquared() const { return x * x + y * y + z * z; }
 
   Vec3 Normalized() const { return *this / Norm(); }
 
@@ -108,6 +108,6 @@ struct Vec3 {
   }
 };
 
-inline Vec3 operator*(float r, const Vec3 &v) {
+inline Vec3 operator*(double r, const Vec3 &v) {
   return Vec3(v.x * r, v.y * r, v.z * r);
 }
