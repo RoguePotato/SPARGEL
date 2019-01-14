@@ -661,8 +661,8 @@ void Application::FindToomre(SnapshotFile *file) {
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part[i];
     float r = p->GetX().Norm();
-    float r3 = pow(r * AU_TO_M, 3.0);
-    float omega = sqrt((G * inner_mass * MSUN_TO_KG) / (r3));
+    double r3 = pow(r * AU_TO_M, 3.0);
+    double omega = sqrt((G * inner_mass * MSUN_TO_KG) / (r3));
 
     float cs = p->GetCS();
     float sigma = p->GetSigma() * GPERCM2_TO_KGPERM2;
