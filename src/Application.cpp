@@ -526,10 +526,10 @@ void Application::FindThermo(SnapshotFile *file) {
   std::vector<Particle *> part = file->GetParticles();
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part[i];
-    float density = p->GetD();
-    float energy = p->GetU();
-    float sigma = p->GetSigma();
-    float temp = p->GetT();
+    double density = p->GetD();
+    double energy = p->GetU();
+    double sigma = p->GetSigma();
+    double temp = p->GetT();
     if (mCoolingMethod == "stamatellos" || mCoolingMethod == "lombardi") {
       if (mInFormat == "su" || mInFormat == "sf" || mInFormat == "column" ||
           mInFormat == "ascii") {
@@ -544,14 +544,14 @@ void Application::FindThermo(SnapshotFile *file) {
         energy = (K * temp) / (mMuBar * M_P * (mGamma - 1.0));
       }
     }
-    float gamma = mOpacity->GetGamma(density, temp);
-    float kappa = mOpacity->GetKappa(density, temp);
-    float kappar = mOpacity->GetKappar(density, temp);
-    float mu_bar = mOpacity->GetMuBar(density, temp);
-    float press = (gamma - 1.0) * density * energy;
-    float cs = sqrt((K * temp) / (M_P * mu_bar));
-    float tau = kappa * sigma;
-    float dudt = 1.0 / ((sigma * sigma * kappa) + (1 / kappar));
+    double gamma = mOpacity->GetGamma(density, temp);
+    double kappa = mOpacity->GetKappa(density, temp);
+    double kappar = mOpacity->GetKappar(density, temp);
+    double mu_bar = mOpacity->GetMuBar(density, temp);
+    double press = (gamma - 1.0) * density * energy;
+    double cs = sqrt((K * temp) / (M_P * mu_bar));
+    double tau = kappa * sigma;
+    double dudt = 1.0 / ((sigma * sigma * kappa) + (1 / kappar));
 
     part[i]->SetT(temp);
     part[i]->SetU(energy);
@@ -609,9 +609,9 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
 
   for (int i = 0; i < negative.size(); ++i) {
     Particle *p = negative[i];
-    float x = p->GetX().x;
-    float y = p->GetX().y;
-    float z = -(p->GetX().z);
+    double x = p->GetX().x;
+    double y = p->GetX().y;
+    double z = -(p->GetX().z);
     negative[i]->SetX(Vec3(x, y, z));
   }
   OpticalDepthPoint *negative_points = new OpticalDepthPoint[negative.size()];
@@ -620,9 +620,9 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
   // The particles below the disc which have been flipped above now require
   // being flipped back.
   for (int i = 0; i < negative.size(); ++i) {
-    float x = negative[i]->GetX().x;
-    float y = negative[i]->GetX().y;
-    float z = -(negative[i]->GetX().z);
+    double x = negative[i]->GetX().x;
+    double y = negative[i]->GetX().y;
+    double z = -(negative[i]->GetX().z);
     negative[i]->SetX(Vec3(x, y, z));
     part[i + positive.size()] = negative[i];
   }
@@ -631,9 +631,9 @@ void Application::FindOpticalDepth(SnapshotFile *file) {
 
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part[i];
-    float sigma = p->GetSigma();
-    float tau = p->GetTau();
-    float dudt = 1.0 / (sigma * (tau + (1.0 / tau)));
+    double sigma = p->GetSigma();
+    double tau = p->GetTau();
+    double dudt = 1.0 / (sigma * (tau + (1.0 / tau)));
 
     part[i]->SetDUDT(dudt);
   }
