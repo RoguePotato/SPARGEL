@@ -36,4 +36,5 @@ private:
   std::vector<std::vector<int>> mGridNum;
 
   int Bin(float d, float x);
+  float AverageNeighbours(const int x, const float y);
 };

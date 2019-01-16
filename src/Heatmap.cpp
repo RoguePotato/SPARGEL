@@ -24,6 +24,9 @@ void Heatmap::Create(SnapshotFile *file) {
   float rout = file->GetOuterRadius(1);
   float grid_size = (2.0f * rout) / (float)mRes;
 
+  std::cout << "   Heatmap: rout = " << rout << " with resolution " << mRes
+            << "\n";
+
   for (int i = 0; i < mRes; ++i) {
     mGrid.push_back(std::vector<float>(mRes, 0.0f));
     mGridNum.push_back(std::vector<int>(mRes, 0));
@@ -58,7 +61,11 @@ void Heatmap::Output() {
   out.open(mFileName);
   for (int i = 0; i < mRes; ++i) {
     for (int j = 0; j < mRes; ++j) {
-      out << mGrid[i][j] / mGridNum[i][j] << "\t";
+      if (mGridNum[i][j] == 0) {
+        out << this->AverageNeighbours(i, j) << "\t";
+      } else {
+        out << mGrid[i][j] / mGridNum[i][j] << "\t";
+      }
     }
     out << "\n";
   }
@@ -73,4 +80,19 @@ int Heatmap::Bin(float d, float x) {
   float frac = x / d;
 
   return frac * mRes;
+}
+
+float Heatmap::AverageNeighbours(const int x, const float y) {
+  if (x == 0 || y == 0 || x == mRes - 1 || y == mRes - 1) {
+    return 0.0f;
+  }
+
+  float total = 0.0f;
+  for (int i = -1; i < 1; ++i) {
+    for (int j = -1; j < 1; ++j) {
+      total += mGrid[x + j][y + i];
+    }
+  }
+
+  return total / 8.0f;
 }
