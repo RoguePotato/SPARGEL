@@ -35,6 +35,8 @@ Application::~Application() {
     delete mSinkAnalyser;
   if (mMassAnalyser != NULL)
     delete mMassAnalyser;
+  if (mHeatmap != NULL)
+    delete mHeatmap;
 }
 
 void Application::StartSplash() {
@@ -103,6 +105,7 @@ bool Application::Initialise() {
   mHillRadiusCut = mParams->GetInt("HILLRADIUS_CUT");
   mMidplaneCut = mParams->GetFloat("MIDPLANE_CUT");
   mExtraQuantities = mParams->GetInt("EXTRA_QUANTITIES");
+  mHeatmapRun = mParams->GetInt("HEATMAP");
   mResetTime = mParams->GetInt("RESET_TIME");
   mInsertPlanet = mParams->GetInt("INSERT_PLANET");
 
@@ -179,6 +182,10 @@ bool Application::Initialise() {
 
   if (mMassAnalyse && mFiles.size() > 0) {
     mMassAnalyser = new MassAnalyser();
+  }
+
+  if (mHeatmapRun && mFiles.size() > 0) {
+    mHeatmap = new Heatmap(mParams->GetInt("HEATMAP_RES"));
   }
 
   return true;
@@ -290,6 +297,10 @@ void Application::Analyse(int task, int start, int end) {
       }
       if (mMidplaneCut) {
         MidplaneCut((SnapshotFile *)mFiles[i]);
+      }
+      if (mHeatmapRun) {
+        mHeatmap->Create((SnapshotFile *) mFiles[i]);
+        mHeatmap->Output();
       }
       if (mEvolAnalyse) {
         mEvolAnalyser->Append((SnapshotFile *)mFiles[i]);

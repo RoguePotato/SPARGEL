@@ -157,6 +157,9 @@ void Parameters::SetDefaultParameters() {
   mFloatParams["HEIGHT_HI"] = 10.0;
   mIntParams["VERTICAL_BINS"] = 100;
 
+  mIntParams["HEATMAP"] = 0;
+  mIntParams["HEATMAP_RES"] = 64;
+
   mIntParams["COOLING_MAP"] = 0;
   mStringParams["COOLING_MAP_NAME"] = "cooling_map";
   mFloatParams["DENS_MIN"] = 0.0f;

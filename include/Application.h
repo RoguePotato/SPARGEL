@@ -28,6 +28,7 @@
 #include "File.h"
 #include "FileNameExtractor.h"
 #include "Generator.h"
+#include "Heatmap.h"
 #include "MassAnalyser.h"
 #include "OpacityTable.h"
 #include "OpticalDepthOctree.h"
@@ -65,6 +66,7 @@ private:
   RadialAnalyser *mRadialAnalyser = NULL;
   MassAnalyser *mMassAnalyser = NULL;
   Generator *mGenerator = NULL;
+  Heatmap *mHeatmap = NULL;
   CoolingMap *mCoolingMap = NULL;
 
   std::vector<File *> mFiles;
@@ -92,6 +94,7 @@ private:
   int mMassAnalyse = 0;
   int mCenter = 0;
   int mExtraQuantities = 0;
+  int mHeatmapRun = 0;
   int mResetTime = 0;
   Vec3 mPosCenter = {0.0, 0.0, 0.0};
   int mCenterDensest = 0;
