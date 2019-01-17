@@ -89,6 +89,10 @@ struct Vec3 {
     return *this;
   }
 
+  double Dot(const Vec3 &v) const {
+    return x * v.x + y * v.y + z * v.z;
+  }
+
   double Norm() const { return sqrt(x * x + y * y + z * z); }
 
   double Norm2() const { return sqrt(x * x + y * y); }
