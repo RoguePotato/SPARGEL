@@ -21,8 +21,8 @@
 
 class Particle {
 public:
-  Particle() {};
-  ~Particle() {};
+  Particle(){};
+  ~Particle(){};
 
   int GetID() { return mID; }
   Vec3 GetX() { return mX; }
@@ -43,6 +43,7 @@ public:
   float GetTau() { return mTau; }
   float GetDUDT() { return mDUDT; }
   float GetBeta() { return mBeta; }
+  double GetEnergy(const int i) { return mEnergy[i]; }
   int GetType() { return mType; }
   float GetExtra(int index) { return mExtra[index]; }
 
@@ -64,6 +65,7 @@ public:
   void SetTau(float tau) { mTau = tau; }
   void SetDUDT(float dudt) { mDUDT = dudt; }
   void SetBeta(float beta) { mBeta = beta; }
+  void SetEnergy(const double e, const int i) { mEnergy[i] = e; }
   void SetType(int type) { mType = type; }
   void SetExtra(int index, float value) { mExtra[index] = value; }
 
@@ -89,14 +91,15 @@ private:
   float mTau = 0.0;
   float mDUDT = 0.0;
   float mBeta = 0.0;
+  double mEnergy[3] = {0.0, 0.0, 0.0};
   int mType = 1;
   float mExtra[EXTRA_DATA] = {0.0};
 };
 
 class Sink : public Particle {
 public:
-  Sink() {};
-  ~Sink() {};
+  Sink(){};
+  ~Sink(){};
 
   float *GetAllData() { return mSerenData; }
   float GetData(int index) { return mSerenData[index]; }

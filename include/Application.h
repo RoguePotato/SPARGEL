@@ -111,6 +111,7 @@ private:
   void FindThermo(SnapshotFile *file);
   void FindOpticalDepth(SnapshotFile *file);
   void FindToomre(SnapshotFile *file);
+  void FindEnergy(SnapshotFile *file);
   void FindBeta(SnapshotFile *file);
   void InsertPlanet(SnapshotFile *file);
   void ReduceParticles(SnapshotFile *file);

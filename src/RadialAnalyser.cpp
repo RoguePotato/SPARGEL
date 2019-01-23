@@ -37,8 +37,7 @@ void RadialAnalyser::Run(SnapshotFile *file) {
   float cur_inner = mIn;
   float cur_outer = mOut;
   for (int i = 0; i < mBins; ++i) {
-    mRadialBins.push_back(
-        new RadialBin(mParams, cur_inner, cur_outer, mWidth));
+    mRadialBins.push_back(new RadialBin(mParams, cur_inner, cur_outer, mWidth));
     cur_outer = cur_inner;
     cur_inner += mWidth;
   }

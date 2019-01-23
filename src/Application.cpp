@@ -314,6 +314,7 @@ void Application::Analyse(int task, int start, int end) {
     // Necessary Toomre quantity calculations. Needs to be done after moving the
     // disc (e.g. centering).
     FindToomre((SnapshotFile *)mFiles[i]);
+    FindEnergy((SnapshotFile *)mFiles[i]);
 
     // Particle reduction.
     // TODO: Double-free when deleting snapshot file.
@@ -687,6 +688,51 @@ void Application::FindToomre(SnapshotFile *file) {
       }
     }
     inner_mass += p->GetM();
+  }
+  file->SetParticles(part);
+}
+
+void Application::FindEnergy(SnapshotFile *file) {
+  std::vector<Particle *> part = file->GetParticles();
+
+  std::vector<Sink *> sink = file->GetSinks();
+  std::sort(part.begin(), part.end(), [](Particle *a, Particle *b) {
+    return b->GetX().Norm() > a->GetX().Norm();
+  });
+  float inner_mass = 0.0;
+  int sink_index = 0;
+
+  // Add mass contribution from central star if it exists
+  if (sink.size() > 0) {
+    inner_mass += sink[0]->GetM();
+    sink_index = 1;
+  }
+
+  for (int i = 0; i < part.size(); ++i) {
+    Particle *p = part[i];
+    inner_mass += p->GetM();
+    
+    double r = p->GetX().Norm() * AU_TO_M;
+    double m = p->GetM() * MSUN_TO_KG;
+    double v_rot = p->GetV().Norm2() * KMPERS_TO_MPERS;
+    double u = p->GetU() * ERGPERG_TO_JPERKG;
+
+    double e_grav = (G * m * inner_mass * MSUN_TO_KG) / r;
+    double e_rot = 0.5 * m * v_rot * v_rot;
+    double e_ther = m * u;
+
+    part[i]->SetEnergy(e_grav, 0);
+    part[i]->SetEnergy(e_rot, 1);
+    part[i]->SetEnergy(e_ther, 2);
+
+    // Add contribution from other sinks but only once when
+    // we have exceeded it's radius
+    for (int i = sink_index; i < sink.size(); ++i) {
+      if (r > sink[i]->GetX().Norm()) {
+        inner_mass += sink[i]->GetM();
+        sink_index++;
+      }
+    }
   }
   file->SetParticles(part);
 }

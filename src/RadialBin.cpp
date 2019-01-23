@@ -57,6 +57,10 @@ void RadialBin::CalculateValues() {
     mAverages[12] += p->GetBeta();
     mAverages[13] += p->GetU();
     mAverages[14] += p->GetX().Dot(p->GetV()) / p->GetX().Norm();
+    mAverages[15] += p->GetV().Norm2();
+    mAverages[16] += p->GetEnergy(0);
+    mAverages[17] += p->GetEnergy(1);
+    mAverages[18] += p->GetEnergy(2);
     for (int j = 0; j < EXTRA_DATA; ++j) {
       mAverages[RADIAL_QUAN + j] += p->GetExtra(j);
     }
@@ -79,6 +83,9 @@ void RadialBin::CalculateValues() {
                  (PI * G * (mAverages[7] * GPERCM2_TO_KGPERM2));
 
   for (int i = 0; i < TOT_RAD_QUAN; ++i) {
-    mAverages[i] /= mParticles.size();
+    // Ignore energies!
+    if (i != 16 && i != 17 && i != 18) {
+      mAverages[i] /= mParticles.size();
+    }
   }
 }
