@@ -39,11 +39,11 @@ public:
   void CalculateValues();
 
   float GetMid() { return mIn + (mWidth / 2.0); }
-  float GetAverage(int index) { return mAverages[index]; }
+  double GetAverage(int index) { return mAverages[index]; }
   int GetNumParticles() { return mParticles.size(); }
   std::vector<VerticalBin *> GetVerticalBins() { return mVerticalBins; }
 
-  float SetAverage(const float value, const int index) {
+  double SetAverage(const double value, const int index) {
     mAverages[index] = value;
   }
 
@@ -58,5 +58,5 @@ private:
   std::vector<Particle *> mParticles;
   std::vector<Sink *> mSinks;
   std::vector<VerticalBin *> mVerticalBins;
-  float mAverages[TOT_RAD_QUAN] = {};
+  double mAverages[TOT_RAD_QUAN] = {};
 };

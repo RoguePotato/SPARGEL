@@ -91,7 +91,7 @@ private:
   float mTau = 0.0;
   float mDUDT = 0.0;
   float mBeta = 0.0;
-  double mEnergy[3] = {0.0, 0.0, 0.0};
+  double mEnergy[4] = {0.0, 0.0, 0.0, 0.0};
   int mType = 1;
   float mExtra[EXTRA_DATA] = {0.0};
 };

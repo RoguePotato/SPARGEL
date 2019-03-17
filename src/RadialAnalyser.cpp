@@ -69,12 +69,17 @@ void RadialAnalyser::Run(SnapshotFile *file) {
     mRadialBins[i]->CalculateValues();
   }
 
-  // Find the cumulative mass of the bins.
-  float total_mass = 0.0f;
+  // Find the cumulative mass and energy of the bins.
+  double total_mass = 0.0f, energy[4] = {0.0, 0.0, 0.0, 0.0};
   for (int i = 0; i < mRadialBins.size(); ++i) {
     total_mass +=
-        mRadialBins[i]->GetAverage(11) * mRadialBins[i]->GetNumParticles();
+        mRadialBins[i]->GetAverage(11);
     mRadialBins[i]->SetAverage(total_mass, 11);
+
+    for (int e = 0; e < 3; ++e) {
+      energy[e] += mRadialBins[i]->GetAverage(16 + e);
+      mRadialBins[i]->SetAverage(energy[e], 16 + e);
+    }
   }
 
   // Output azimuthally-averaged values
@@ -90,12 +95,13 @@ void RadialAnalyser::Run(SnapshotFile *file) {
     outputName = nd.dir + "/SPARGEL." + nd.id + "." + nd.format + "." +
                  nd.snap + nd.append + ".radial";
   }
+  std::cout << "File output      :" << outputName << "\n";
 
   std::ofstream out;
   out.open(outputName);
   for (int i = 0; i < mRadialBins.size(); ++i) {
     RadialBin *b = mRadialBins[i];
-    if (b->GetNumParticles() <= 0) {
+    if (b->GetNumParticles() <= 10) {
       continue;
     }
 
@@ -108,7 +114,7 @@ void RadialAnalyser::Run(SnapshotFile *file) {
     for (int j = 0; j < 32; ++j) {
       out << b->GetAverage(j) << "\t";
     }
-    out << "\n";
+    out << "\t" << b->GetNumParticles() << "\n";
   }
   out.close();
 

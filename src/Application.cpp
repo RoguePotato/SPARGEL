@@ -699,11 +699,10 @@ void Application::FindEnergy(SnapshotFile *file) {
   std::sort(part.begin(), part.end(), [](Particle *a, Particle *b) {
     return b->GetX().Norm() > a->GetX().Norm();
   });
-  float inner_mass = 0.0;
+  double inner_mass = 0.0;
   int sink_index = 0;
 
-  // Add mass contribution from central star if it exists
-  if (sink.size() > 0) {
+  if (sink.size() > 0 && !mParams->GetInt("CENTER_DENSEST")) {
     inner_mass += sink[0]->GetM();
     sink_index = 1;
   }
@@ -711,13 +710,14 @@ void Application::FindEnergy(SnapshotFile *file) {
   for (int i = 0; i < part.size(); ++i) {
     Particle *p = part[i];
     inner_mass += p->GetM();
-    
+
     double r = p->GetX().Norm() * AU_TO_M;
     double m = p->GetM() * MSUN_TO_KG;
+    double m_in = inner_mass * MSUN_TO_KG;
     double v_rot = p->GetV().Norm2() * KMPERS_TO_MPERS;
-    double u = p->GetU() * ERGPERG_TO_JPERKG;
+    double u = p->GetU();
 
-    double e_grav = (G * m * inner_mass * MSUN_TO_KG) / r;
+    double e_grav = (G * m * m_in) / r;
     double e_rot = 0.5 * m * v_rot * v_rot;
     double e_ther = m * u;
 
@@ -728,7 +728,7 @@ void Application::FindEnergy(SnapshotFile *file) {
     // Add contribution from other sinks but only once when
     // we have exceeded it's radius
     for (int i = sink_index; i < sink.size(); ++i) {
-      if (r > sink[i]->GetX().Norm()) {
+      if (p->GetX().Norm() > sink[i]->GetX().Norm()) {
         inner_mass += sink[i]->GetM();
         sink_index++;
       }
