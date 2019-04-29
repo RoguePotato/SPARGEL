@@ -43,7 +43,7 @@ public:
   int GetNumParticles() { return mParticles.size(); }
   std::vector<VerticalBin *> GetVerticalBins() { return mVerticalBins; }
 
-  double SetAverage(const double value, const int index) {
+  void SetAverage(const double value, const int index) {
     mAverages[index] = value;
   }
 

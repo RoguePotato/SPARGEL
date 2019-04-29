@@ -712,6 +712,7 @@ void Application::FindEnergy(SnapshotFile *file) {
     inner_mass += p->GetM();
 
     double r = p->GetX().Norm() * AU_TO_M;
+    double r2 = p->GetX().Norm2() * AU_TO_M;
     double m = p->GetM() * MSUN_TO_KG;
     double m_in = inner_mass * MSUN_TO_KG;
     double v_rot = p->GetV().Norm2() * KMPERS_TO_MPERS;
@@ -720,10 +721,12 @@ void Application::FindEnergy(SnapshotFile *file) {
     double e_grav = (G * m * m_in) / r;
     double e_rot = 0.5 * m * v_rot * v_rot;
     double e_ther = m * u;
+    double ang_mom = m * v_rot * r2;
 
     part[i]->SetEnergy(e_grav, 0);
     part[i]->SetEnergy(e_rot, 1);
     part[i]->SetEnergy(e_ther, 2);
+    part[i]->SetEnergy(ang_mom, 3);
 
     // Add contribution from other sinks but only once when
     // we have exceeded it's radius
@@ -832,20 +835,30 @@ void Application::OutputInfo(SnapshotFile *file) {
   std::cout << "\n";
 
   float gas_mass = 0.0, total_mass = 0.0;
+  float max_rho = 1E-30, max_temp = 1E-30;
   for (int i = 0; i < sink.size(); ++i) {
     std::cout << "   Sink " << i + 1 << "\n";
-    std::cout << "   Mass   = " << sink[i]->GetM() << "\n";
-    std::cout << "   Radius = " << sink[i]->GetX().Norm() << "\n";
-    std::cout << "   Accretion radius = " << sink[i]->GetH() << "\n";
+    std::cout << "   Mass   = " << sink.at(i)->GetM() << "\n";
+    std::cout << "   Radius = " << sink.at(i)->GetX().Norm() << "\n";
+    std::cout << "   Accretion radius = " << sink.at(i)->GetH() << "\n";
     for (int i = 0; i < 16; ++i)
       std::cout << "-----";
     std::cout << "\n";
 
-    total_mass += sink[i]->GetM();
+    total_mass += sink.at(i)->GetM();
   }
   for (int i = 0; i < part.size(); ++i) {
-    gas_mass += part[i]->GetM();
+    gas_mass += part.at(i)->GetM();
+    if (part.at(i)->GetD() > max_rho) {
+      max_rho = part.at(i)->GetD();
+    }
+
+    if (part.at(i)->GetT() > max_temp) {
+      max_temp = part.at(i)->GetT();
+    }
   }
-  std::cout << "   Gas mass   : " << gas_mass << "\n";
-  std::cout << "   Total mass : " << gas_mass + total_mass << "\n";
+  std::cout << "   Max density     : " << max_rho << " g/cm^3\n";
+  std::cout << "   Max temperature : " << max_temp << " K\n";
+  std::cout << "   Gas mass        : " << gas_mass << "\n";
+  std::cout << "   Total mass      : " << gas_mass + total_mass << "\n";
 }

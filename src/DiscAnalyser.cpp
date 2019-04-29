@@ -79,7 +79,7 @@ void DiscAnalyser::Center(SnapshotFile *file, int sinkIndex, Vec3 posCenter,
     sink[i]->SetX(newX);
     sink[i]->SetR(sink[i]->GetX().Norm());
   }
-  std::cout << "    " << file->GetNameData().id << " centering R "
+  std::cout << "   " << file->GetNameData().id << " centering R "
             << sink[0]->GetX().Norm() << "\n";
 
   file->SetParticles(part);

@@ -72,15 +72,27 @@ void RadialAnalyser::Run(SnapshotFile *file) {
   // Find the cumulative mass and energy of the bins.
   double total_mass = 0.0f, energy[4] = {0.0, 0.0, 0.0, 0.0};
   for (int i = 0; i < mRadialBins.size(); ++i) {
-    total_mass +=
-        mRadialBins[i]->GetAverage(11);
+    total_mass += mRadialBins[i]->GetAverage(11);
     mRadialBins[i]->SetAverage(total_mass, 11);
 
-    for (int e = 0; e < 3; ++e) {
+    for (int e = 0; e < 4; ++e) {
       energy[e] += mRadialBins[i]->GetAverage(16 + e);
       mRadialBins[i]->SetAverage(energy[e], 16 + e);
     }
   }
+
+  // Output number of particles within a radius.
+  float interior = 1.0f;
+  int total_part = 0;
+  for (int i = 0; i < mRadialBins.size(); ++i) {
+    if (mRadialBins[i]->GetMid() >= log10(interior)) {
+      break;
+    }
+
+    total_part += mRadialBins[i]->GetNumParticles();
+  }
+  std::cout << "   Total particles within " << interior << " AU is "
+            << total_part << "\n";
 
   // Output azimuthally-averaged values
   NameData nd = file->GetNameData();
